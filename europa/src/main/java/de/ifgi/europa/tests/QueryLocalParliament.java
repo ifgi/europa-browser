@@ -1,5 +1,7 @@
 package de.ifgi.europa.tests;
 
+import java.text.ParseException;
+
 import com.hp.hpl.jena.query.ARQ;
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryExecution;
@@ -9,13 +11,20 @@ import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
 
 import de.ifgi.europa.constants.Constants;
+import de.ifig.europa.comm.Comm;
+import de.ifig.europa.core.TimePeriod;
 
 public class QueryLocalParliament {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ParseException {
 
-        QueryLocalParliament queryDBpedia = new QueryLocalParliament();
-        queryDBpedia.queryExternalSources();
+        //QueryLocalParliament queryDBpedia = new QueryLocalParliament();
+        //queryDBpedia.queryExternalSources();
+        
+        Comm cnn = new Comm();
+         
+        TimePeriod tm = cnn.getTimePeriod("Wassertemperatur");
+        System.out.println(tm.getStartDate() + " " + tm.getEndDate());
     }
 
     public void queryExternalSources() {
