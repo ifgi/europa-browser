@@ -6,6 +6,9 @@ public class Constants {
 	 * Address to the SPARQL Endpoint 
 	 */
 	public static String SPARQL_Endpoint = "http://giv-siidemo.uni-muenster.de:8081/parliament/sparql";
+	/**
+	 * 
+	 */
 	public static String SPARQL_getStimulus = "PREFIX purl:  <http://purl.oclc.org/NET/ssnx/ssn#> " +  
 											  "SELECT ?object "  + 
 											  "WHERE {  " + 
@@ -16,7 +19,9 @@ public class Constants {
 											  "	                ?subject purl:isDescribedBy <http://www.opengis.net/def/property/OGC/0/SamplingTime>. " + 
 											  "	            } " + 
 											  "	        )}";  
-	
+	/**
+	 * 
+	 */
 	public static String SPARQL_getPropertyTimeRange =  "PREFIX purl:  <http://purl.oclc.org/NET/ssnx/ssn#>  " +
 														"PREFIX my: <http://ifgi.uni-muenster.de/hydrolod#> " +
 														"PREFIX hyd:  <http://ifgi.uni-muenster.de/hydrolodVocabulary#> " +

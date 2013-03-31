@@ -1,30 +1,22 @@
 package de.ifig.europa.comm;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Locale;
-
 import de.ifgi.europa.constants.Constants;
 import de.ifig.europa.core.SOSObservation;
 import de.ifig.europa.core.TimePeriod;
-
 import javax.swing.text.Position;
-
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.QueryExecutionFactory;
 import com.hp.hpl.jena.query.QueryFactory;
 import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
-import com.hp.hpl.jena.rdf.model.RDFNode;
 
 public class Comm {
 	String URL;
 	
-
-
 	/**
 	 * This function connects to the SPARQL Endpoint and lists all properties (Stimulus) available . 
 	 * 
@@ -50,7 +42,7 @@ public class Comm {
 		
 	}
 
-	public TimePeriod getTimePeriod(String property) throws ParseException{
+	public TimePeriod getPropertyInterval(String property) throws ParseException{
 		
 		String SPARQL = new String();
 		SPARQL = Constants.SPARQL_getPropertyTimeRange.replace("PARAM_PROPERTY", property);		
@@ -67,10 +59,6 @@ public class Comm {
 		return timePeriod;
 	}
 	
-	public ArrayList<Date> getPropertyIntervall(String property){
-		
-		return null;		
-	}
 
 	/**
 	 * Lists the properties regarding a certain BBOX and time interval.

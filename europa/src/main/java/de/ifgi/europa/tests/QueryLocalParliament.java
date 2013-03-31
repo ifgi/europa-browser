@@ -23,7 +23,7 @@ public class QueryLocalParliament {
         
         Comm cnn = new Comm();
          
-        TimePeriod tm = cnn.getTimePeriod("Wassertemperatur");
+        TimePeriod tm = cnn.getPropertyInterval("Wassertemperatur");
         System.out.println(tm.getStartDate() + " " + tm.getEndDate());
     }
 
