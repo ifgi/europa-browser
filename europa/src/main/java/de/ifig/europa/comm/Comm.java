@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import de.ifgi.europa.constants.Constants;
 import de.ifig.europa.core.SOSObservation;
-import de.ifig.europa.core.TimePeriod;
+import de.ifig.europa.core.TimeInterval;
 import javax.swing.text.Position;
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryExecution;
@@ -25,8 +25,8 @@ public class Comm {
 	 */
 
 	public ArrayList<String> getListOfProperties(){
-		Query query = QueryFactory.create(Constants.SPARQL_getStimulus);
-		QueryExecution qexec = QueryExecutionFactory.sparqlService(Constants.SPARQL_Endpoint, query);
+		Query query = QueryFactory.create(Constants.SPARQL_getListOfProperties);
+		QueryExecution qexec = QueryExecutionFactory.sparqlService(Constants.Standard_Endpoint, query);
 		ArrayList<String> result = new ArrayList<String>();
         ResultSet results = qexec.execSelect();
 
@@ -42,17 +42,24 @@ public class Comm {
 		
 	}
 
-	public TimePeriod getPropertyInterval(String property) throws ParseException{
+	/**
+	 * 
+	 * @param property
+	 * @return
+	 * @throws ParseException
+	 */
+	
+	public TimeInterval getPropertyInterval(String property) throws ParseException{
 		
 		String SPARQL = new String();
-		SPARQL = Constants.SPARQL_getPropertyTimeRange.replace("PARAM_PROPERTY", property);		
+		SPARQL = Constants.SPARQL_getPropertyInterval.replace("PARAM_PROPERTY", property);		
 		Query query = QueryFactory.create(SPARQL);
-		QueryExecution qexec = QueryExecutionFactory.sparqlService(Constants.SPARQL_Endpoint, query);
+		QueryExecution qexec = QueryExecutionFactory.sparqlService(Constants.Standard_Endpoint, query);
 
 		ResultSet results = qexec.execSelect();
         QuerySolution soln = results.nextSolution();
 
-        TimePeriod timePeriod = new TimePeriod(soln.get("min"), soln.get("max"));
+        TimeInterval timePeriod = new TimeInterval(soln.get("min"), soln.get("max"));
         
         qexec.close();
 		
@@ -69,7 +76,9 @@ public class Comm {
 	 * @param lowerLeft
 	 * @param upperRight
 	 * @return
+	 * 
 	 */
+	
 	public ArrayList<Date> getPropertyBBOX(String property, Date startTime, Date endTime, Position lowerLeft, Position upperRight){
 		
 		return null;		
