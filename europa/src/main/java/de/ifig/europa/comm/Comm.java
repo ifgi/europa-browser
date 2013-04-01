@@ -18,12 +18,9 @@ public class Comm {
 	String URL;
 	
 	/**
-	 * This function connects to the SPARQL Endpoint and lists all properties (Stimulus) available . 
-	 * 
-	 * @param URL
-	 * @return
+	 * This function connects to the SPARQL Endpoint and lists all properties (Stimulus) available .
+	 * @return 
 	 */
-
 	public ArrayList<String> getListOfProperties(){
 		Query query = QueryFactory.create(Constants.SPARQL_getListOfProperties);
 		QueryExecution qexec = QueryExecutionFactory.sparqlService(Constants.Standard_Endpoint, query);
@@ -95,7 +92,7 @@ public class Comm {
 	 * @return
 	 */
 	public ArrayList<SOSObservation> dataLoader(String property, Date startTime, Date endTime,
-			Position lowerLeft, Position upperRight, String aggregationMethod){
+			gov.nasa.worldwind.geom.Position lowerLeft, gov.nasa.worldwind.geom.Position upperRight, String aggregationMethod){
 				
 		
 		return null;
@@ -110,6 +107,8 @@ public class Comm {
 	 */
 	
 	public SOSObservation getLastObservation(String property){
+		
+
 		return null;
 		
 	}

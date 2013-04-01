@@ -22,16 +22,16 @@ public class QueryLocalParliament {
         //queryDBpedia.queryExternalSources();
         
         Comm cnn = new Comm();
-         
+        
         TimeInterval tm = cnn.getPropertyInterval("Wassertemperatur");
-        System.out.println(tm.getStartDate() + " " + tm.getEndDate());
+        System.out.println("Min: " + tm.getStartDate() + "\nMax: " + tm.getEndDate());
     }
 
     public void queryExternalSources() {
         //Defining SPARQL Query. This query lists, in all languages available, the
         //abstract entries on Wikipedia/DBpedia for the planet Mars.
-        String sparqlQueryString2 = " SELECT  ?s  " +
-                                    " WHERE {?s ?p <http://purl.oclc.org/NET/ssnx/ssn#Sensor>}";
+        String sparqlQueryString2 = " SELECT ?s  " +
+                                    " WHERE { ?s ?p <http://purl.oclc.org/NET/ssnx/ssn#Sensor> }";
 
         Query query = QueryFactory.create(sparqlQueryString2);
         ARQ.getContext().setTrue(ARQ.useSAX);
