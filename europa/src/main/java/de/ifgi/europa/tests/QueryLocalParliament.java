@@ -25,6 +25,7 @@ public class QueryLocalParliament {
         
         TimeInterval tm = cnn.getPropertyInterval("Wassertemperatur");
         System.out.println("Min: " + tm.getStartDate() + "\nMax: " + tm.getEndDate());
+        cnn.getListOfProperties();
     }
 
     public void queryExternalSources() {

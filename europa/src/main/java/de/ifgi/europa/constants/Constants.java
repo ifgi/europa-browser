@@ -11,15 +11,10 @@ public class Constants {
 	 * Returns all PROPERTIES from a SPARQL ENDPOINT.
 	 */
 	public static String SPARQL_getListOfProperties = "PREFIX purl:  <http://purl.oclc.org/NET/ssnx/ssn#> " +  
-													  "SELECT ?object "  + 
+													  "SELECT ?propertyDescription "  + 
 													  "WHERE {  " + 
-													  "    ?subject a purl:Stimulus . " + 
-													  "    ?subject purl:isDescribedBy ?object . " + 
-													  "	    FILTER( " + 
-													  "	        !EXISTS { " + 
-													  "	                ?subject purl:isDescribedBy <http://www.opengis.net/def/property/OGC/0/SamplingTime>. " + 
-													  "	            } " + 
-													  "	           )}";  
+													  "    ?property a purl:Property . " + 
+													  "     ?property purl:isDescribedBy ?propertyDescription . } "; 
 	/**
 	 * Returns the min and max dates for a given property.
 	 * INPUT: a property (hyd:PARAM_PROPERTY)

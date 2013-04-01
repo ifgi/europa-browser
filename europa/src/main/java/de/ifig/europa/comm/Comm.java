@@ -29,8 +29,8 @@ public class Comm {
 
         while (results.hasNext()) {
             QuerySolution soln = results.nextSolution();
-            result.add(soln.get("?object").toString());
-            System.out.println(soln.get("?object"));                                                
+            result.add(soln.get("?propertyDescription").toString());
+            System.out.println(soln.get("?propertyDescription"));                                                
         }
         
         qexec.close();
