@@ -46,7 +46,7 @@ public class Comm {
 	 * @throws ParseException
 	 */
 	
-	public TimeInterval getPropertyInterval(String property) throws ParseException{
+	public de.ifgi.europa.core.TimeInterval getPropertyInterval(String property) throws ParseException{
 		
 		String SPARQL = new String();
 		SPARQL = Constants.SPARQL_getPropertyInterval.replace("PARAM_PROPERTY", property);		
@@ -56,7 +56,7 @@ public class Comm {
 		ResultSet results = qexec.execSelect();
         QuerySolution soln = results.nextSolution();
 
-        TimeInterval timePeriod = new TimeInterval(soln.get("min"), soln.get("max"));
+        de.ifgi.europa.core.TimeInterval timePeriod = new de.ifgi.europa.core.TimeInterval(soln.get("min"), soln.get("max"));
         
         qexec.close();
 		
