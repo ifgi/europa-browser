@@ -12,7 +12,12 @@ import com.hp.hpl.jena.query.ResultSet;
 
 import de.ifgi.europa.comm.Comm;
 import de.ifgi.europa.constants.Constants;
+<<<<<<< HEAD
 import de.ifig.europa.core.TimeInterval;
+=======
+import de.ifgi.europa.core.TimeInterval;
+import de.ifig.europa.comm.Comm;
+>>>>>>> refs/remotes/origin/master
 
 public class QueryLocalParliament {
 
