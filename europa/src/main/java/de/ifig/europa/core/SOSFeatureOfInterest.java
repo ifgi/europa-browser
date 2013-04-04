@@ -2,11 +2,11 @@ package de.ifig.europa.core;
 
 public class SOSFeatureOfInterest {
 
-	long id;
-	String identifier;
-	String name;
-	String label;	
-	SOSPoint defaultGeometry;
+	private long id;
+	private String identifier;
+	private String name;
+	private String label;	
+	private SOSPoint defaultGeometry;
 	
 	public SOSFeatureOfInterest(long id, String identifier, String name,
 			String label, SOSPoint defaultGeometry) {

@@ -37,8 +37,8 @@
       <operations public="true" package="true" protected="true" private="true"/>    
     </display>  
   </class>  
-  <class id="5" language="java" name="de.ifig.europa.comm.Comm" project="europa" 
-    file="/europa/src/main/java/de/ifig/europa/comm/Comm.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="5" language="java" name="de.ifgi.europa.comm.Comm" project="europa" 
+    file="/europa/src/main/java/de/ifgi/europa/comm/Comm.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="-1" width="-1" x="719" y="115"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
       visibility="true">      

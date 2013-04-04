@@ -1,4 +1,4 @@
-package de.ifig.europa.comm;
+package de.ifgi.europa.comm;
 
 import java.text.ParseException;
 import java.util.ArrayList;
