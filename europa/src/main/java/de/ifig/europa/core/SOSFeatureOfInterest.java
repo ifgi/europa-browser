@@ -8,23 +8,6 @@ public class SOSFeatureOfInterest {
 	String label;	
 	SOSPoint defaultGeometry;
 	
-	public SOSFeatureOfInterest(long id, String identifier, String name,
-			String label, SOSPoint defaultGeometry) {
-		super();
-		this.id = id;
-		this.identifier = identifier;
-		this.name = name;
-		this.label = label;
-		this.defaultGeometry = defaultGeometry;
-	}
-	
-	
-	public SOSFeatureOfInterest() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
-
-
 	public long getId() {
 		return id;
 	}
@@ -56,6 +39,18 @@ public class SOSFeatureOfInterest {
 		this.defaultGeometry = defaultGeometry;
 	}
 	
+	public SOSFeatureOfInterest(long id, String identifier, String name,
+			String label, SOSPoint defaultGeometry) {
+		super();
+		this.id = id;
+		this.identifier = identifier;
+		this.name = name;
+		this.label = label;
+		this.defaultGeometry = defaultGeometry;
+	}
 	
+	public SOSFeatureOfInterest() {
+		super();
+	}	
 	
 }
