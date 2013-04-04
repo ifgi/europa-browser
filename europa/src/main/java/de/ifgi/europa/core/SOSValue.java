@@ -1,5 +1,18 @@
 package de.ifgi.europa.core;
 
+import java.util.Date;
+
+public class SOSValue {
+
+	long id;
+	double hasValue;
+		
+
+
+	
+}
+package de.ifgi.europa.core;
+
 public class SOSValue  extends LODResource {
 
 	private long id;
