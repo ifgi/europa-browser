@@ -11,8 +11,8 @@ import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
 
 import de.ifgi.europa.constants.Constants;
+import de.ifgi.europa.core.TimeInterval;
 import de.ifig.europa.comm.Comm;
-import de.ifig.europa.core.TimeInterval;
 
 public class QueryLocalParliament {
 

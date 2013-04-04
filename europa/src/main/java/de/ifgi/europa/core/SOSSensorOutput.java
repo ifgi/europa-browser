@@ -1,4 +1,4 @@
-package de.ifig.europa.core;
+package de.ifgi.europa.core;
 
 import java.util.Date;
 

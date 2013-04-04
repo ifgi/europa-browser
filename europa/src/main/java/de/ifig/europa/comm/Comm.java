@@ -4,8 +4,9 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import de.ifgi.europa.constants.Constants;
-import de.ifig.europa.core.SOSObservation;
-import de.ifig.europa.core.TimeInterval;
+import de.ifgi.europa.core.SOSObservation;
+import de.ifgi.europa.core.TimeInterval;
+
 import javax.swing.text.Position;
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryExecution;

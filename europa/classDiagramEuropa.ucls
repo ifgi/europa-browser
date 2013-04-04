@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <class-diagram version="1.1.2" icons="true" always-add-relationships="false" generalizations="true" realizations="true" 
   associations="true" dependencies="false" nesting-relationships="true">  
-  <class id="1" language="java" name="de.ifig.europa.core.SOSFeatureOfInterest" project="europa" 
-    file="/europa/src/main/java/de/ifig/europa/core/SOSFeatureOfInterest.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="1" language="java" name="de.ifgi.europa.core.SOSFeatureOfInterest" project="europa" 
+    file="/europa/src/main/java/de/ifgi/europa/core/SOSFeatureOfInterest.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="349" width="280" x="35" y="262"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
+    <display autosize="false" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
       visibility="true">      
       <attributes public="true" package="true" protected="true" private="true"/>      
       <operations public="true" package="true" protected="true" private="true"/>    
     </display>  
   </class>  
-  <class id="2" language="java" name="de.ifig.europa.core.TimeInterval" project="europa" 
-    file="/europa/src/main/java/de/ifig/europa/core/TimeInterval.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="2" language="java" name="de.ifgi.europa.core.TimeInterval" project="europa" 
+    file="/europa/src/main/java/de/ifgi/europa/core/TimeInterval.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="187" width="194" x="35" y="35"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
       visibility="true">      
@@ -19,8 +19,8 @@
       <operations public="true" package="true" protected="true" private="true"/>    
     </display>  
   </class>  
-  <class id="3" language="java" name="de.ifig.europa.core.SOSValue" project="europa" 
-    file="/europa/src/main/java/de/ifig/europa/core/SOSValue.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="3" language="java" name="de.ifgi.europa.core.SOSValue" project="europa" 
+    file="/europa/src/main/java/de/ifgi/europa/core/SOSValue.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="295" width="199" x="355" y="262"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
       visibility="true">      
@@ -28,8 +28,8 @@
       <operations public="true" package="true" protected="true" private="true"/>    
     </display>  
   </class>  
-  <class id="4" language="java" name="de.ifig.europa.core.SOSObservation" project="europa" 
-    file="/europa/src/main/java/de/ifig/europa/core/SOSObservation.java" binary="false" corner="BOTTOM_RIGHT">    
+  <class id="4" language="java" name="de.ifgi.europa.core.SOSObservation" project="europa" 
+    file="/europa/src/main/java/de/ifgi/europa/core/SOSObservation.java" binary="false" corner="BOTTOM_RIGHT">    
     <position height="79" width="119" x="269" y="35"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" accessors="true" 
       visibility="true">      
