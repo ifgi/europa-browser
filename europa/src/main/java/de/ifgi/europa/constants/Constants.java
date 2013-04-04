@@ -11,7 +11,7 @@ public class Constants {
 	 * Returns all PROPERTIES from a SPARQL ENDPOINT.
 	 */
 	public static String SPARQL_getListOfProperties = "PREFIX purl:  <http://purl.oclc.org/NET/ssnx/ssn#> " +  
-													  "SELECT ?propertyDescription "  + 
+													  "SELECT ?property ?propertyDescription  "  + 
 													  "WHERE {  " + 
 													  "    ?property a purl:Property . " + 
 													  "     ?property purl:isDescribedBy ?propertyDescription . } "; 
@@ -53,4 +53,12 @@ public class Constants {
 														"ORDER BY DESC (?samplingTime) " +
 														"LIMIT 1";
 
+	
+	public static String SPARQL_Fill_Property = "SELECT ?foi ?id ?description ?label " + 
+												"WHERE { " + 
+												"     <PARAM_URI> purl:isPropertyOf ?foi .  " + 
+												"     <PARAM_URI> rdf:ID ?id . " + 
+												"     <PARAM_URI> purl:isDescribedBy ?description . " + 
+												"     <PARAM_URI> rdfs:label ?label .}"; 
+	
 }
