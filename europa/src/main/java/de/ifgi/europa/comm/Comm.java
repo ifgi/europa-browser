@@ -114,12 +114,5 @@ public class Comm {
 	 * @param property
 	 * @return
 	 */
-
 	
-	
-	public static ResultSet fill(String query){
-		ResultSet res = null;
-		//qexec.close();
-		return res;
-	}
 }
