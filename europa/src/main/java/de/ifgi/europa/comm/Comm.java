@@ -1,11 +1,14 @@
 package de.ifgi.europa.comm;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import de.ifgi.europa.constants.Constants;
-import de.ifig.europa.core.SOSObservation;
-import de.ifig.europa.core.TimeInterval;
+import de.ifgi.europa.core.SOSObservation;
+import de.ifgi.europa.core.SOSProperty;
+
 import javax.swing.text.Position;
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryExecution;
@@ -20,22 +23,28 @@ public class Comm {
 	/**
 	 * This function connects to the SPARQL Endpoint and lists all properties (Stimulus) available .
 	 * @return 
+	 * @throws URISyntaxException 
 	 */
-	public ArrayList<String> getListOfProperties(){
+	public ArrayList<SOSProperty> getListOfProperties() throws URISyntaxException{
+		
 		Query query = QueryFactory.create(Constants.SPARQL_getListOfProperties);
 		QueryExecution qexec = QueryExecutionFactory.sparqlService(Constants.Standard_Endpoint, query);
-		ArrayList<String> result = new ArrayList<String>();
+		ArrayList<SOSProperty> result = new ArrayList<SOSProperty>();
         ResultSet results = qexec.execSelect();
 
         while (results.hasNext()) {
             QuerySolution soln = results.nextSolution();
-            result.add(soln.get("?propertyDescription").toString());
-            System.out.println(soln.get("?propertyDescription"));                                                
+            SOSProperty tmpProperty = new SOSProperty();
+            tmpProperty.setUri(new URI(soln.get("?property").toString()));
+            //tmpProperty.setDescription(soln.get("?propertyDescription").toString());
+            result.add(tmpProperty);
+                        
+            System.out.println(tmpProperty.getUri());                                                
         }
         
         qexec.close();
         
-		return result;
+		return null;
 		
 	}
 
@@ -105,12 +114,12 @@ public class Comm {
 	 * @param property
 	 * @return
 	 */
-	
-	public SOSObservation getLastObservation(String property){
-		
 
-		return null;
-		
-	}
 	
+	
+	public static ResultSet fill(String query){
+		ResultSet res = null;
+		//qexec.close();
+		return res;
+	}
 }

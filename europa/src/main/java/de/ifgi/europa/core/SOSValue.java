@@ -1,21 +1,48 @@
 package de.ifgi.europa.core;
 
-<<<<<<< HEAD
-public class SOSValue {
+public class SOSValue  extends LODResource {
 
-	long id;
-	double hasValue;
+	private long id;
+	private double hasValue;
+	private SOSProperty forProperty;
+
+	public SOSValue(long id, double hasValue, SOSProperty forProperty) {
+		super();
+		this.id = id;
+		this.hasValue = hasValue;
+		this.forProperty = forProperty;
+	}
+
+	public SOSValue() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
+	}
+
+	public double getHasValue() {
+		return hasValue;
+	}
+
+	public void setHasValue(double hasValue) {
+		this.hasValue = hasValue;
+	}
+
+	public SOSProperty getForProperty() {
+		return forProperty;
+	}
+
+	public void setForProperty(SOSProperty forProperty) {
+		this.forProperty = forProperty;
+	}
+
+	public void fill(){
 		
-=======
-import java.util.Date;
-
-public class SOSValue {
-
-	long id;
-	double hasValue;
-		
-
-
->>>>>>> refs/remotes/origin/master
-	
+	}
 }

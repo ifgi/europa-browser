@@ -3,13 +3,26 @@ package de.ifgi.europa.core;
 import java.net.URI;
 import java.util.ArrayList;
 
-public class SOSSensing {
+public class SOSSensing  extends LODResource {
 
+	private URI uri;
 	private ArrayList<URI> description;
 	private String label;
 
-	public SOSSensing(ArrayList<URI> description, String label) {
+	
+	public URI getUri() {
+		return uri;
+	}
+
+	public void setUri(URI uri) {
+		this.uri = uri;
+	}
+
+
+
+	public SOSSensing(URI uri, ArrayList<URI> description, String label) {
 		super();
+		this.uri = uri;
 		this.description = description;
 		this.label = label;
 	}
@@ -34,5 +47,8 @@ public class SOSSensing {
 		super();
 	}
 
-
+	public void fill(){
+		
+	}
+	
 }

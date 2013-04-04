@@ -3,8 +3,9 @@ package de.ifgi.europa.core;
 import java.net.URI;
 import java.util.ArrayList;
 
-public class SOSSensor {
+public class SOSSensor  extends LODResource {
 
+	private URI uri;
 	private ArrayList<SOSSensing> sensing;
 	private ArrayList<SOSStimulus> stimulus;
 	private ArrayList<SOSProperty> property;
@@ -12,6 +13,15 @@ public class SOSSensor {
 	private String description;
 	private URI identifier;
 	
+	
+	public URI getUri() {
+		return uri;
+	}
+
+	public void setUri(URI uri) {
+		this.uri = uri;
+	}
+
 	public ArrayList<SOSSensing> getSensing() {
 		return sensing;
 	}
@@ -64,10 +74,11 @@ public class SOSSensor {
 		super();
 	}
 
-	public SOSSensor(ArrayList<SOSSensing> sensing,
+	public SOSSensor(URI uri, ArrayList<SOSSensing> sensing,
 			ArrayList<SOSStimulus> stimulus, ArrayList<SOSProperty> property,
 			String label, String description, URI identifier) {
 		super();
+		this.uri = uri;
 		this.sensing = sensing;
 		this.stimulus = stimulus;
 		this.property = property;
@@ -75,6 +86,10 @@ public class SOSSensor {
 		this.description = description;
 		this.identifier = identifier;
 	}
-	
+
+
+	public void fill(){
+		
+	}
 	
 }

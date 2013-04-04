@@ -1,19 +1,11 @@
 package de.ifgi.europa.core;
 
+import java.net.URI;
 import java.util.ArrayList;
-<<<<<<< HEAD
-
-
-public class SOSObservation {
-
-	ArrayList<SOSValue> values;
-	SOSFeatureOfInterest FOI;
-	
-=======
 import java.util.Date;
+public class SOSObservation  extends LODResource {
 
-public class SOSObservation {
-
+	private URI uri;
 	private Date startTime;
 	private Date endTime;
 	private SOSFeatureOfInterest featureOfInterest;
@@ -23,6 +15,13 @@ public class SOSObservation {
 	private ArrayList<SOSSensorOutput> sensorOutput;
 	private String label;
 	
+	
+	public URI getUri() {
+		return uri;
+	}
+	public void setUri(URI uri) {
+		this.uri = uri;
+	}
 	public Date getStartTime() {
 		return startTime;
 	}
@@ -71,16 +70,18 @@ public class SOSObservation {
 	public void setLabel(String label) {
 		this.label = label;
 	}
+	
 	public SOSObservation() {
 		super();
 	}
-
-	public SOSObservation(Date startTime, Date endTime,
+	
+	public SOSObservation(URI uri, Date startTime, Date endTime,
 			SOSFeatureOfInterest featureOfInterest,
 			ArrayList<SOSProperty> property, SOSSensor sensor,
 			SOSSensing sensing, ArrayList<SOSSensorOutput> sensorOutput,
 			String label) {
 		super();
+		this.uri = uri;
 		this.startTime = startTime;
 		this.endTime = endTime;
 		this.featureOfInterest = featureOfInterest;
@@ -91,8 +92,9 @@ public class SOSObservation {
 		this.label = label;
 	}
 
+	public void fill(){
+		
+	}
 
 
-
->>>>>>> refs/remotes/origin/master
 }

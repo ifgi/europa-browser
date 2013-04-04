@@ -1,13 +1,23 @@
 package de.ifgi.europa.core;
 
+import java.net.URI;
 import java.util.Date;
 
-public class SOSSensorOutput {
+public class SOSSensorOutput  extends LODResource {
+
+	private URI uri;		
+	public URI getUri() {
+		return uri;
+	}
+	public void setUri(URI uri) {
+		this.uri = uri;
+	}
 
 	private SOSSensor sensor;
 	private String label;
 	private SOSValue value;
 	private Date samplingTime;
+	
 	
 	public SOSSensor getSensor() {
 		return sensor;
@@ -37,14 +47,18 @@ public class SOSSensorOutput {
 	public SOSSensorOutput() {
 		super();
 	}
-
-	public SOSSensorOutput(SOSSensor sensor, String label, SOSValue value,
-			Date samplingTime) {
+	public SOSSensorOutput(URI uri, SOSSensor sensor, String label,
+			SOSValue value, Date samplingTime) {
 		super();
+		this.uri = uri;
 		this.sensor = sensor;
 		this.label = label;
 		this.value = value;
 		this.samplingTime = samplingTime;
-	}	
+	}
+
+	public void fill(){
+		
+	}
 	
 }

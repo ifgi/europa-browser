@@ -1,65 +1,11 @@
 package de.ifgi.europa.core;
 
-public class SOSFeatureOfInterest {
+import java.net.URI;
 
-<<<<<<< HEAD
-	private long id;
-	private String identifier;
-	private String name;
-	private String label;	
-	private SOSPoint defaultGeometry;
-	
-	public SOSFeatureOfInterest(long id, String identifier, String name,
-			String label, SOSPoint defaultGeometry) {
-		super();
-		this.id = id;
-		this.identifier = identifier;
-		this.name = name;
-		this.label = label;
-		this.defaultGeometry = defaultGeometry;
-	}
-	
-	
-	public SOSFeatureOfInterest() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
+public class SOSFeatureOfInterest  extends LODResource {
 
-
-	public long getId() {
-		return id;
-	}
-	public void setId(long id) {
-		this.id = id;
-	}
-	public String getIdentifier() {
-		return identifier;
-	}
-	public void setIdentifier(String identifier) {
-		this.identifier = identifier;
-	}
-	public String getName() {
-		return name;
-	}
-	public void setName(String name) {
-		this.name = name;
-	}
-	public String getLabel() {
-		return label;
-	}
-	public void setLabel(String label) {
-		this.label = label;
-	}
-	public SOSPoint getDefaultGeometry() {
-		return defaultGeometry;
-	}
-	public void setDefaultGeometry(SOSPoint defaultGeometry) {
-		this.defaultGeometry = defaultGeometry;
-	}
-	
-	
-=======
 	long id;
+	URI uri;
 	String identifier;
 	String name;
 	String label;	
@@ -68,6 +14,12 @@ public class SOSFeatureOfInterest {
 	public long getId() {
 		return id;
 	}
+	public URI getUri() {
+		return uri;
+	}
+	public void setUri(URI uri) {
+		this.uri = uri;
+	}
 	public void setId(long id) {
 		this.id = id;
 	}
@@ -94,12 +46,13 @@ public class SOSFeatureOfInterest {
 	}
 	public void setDefaultGeometry(SOSPoint defaultGeometry) {
 		this.defaultGeometry = defaultGeometry;
-	}
+	}	
 	
-	public SOSFeatureOfInterest(long id, String identifier, String name,
-			String label, SOSPoint defaultGeometry) {
+	public SOSFeatureOfInterest(long id, URI uri, String identifier,
+			String name, String label, SOSPoint defaultGeometry) {
 		super();
 		this.id = id;
+		this.uri = uri;
 		this.identifier = identifier;
 		this.name = name;
 		this.label = label;
@@ -109,6 +62,8 @@ public class SOSFeatureOfInterest {
 	public SOSFeatureOfInterest() {
 		super();
 	}	
->>>>>>> refs/remotes/origin/master
-	
+
+	public void fill(){
+		
+	}
 }
