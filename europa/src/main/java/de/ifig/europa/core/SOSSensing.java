@@ -14,6 +14,22 @@ public class SOSSensing {
 		this.label = label;
 	}
 
+	public ArrayList<URI> getDescription() {
+		return description;
+	}
+
+	public void setDescription(ArrayList<URI> description) {
+		this.description = description;
+	}
+
+	public String getLabel() {
+		return label;
+	}
+
+	public void setLabel(String label) {
+		this.label = label;
+	}
+
 	public SOSSensing() {
 		super();
 	}
