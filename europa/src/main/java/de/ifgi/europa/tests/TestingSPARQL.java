@@ -2,7 +2,7 @@ package de.ifgi.europa.tests;
 
 import java.net.URISyntaxException;
 
-import de.ifgi.europa.comm.Comm;
+import de.ifgi.europa.comm.JenaConnector;
 
 public class TestingSPARQL {
 
@@ -13,7 +13,7 @@ public class TestingSPARQL {
 	public static void main(String[] args) throws URISyntaxException {
 		// TODO Auto-generated method stub
 		
-		Comm cnn = new Comm();
+		JenaConnector cnn = new JenaConnector();
 		cnn.getListOfProperties();
 		
 	}

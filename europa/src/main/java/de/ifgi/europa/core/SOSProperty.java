@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
 
-import de.ifgi.europa.comm.Comm;
+import de.ifgi.europa.comm.JenaConnector;
 import de.ifgi.europa.constants.Constants;
 
 

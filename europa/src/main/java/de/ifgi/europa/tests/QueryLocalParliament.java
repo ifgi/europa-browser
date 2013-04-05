@@ -1,5 +1,6 @@
 package de.ifgi.europa.tests;
 
+import java.net.URISyntaxException;
 import java.text.ParseException;
 
 import com.hp.hpl.jena.query.ARQ;
@@ -12,16 +13,16 @@ import com.hp.hpl.jena.query.ResultSet;
 
 import de.ifgi.europa.constants.Constants;
 import de.ifgi.europa.core.TimeInterval;
-import de.ifig.europa.comm.Comm;
+import de.ifgi.europa.comm.JenaConnector;
 
 public class QueryLocalParliament {
 
-    public static void main(String[] args) throws ParseException {
+    public static void main(String[] args) throws ParseException, URISyntaxException {
 
         //QueryLocalParliament queryDBpedia = new QueryLocalParliament();
         //queryDBpedia.queryExternalSources();
         
-        Comm cnn = new Comm();
+        JenaConnector cnn = new JenaConnector();
         
         TimeInterval tm = cnn.getPropertyInterval("Wassertemperatur");
         System.out.println("Min: " + tm.getStartDate() + "\nMax: " + tm.getEndDate());
