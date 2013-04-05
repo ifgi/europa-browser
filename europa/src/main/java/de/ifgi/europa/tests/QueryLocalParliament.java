@@ -22,7 +22,7 @@ public class QueryLocalParliament {
         //QueryLocalParliament queryDBpedia = new QueryLocalParliament();
         //queryDBpedia.queryExternalSources();
         
-        JenaConnector cnn = new JenaConnector();
+        JenaConnector cnn = new JenaConnector(Constants.Standard_Endpoint);
         
         TimeInterval tm = cnn.getPropertyInterval("Wassertemperatur");
         System.out.println("Min: " + tm.getStartDate() + "\nMax: " + tm.getEndDate());

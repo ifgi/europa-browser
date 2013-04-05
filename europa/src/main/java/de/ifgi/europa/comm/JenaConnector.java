@@ -18,8 +18,13 @@ import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
 
 public class JenaConnector {
-	String URL;
+	String endpointURL;
 	
+	public JenaConnector(String url) {
+		super();
+		endpointURL = url;
+	}
+
 	/**
 	 * This function connects to the SPARQL Endpoint and lists all properties (Stimulus) available .
 	 * @return 
@@ -28,7 +33,7 @@ public class JenaConnector {
 	public ArrayList<SOSProperty> getListOfProperties() throws URISyntaxException{
 		
 		Query query = QueryFactory.create(Constants.SPARQL_getListOfProperties);
-		QueryExecution qexec = QueryExecutionFactory.sparqlService(Constants.Standard_Endpoint, query);
+		QueryExecution qexec = QueryExecutionFactory.sparqlService(this.endpointURL, query);
 		ArrayList<SOSProperty> result = new ArrayList<SOSProperty>();
         ResultSet results = qexec.execSelect();
 
@@ -60,7 +65,7 @@ public class JenaConnector {
 		String SPARQL = new String();
 		SPARQL = Constants.SPARQL_getPropertyInterval.replace("PARAM_PROPERTY", property);		
 		Query query = QueryFactory.create(SPARQL);
-		QueryExecution qexec = QueryExecutionFactory.sparqlService(Constants.Standard_Endpoint, query);
+		QueryExecution qexec = QueryExecutionFactory.sparqlService(this.endpointURL, query);
 
 		ResultSet results = qexec.execSelect();
         QuerySolution soln = results.nextSolution();
