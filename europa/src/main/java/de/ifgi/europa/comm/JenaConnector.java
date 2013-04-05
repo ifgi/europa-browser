@@ -6,6 +6,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import de.ifgi.europa.constants.Constants;
+import de.ifgi.europa.core.ObservationSet;
 import de.ifgi.europa.core.SOSObservation;
 import de.ifgi.europa.core.SOSProperty;
 
@@ -19,7 +20,7 @@ import com.hp.hpl.jena.query.ResultSet;
 
 public class JenaConnector {
 	String endpointURL;
-	
+
 	public JenaConnector(String url) {
 		super();
 		endpointURL = url;
@@ -31,26 +32,26 @@ public class JenaConnector {
 	 * @throws URISyntaxException 
 	 */
 	public ArrayList<SOSProperty> getListOfProperties() throws URISyntaxException{
-		
+
 		Query query = QueryFactory.create(Constants.SPARQL_getListOfProperties);
 		QueryExecution qexec = QueryExecutionFactory.sparqlService(this.endpointURL, query);
 		ArrayList<SOSProperty> result = new ArrayList<SOSProperty>();
-        ResultSet results = qexec.execSelect();
+		ResultSet results = qexec.execSelect();
 
-        while (results.hasNext()) {
-            QuerySolution soln = results.nextSolution();
-            SOSProperty tmpProperty = new SOSProperty();
-            tmpProperty.setUri(new URI(soln.get("?property").toString()));
-            //tmpProperty.setDescription(soln.get("?propertyDescription").toString());
-            result.add(tmpProperty);
-                        
-            System.out.println(tmpProperty.getUri());                                                
-        }
-        
-        qexec.close();
-        
+		while (results.hasNext()) {
+			QuerySolution soln = results.nextSolution();
+			SOSProperty tmpProperty = new SOSProperty();
+			tmpProperty.setUri(new URI(soln.get("?property").toString()));
+			//tmpProperty.setDescription(soln.get("?propertyDescription").toString());
+			result.add(tmpProperty);
+
+			System.out.println(tmpProperty.getUri());                                                
+		}
+
+		qexec.close();
+
 		return null;
-		
+
 	}
 
 	/**
@@ -59,24 +60,24 @@ public class JenaConnector {
 	 * @return
 	 * @throws ParseException
 	 */
-	
+
 	public de.ifgi.europa.core.TimeInterval getPropertyInterval(String property) throws ParseException{
-		
+
 		String SPARQL = new String();
 		SPARQL = Constants.SPARQL_getPropertyInterval.replace("PARAM_PROPERTY", property);		
 		Query query = QueryFactory.create(SPARQL);
 		QueryExecution qexec = QueryExecutionFactory.sparqlService(this.endpointURL, query);
 
 		ResultSet results = qexec.execSelect();
-        QuerySolution soln = results.nextSolution();
+		QuerySolution soln = results.nextSolution();
 
-        de.ifgi.europa.core.TimeInterval timePeriod = new de.ifgi.europa.core.TimeInterval(soln.get("min"), soln.get("max"));
-        
-        qexec.close();
-		
+		de.ifgi.europa.core.TimeInterval timePeriod = new de.ifgi.europa.core.TimeInterval(soln.get("min"), soln.get("max"));
+
+		qexec.close();
+
 		return timePeriod;
 	}
-	
+
 
 	/**
 	 * Lists the properties regarding a certain BBOX and time interval.
@@ -89,9 +90,9 @@ public class JenaConnector {
 	 * @return
 	 * 
 	 */
-	
+
 	public ArrayList<Date> getPropertyBBOX(String property, Date startTime, Date endTime, Position lowerLeft, Position upperRight){
-		
+
 		return null;		
 	}
 
@@ -107,17 +108,175 @@ public class JenaConnector {
 	 */
 	public ArrayList<SOSObservation> dataLoader(String property, Date startTime, Date endTime,
 			gov.nasa.worldwind.geom.Position lowerLeft, gov.nasa.worldwind.geom.Position upperRight, String aggregationMethod){
-				
-		
+
+
 		return null;
-		
+
 	}
-	
+
 	/**
 	 * Gets the last observation of a certain property
 	 * 
 	 * @param property
 	 * @return
 	 */
-	
+
+
+	public ArrayList<URI> getListGraphs(){
+
+		Query query = QueryFactory.create(Constants.SPARQL_ListAvailableGraphs);
+		QueryExecution qexec = QueryExecutionFactory.sparqlService(this.endpointURL, query);
+
+		ArrayList<URI> result = new ArrayList<URI>();
+
+		ResultSet results = qexec.execSelect();
+
+		while (results.hasNext()) {
+			QuerySolution soln = results.nextSolution();
+
+			try {
+
+				result.add(new URI(soln.get("?graph").toString()));
+				System.out.println(new URI(soln.get("?graph").toString()));
+
+			} catch (URISyntaxException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+
+		}
+
+		qexec.close();
+
+		return result;	
+	}
+
+	public ObservationSet getObjectElement(URI subject){
+		
+		String templateQuery = Constants.SPARQL_ListSubjectElements;
+		templateQuery = templateQuery.replace("PARAM_URI", subject.toString());
+		Query query = QueryFactory.create(templateQuery);
+		QueryExecution qexec = QueryExecutionFactory.sparqlService(this.endpointURL, query);
+		ResultSet results = qexec.execSelect();
+
+		Triple triple = new Triple(subject);
+		
+		while (results.hasNext()) {
+
+			QuerySolution soln = results.nextSolution();
+			String predicate = soln.get("?p").toString();
+			String object = soln.get("?o").toString();
+			try {
+				URI predicateUri;
+				predicateUri = new URI(predicate);
+				if(this.isURI(object)){
+					URI objectUri = new URI(object);
+					triple.add(predicateUri, objectUri);
+				}else{
+					triple.add(predicateUri, object);
+				}
+			} catch (URISyntaxException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+		ObservationSet os = triple.toObservationSet(); 
+		return os;
+	}
+
+	private boolean isURI(String uri){
+		boolean res = true;
+		try {
+			new URI(uri);
+		} catch (URISyntaxException e) {
+			res = false;
+		}
+		return res;
+	}
+
+
+
+	class Triple{
+		private URI subject;
+		private ArrayList<String> predicate = new ArrayList<String>();
+		private ArrayList<String> object = new ArrayList<String>();
+		private ArrayList<String> datatype = new ArrayList<String>();
+
+		public URI getSubject() {
+			return subject;
+		}
+
+		public void setSubject(URI subject) {
+			this.subject = subject;
+		}
+
+		Triple(){}
+
+		Triple(URI subject){
+			this.subject = subject;
+		}
+
+		public void add(URI predicate,String object){
+			String tmp[] = object.split("\\^\\^");
+			URI datatype = null;
+			try {
+				if(tmp.length > 1){
+					datatype = new URI(tmp[1]);
+				}else{
+					datatype = null;
+				}
+			} catch (URISyntaxException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			this.predicate.add(predicate.toString());
+			this.object.add(tmp[0]);
+			
+			if(datatype == null){
+				this.datatype.add("");
+			}else{
+				this.datatype.add(datatype.toString());
+			}
+			
+		}
+
+		public void add(URI predicate,URI object){
+			this.predicate.add(predicate.toString());
+			this.object.add(object.toString());
+			this.datatype.add(null);
+		}
+
+		//TODO: Implement an interface with this method. That way TUPLE for DBs implements the same method ad the factory does not change
+		//TODO: I feel dirty, clean me!
+		public ObservationSet toObservationSet(){
+			ArrayList<String> subject = new ArrayList<String>();
+			ArrayList<String> predicate = new ArrayList<String>();
+			ArrayList<String> object = new ArrayList<String>();
+			ArrayList<String> datatype = new ArrayList<String>();
+			for(int i=0; i < this.predicate.size(); i++){
+				subject.add(this.subject.toString());
+				predicate.add(this.predicate.get(i).toString());
+				object.add(this.object.get(i).toString());
+				if(this.datatype.get(i) == null){
+					datatype.add("");
+				}else{
+					datatype.add(this.datatype.get(i).toString());
+				}
+			}
+			ObservationSet os = null;
+			try {
+				os = new ObservationSet(subject,predicate,object,datatype);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return os;
+		}
+
+	}
+
+
+
 }
