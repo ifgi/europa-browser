@@ -57,23 +57,7 @@ public class SOSProperty extends LODResource {
 
 
 	public void fill(){
-//		String query = Constants.SPARQL_Fill_Property;
-//		query = query.replace("PARAM_URI", "<" + this.uri + ">");
-//		ResultSet res = Comm.(query);
-//		
-//		while (res.hasNext()) {
-//			QuerySolution soln = res.nextSolution();
-//			
-//			//SOSProperty tmpProperty = new SOSProperty();
-//			//ArrayList<SOSFeatureOfInterest> tmpFOIList = new ArrayList<SOSFeatureOfInterest>();
-//					
-//			this.setDescription(soln.get("?description").toString());
-//			this.setLabel(soln.get("?label").toString());						
-//
-//			System.out.println(this.getDescription());
-//			System.out.println(this.getLabel());
-//		}
-//
+
 
 	}
 
