@@ -1,6 +1,6 @@
 package de.ifgi.europa.factory;
 
-public class Creator {
+public class Factory {
 
 	/**
 	 * @param args

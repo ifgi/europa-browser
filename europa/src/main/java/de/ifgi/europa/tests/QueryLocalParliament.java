@@ -22,7 +22,7 @@ public class QueryLocalParliament {
         //QueryLocalParliament queryDBpedia = new QueryLocalParliament();
         //queryDBpedia.queryExternalSources();
         
-        JenaConnector cnn = new JenaConnector(Constants.Standard_Endpoint);
+        JenaConnector cnn = new JenaConnector(Constants.SII_Lecutre_Endpoint);
         
         TimeInterval tm = cnn.getPropertyInterval("Wassertemperatur");
         System.out.println("Min: " + tm.getStartDate() + "\nMax: " + tm.getEndDate());
@@ -38,7 +38,7 @@ public class QueryLocalParliament {
         Query query = QueryFactory.create(sparqlQueryString2);
         ARQ.getContext().setTrue(ARQ.useSAX);
        //Executing SPARQL Query and pointing to the DBpedia SPARQL Endpoint 
-        QueryExecution qexec = QueryExecutionFactory.sparqlService(Constants.Standard_Endpoint, query);
+        QueryExecution qexec = QueryExecutionFactory.sparqlService(Constants.SII_Lecutre_Endpoint, query);
        //Retrieving the SPARQL Query results
         ResultSet results = qexec.execSelect();
        //Iterating over the SPARQL Query results

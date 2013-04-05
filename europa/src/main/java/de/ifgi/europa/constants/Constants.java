@@ -5,7 +5,7 @@ public class Constants {
 	/**
 	 * Address to the SPARQL Endpoint 
 	 */
-	public static String Standard_Endpoint = "http://giv-siidemo.uni-muenster.de:8081/parliament/sparql";
+	public static String SII_Lecutre_Endpoint = "http://giv-siidemo.uni-muenster.de:8081/parliament/sparql";
 	
 	/**
 	 * Returns all PROPERTIES from a SPARQL ENDPOINT.

@@ -14,7 +14,7 @@ public class TestingSPARQL {
 	public static void main(String[] args) throws URISyntaxException {
 		// TODO Auto-generated method stub
 		
-		JenaConnector cnn = new JenaConnector(Constants.Standard_Endpoint);
+		JenaConnector cnn = new JenaConnector(Constants.SII_Lecutre_Endpoint);
 		cnn.getListOfProperties();
 		
 	}
