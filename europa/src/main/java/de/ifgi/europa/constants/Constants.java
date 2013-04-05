@@ -54,11 +54,95 @@ public class Constants {
 														"LIMIT 1";
 
 	
-	public static String SPARQL_Fill_Property = "SELECT ?foi ?id ?description ?label " + 
+	public static String SPARQL_Fill_Property = "PREFIX purl:  <http://purl.oclc.org/NET/ssnx/ssn#>" +
+												"PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> " +
+												"PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> " +
+												"SELECT ?foi ?id ?description ?label " + 
 												"WHERE { " + 
 												"     <PARAM_URI> purl:isPropertyOf ?foi .  " + 
 												"     <PARAM_URI> rdf:ID ?id . " + 
 												"     <PARAM_URI> purl:isDescribedBy ?description . " + 
 												"     <PARAM_URI> rdfs:label ?label .}"; 
 	
+	
+	public static String SPARQL_Fill_Sensor =   "PREFIX purl:  <http://purl.oclc.org/NET/ssnx/ssn#> " +
+												"PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> " +
+												"PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> " +
+												"SELECT ?label ?id ?property ?sensing " + 
+												"WHERE { " +
+												"     <PARAM_URI> rdfs:label ?label . " +
+												"     <PARAM_URI> rdf:ID ?id . " +
+												"     <PARAM_URI> purl:observes ?property . " +
+												"     <PARAM_URI> purl:implements ?sensing .}";
+	
+	
+	public static String SPARQL_Fill_Sensing =  "PREFIX purl:  <http://purl.oclc.org/NET/ssnx/ssn#> " +
+												"PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> " +
+												"PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> " +
+												"SELECT ?label ?id ?isDescribedBy " + 
+												"WHERE { " +
+												"     <PARAM_URI> rdfs:label ?label . " +
+												"     <PARAM_URI> rdf:ID ?id . " +
+												"     <PARAM_URI> purl:isDescribedBy ?isDescribedBy .} ";
+
+	public static String SPARQL_Fill_Observation =  "PREFIX purl:  <http://purl.oclc.org/NET/ssnx/ssn#> " +
+													"PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> " +
+													"PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> " +
+													"SELECT ?label ?id ?observationResult ?sensingMethodUsed ?observedBy ?observedProperty ?featureOfInterest ?startTime ?endTime " +
+													"		WHERE{ " +
+													"		     <PARAM_URI> rdfs:label ?label . " +
+													"		     <PARAM_URI> rdf:ID ?id . " +
+													"		     <PARAM_URI> purl:observationResult ?observationResult . " +
+													"		     <PARAM_URI> purl:sensingMethodUsed ?sensingMethodUsed . " +
+													"		     <PARAM_URI> purl:observedBy ?observedBy . " +
+													"		     <PARAM_URI> purl:observedProperty ?observedProperty . " +
+													"		     <PARAM_URI> purl:featureOfInterest ?featureOfInterest . " +
+													"		     <PARAM_URI> purl:endTime ?endTime . " +
+													"		     <PARAM_URI> purl:startTime ?startTime . " +
+													"		} ";
+	
+	
+	public static String SPARQL_Fill_Sensor_Output ="PREFIX purl:  <http://purl.oclc.org/NET/ssnx/ssn#> " +
+													"PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> " +
+													"PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> " +
+													"SELECT ?label ?id ?hasValue ?isProducedBy ?observationSamplingTime " +
+													"		WHERE{ " +
+													"		     <PARAM_URI> rdfs:label ?label . " +
+													"		     <PARAM_URI> rdf:ID ?id . " +
+												    " 			 <PARAM_URI> purl:hasValue ?hasValue . " +
+													"	         <PARAM_URI> purl:isProducedBy ?isProducedBy . " +
+													"	         <PARAM_URI> purl:observationSamplingTime ?observationSamplingTime .} ";
+	
+	
+	public static String SPARQL_Fill_FOI =  "PREFIX purl:  <http://purl.oclc.org/NET/ssnx/ssn#> " + 
+											"PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> " +
+											"PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> " +
+											"PREFIX foaf: <http://xmlns.com/foaf/spec/#> " +
+											"PREFIX geo: <http://www.opengis.net/ont/geosparql#> " +
+											"PREFIX dc: <http://dublincore.org/documents/dcmi-type-vocabulary/#> " +
+											"SELECT ?label ?id ?name ?defaultGeometry ?identifier " +
+											"WHERE{ " +
+											"     <PARAM_URI> rdfs:label ?label . " +
+											"     <PARAM_URI> rdf:ID ?id . " +
+											"     <PARAM_URI> foaf:name ?name . " +
+											"     <PARAM_URI> geo:defaultGeometry ?defaultGeometry . " +
+											"     <PARAM_URI> dc:identifier ?identifier . " +
+											"}"; 
+	
+	public static String SPARQL_Fill_Observation_Value ="PREFIX purl:  <http://purl.oclc.org/NET/ssnx/ssn#> " + 
+														"PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> " +
+														"SELECT ?id ?forProperty ?hasValue " +
+														"WHERE{ " +
+														"     <PARAM_URI> rdf:ID ?id . " +
+														"     <PARAM_URI> purl:forProperty ?forProperty . " +
+														"     <PARAM_URI> purl:hasValue ?hasValue . " +
+														"}";  
+	
+	public static String SPARQL_Fill_Point ="PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> " + 
+											"PREFIX geo: <http://www.opengis.net/ont/geosparql#> " + 
+											"SELECT ?label ?asWKT " + 
+											"WHERE{ " + 
+											"     <PARAM_URI> rdfs:label ?label . " + 
+											"     <PARAM_URI> geo:asWKT ?asWKT .}";
+											
 }
