@@ -3,9 +3,10 @@ package de.ifgi.europa.constants;
 public class Constants {
 
 	/**
-	 * Address to the SPARQL Endpoint 
+	 * Address to sample SPARQL Endpoints 
 	 */
-	public static String SII_Lecutre_Endpoint = "http://giv-siidemo.uni-muenster.de:8081/parliament/sparql";
+	public static String SII_Lecture_Endpoint = "http://giv-siidemo.uni-muenster.de:8081/parliament/sparql";
+	public static String LinkedScience_Endpoint = "http://spatial.linkedscience.org/sparql";
 	
 	/**
 	 * Returns all PROPERTIES from a SPARQL ENDPOINT.
@@ -144,5 +145,10 @@ public class Constants {
 											"WHERE{ " + 
 											"     <PARAM_URI> rdfs:label ?label . " + 
 											"     <PARAM_URI> geo:asWKT ?asWKT .}";
+	
+	
+	public static String SPARQL_ListAvailableGraphs = "SELECT DISTINCT ?graph WHERE { GRAPH ?graph { ?s ?p ?o } }";
+	
+	public static String SPARQL_ListSubjectElements = "SELECT DISTINCT ?s ?p ?o ?dataType WHERE { <PARAM_URI> ?p ?o .}";
 											
 }
