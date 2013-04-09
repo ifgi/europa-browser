@@ -13,8 +13,5 @@ public abstract class LODResource {
 		this.uri = uri;
 	}
 
-	public void fill(){
-		
-	}
 }
 

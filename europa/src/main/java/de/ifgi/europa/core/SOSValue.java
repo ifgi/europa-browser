@@ -1,23 +1,36 @@
 package de.ifgi.europa.core;
 
+import java.net.URI;
+
 public class SOSValue  extends LODResource {
 
-	private long id;
-	private double hasValue;
-	private SOSProperty forProperty;
+	URI uri;
+	long id;
+	double hasValue;
+	SOSProperty forProperty;
+	boolean isFilled = false;
+	
 
+	public SOSValue() {
+		super();
+	}
+	public SOSValue(URI uri) {
+		super();
+		this.uri = uri;
+	}
 	public SOSValue(long id, double hasValue, SOSProperty forProperty) {
 		super();
 		this.id = id;
 		this.hasValue = hasValue;
 		this.forProperty = forProperty;
+		this.isFilled = true;
 	}
 
-	public SOSValue() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
 
+	
+	
+	
+	
 	public long getId() {
 		return id;
 	}
@@ -42,7 +55,5 @@ public class SOSValue  extends LODResource {
 		this.forProperty = forProperty;
 	}
 
-	public void fill(){
-		
-	}
+
 }

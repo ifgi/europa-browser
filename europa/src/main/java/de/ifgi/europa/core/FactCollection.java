@@ -29,7 +29,7 @@ public class FactCollection implements Iterable<FactCollection.FactCollectionIte
 		if(subject.size() == predicate.size() && predicate.size() == object.size() && object.size() == datatype.size()){
 			this.factCollection = this.buildFacts(subject, predicate, object, datatype);
 		}else{
-			//TODO: Deal with exceptions
+			// TODO Auto-generated catch block
 			throw new Exception();
 		}
 
@@ -83,6 +83,7 @@ public class FactCollection implements Iterable<FactCollection.FactCollectionIte
 		return res;
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public Iterator<FactCollection.FactCollectionIterator<Fact>> iterator() {
 		return new FactCollectionIterator(this);
 	}

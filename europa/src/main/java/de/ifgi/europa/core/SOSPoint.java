@@ -2,16 +2,13 @@ package de.ifgi.europa.core;
 
 import java.net.URI;
 
-import com.hp.hpl.jena.query.QuerySolution;
-import com.hp.hpl.jena.query.ResultSet;
-
-import de.ifgi.europa.comm.JenaConnector;
 
 public class SOSPoint  extends LODResource {
 
-	private URI uri;
-	private String asWKT;
-	private String label;
+	 URI uri;
+	 String asWKT;
+	 String label;
+	boolean isFilled = false;
 
 
 	public URI getUri() {
@@ -35,20 +32,19 @@ public class SOSPoint  extends LODResource {
 
 	public SOSPoint() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
-
+	public SOSPoint(URI uri) {
+		super();
+		this.uri = uri;
+	}
 	public SOSPoint(URI uri, String asWKT, String label) {
 		super();
 		this.uri = uri;
 		this.asWKT = asWKT;
 		this.label = label;
+		this.isFilled = true;
 	}
 
-	public void fill(){
-
-
-	}		
 
 }
 

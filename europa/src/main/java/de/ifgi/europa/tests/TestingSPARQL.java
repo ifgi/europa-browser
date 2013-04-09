@@ -1,11 +1,15 @@
 package de.ifgi.europa.tests;
 
+import static org.junit.Assert.assertNotNull;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 import de.ifgi.europa.comm.JenaConnector;
 import de.ifgi.europa.constants.Constants;
 import de.ifgi.europa.core.Fact;
-import de.ifgi.europa.core.FactCollection;
+import de.ifgi.europa.core.LODResource;
+import de.ifgi.europa.core.SOSObservation;
+import de.ifgi.europa.factory.LODResourceFactory;
 
 public class TestingSPARQL {
 
@@ -14,7 +18,6 @@ public class TestingSPARQL {
 	 * @throws URISyntaxException 
 	 */
 	public static void main(String[] args) throws URISyntaxException {
-		// TODO Auto-generated method stub
 		
 		JenaConnector cnn = new JenaConnector(Constants.SII_Lecture_Endpoint);
 		//cnn.getListOfProperties();
@@ -23,12 +26,12 @@ public class TestingSPARQL {
 		//cnnLS.getListGraphs();
 		
 		
-		URI subject = new URI("http://ifgi.uni-muenster.de/hydrolod#OBSERVATION_1");
-		Fact f = cnn.getFact(subject);
+		URI uri = new URI("http://ifgi.uni-muenster.de/hydrolod#OBSERVATION_1");
+		LODResourceFactory lrf = new LODResourceFactory();
+		LODResource lr = lrf.create(uri);
+		SOSObservation so = (SOSObservation)lr;
 		
-		for(int i=0;i<f.getSize();i++){
-			System.out.println(f.getSubject() + " - " + f.getPredicate(i) + " - " + f.getObject(i) + " - " + f.getDatatype(i));
-		}
+
 		
 		
 		

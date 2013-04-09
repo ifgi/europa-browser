@@ -5,16 +5,16 @@ import java.util.ArrayList;
 import java.util.Date;
 public class SOSObservation  extends LODResource {
 
-	private URI uri;
-	private Date startTime;
-	private Date endTime;
-	private SOSFeatureOfInterest featureOfInterest;
-	private ArrayList<SOSProperty> property;
-	private SOSSensor sensor;
-	private SOSSensing sensing;
-	private ArrayList<SOSSensorOutput> sensorOutput;
-	private String label;
-	
+	 URI uri;
+	 Date startTime;
+	 Date endTime;
+	 SOSFeatureOfInterest featureOfInterest;
+	 ArrayList<SOSProperty> property;
+	 SOSSensor sensor;
+	 SOSSensing sensing;
+	 ArrayList<SOSSensorOutput> sensorOutput;
+	 String label;
+	boolean isFilled = false;
 	
 	public URI getUri() {
 		return uri;
@@ -74,7 +74,10 @@ public class SOSObservation  extends LODResource {
 	public SOSObservation() {
 		super();
 	}
-	
+	public SOSObservation(URI uri) {
+		super();
+		this.uri = uri;
+	}
 	public SOSObservation(URI uri, Date startTime, Date endTime,
 			SOSFeatureOfInterest featureOfInterest,
 			ArrayList<SOSProperty> property, SOSSensor sensor,
@@ -90,11 +93,10 @@ public class SOSObservation  extends LODResource {
 		this.sensing = sensing;
 		this.sensorOutput = sensorOutput;
 		this.label = label;
+		this.isFilled = true;
 	}
 
-	public void fill(){
-		
-	}
+
 
 
 }

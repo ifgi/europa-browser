@@ -5,10 +5,10 @@ import java.util.ArrayList;
 
 public class SOSStimulus  extends LODResource {
 
-	private URI uri;
-	private ArrayList<SOSProperty> property;
-	private URI description;
-	
+	URI uri;
+	ArrayList<SOSProperty> property;
+	URI description;
+	boolean isFilled = false;
 	
 	public URI getUri() {
 		return uri;
@@ -28,19 +28,23 @@ public class SOSStimulus  extends LODResource {
 	public void setDescription(URI description) {
 		this.description = description;
 	}
+	
+	
 	public SOSStimulus() {
 		super();
 	}
-	
+	public SOSStimulus(URI uri) {
+		super();
+		this.uri = uri;
+	}
 	public SOSStimulus(URI uri, ArrayList<SOSProperty> property, URI description) {
 		super();
 		this.uri = uri;
 		this.property = property;
 		this.description = description;
+		this.isFilled = true;
 	}
 
-	public void fill(){
-		
-	}
+
 
 }
