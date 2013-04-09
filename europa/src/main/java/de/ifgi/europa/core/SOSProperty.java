@@ -3,20 +3,24 @@ package de.ifgi.europa.core;
 import java.net.*;
 import java.util.ArrayList;
 
-import com.hp.hpl.jena.query.QuerySolution;
-import com.hp.hpl.jena.query.ResultSet;
-
-import de.ifgi.europa.comm.JenaConnector;
-import de.ifgi.europa.constants.Constants;
-
-
 public class SOSProperty extends LODResource {
 
-	private URI uri;	
-	private ArrayList<SOSFeatureOfInterest> foi;
-	private String description;
-	private String label;
+	 URI uri;	
+	 ArrayList<SOSFeatureOfInterest> foi;
+	 String description;
+	 String label;
+	boolean isFilled = false;
 	
+	
+	
+	
+	public SOSProperty() {
+		super();
+	}
+	public SOSProperty(URI uri) {
+		super();
+		this.uri = uri;
+	}
 	public SOSProperty(URI uri, ArrayList<SOSFeatureOfInterest> foi,
 			String description, String label) {
 		super();
@@ -24,11 +28,15 @@ public class SOSProperty extends LODResource {
 		this.foi = foi;
 		this.description = description;
 		this.label = label;
+		this.isFilled = true;
 	}
-	public SOSProperty() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
+
+	
+	
+
+
+	
+	
 	public URI getUri() {
 		return uri;
 	}
@@ -56,10 +64,6 @@ public class SOSProperty extends LODResource {
 
 
 
-	public void fill(){
-
-
-	}
 
 
 

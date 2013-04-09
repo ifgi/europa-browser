@@ -5,10 +5,10 @@ import java.util.ArrayList;
 
 public class SOSSensing  extends LODResource {
 
-	private URI uri;
-	private ArrayList<URI> description;
-	private String label;
-
+	 URI uri;
+	 ArrayList<URI> description;
+	 String label;
+	boolean isFilled = false;
 	
 	public URI getUri() {
 		return uri;
@@ -19,12 +19,19 @@ public class SOSSensing  extends LODResource {
 	}
 
 
-
+	public SOSSensing() {
+		super();
+	}
+	public SOSSensing(URI uri) {
+		super();
+		this.uri = uri;
+	}
 	public SOSSensing(URI uri, ArrayList<URI> description, String label) {
 		super();
 		this.uri = uri;
 		this.description = description;
 		this.label = label;
+		this.isFilled = true;
 	}
 
 	public ArrayList<URI> getDescription() {
@@ -43,12 +50,7 @@ public class SOSSensing  extends LODResource {
 		this.label = label;
 	}
 
-	public SOSSensing() {
-		super();
-	}
 
-	public void fill(){
-		
-	}
+
 	
 }

@@ -6,19 +6,21 @@ import java.util.Date;
 public class SOSSensorOutput  extends LODResource {
 
 	private URI uri;		
+
+
+	 SOSSensor sensor;
+	 String label;
+	 SOSValue value;
+	 Date samplingTime;
+	boolean isFilled = false;
+	
+	
 	public URI getUri() {
 		return uri;
 	}
 	public void setUri(URI uri) {
 		this.uri = uri;
 	}
-
-	private SOSSensor sensor;
-	private String label;
-	private SOSValue value;
-	private Date samplingTime;
-	
-	
 	public SOSSensor getSensor() {
 		return sensor;
 	}
@@ -47,6 +49,10 @@ public class SOSSensorOutput  extends LODResource {
 	public SOSSensorOutput() {
 		super();
 	}
+	public SOSSensorOutput(URI uri) {
+		super();
+		this.uri = uri;
+	}
 	public SOSSensorOutput(URI uri, SOSSensor sensor, String label,
 			SOSValue value, Date samplingTime) {
 		super();
@@ -55,10 +61,9 @@ public class SOSSensorOutput  extends LODResource {
 		this.label = label;
 		this.value = value;
 		this.samplingTime = samplingTime;
+		this.isFilled = true;
 	}
 
-	public void fill(){
-		
-	}
+
 	
 }

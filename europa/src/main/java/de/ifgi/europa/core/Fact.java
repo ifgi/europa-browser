@@ -41,7 +41,7 @@ public class Fact {
 			this.object = object;
 			this.datatype = datatype;
 		}else{
-			//TODO: Deal with exceptions
+			// TODO Auto-generated catch block
 			throw new Exception();
 		}
 	}

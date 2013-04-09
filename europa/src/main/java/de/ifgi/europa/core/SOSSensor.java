@@ -5,14 +5,14 @@ import java.util.ArrayList;
 
 public class SOSSensor  extends LODResource {
 
-	private URI uri;
-	private ArrayList<SOSSensing> sensing;
-	private ArrayList<SOSStimulus> stimulus;
-	private ArrayList<SOSProperty> property;
-	private String label;
-	private String description;
-	private URI identifier;
-	
+	 URI uri;
+	 ArrayList<SOSSensing> sensing;
+	 ArrayList<SOSStimulus> stimulus;
+	 ArrayList<SOSProperty> property;
+	 String label;
+	 String description;
+	 URI identifier;
+	boolean isFilled = false;
 	
 	public URI getUri() {
 		return uri;
@@ -73,7 +73,10 @@ public class SOSSensor  extends LODResource {
 	public SOSSensor() {
 		super();
 	}
-
+	public SOSSensor(URI uri) {
+		super();
+		this.uri = uri;
+	}
 	public SOSSensor(URI uri, ArrayList<SOSSensing> sensing,
 			ArrayList<SOSStimulus> stimulus, ArrayList<SOSProperty> property,
 			String label, String description, URI identifier) {
@@ -85,11 +88,10 @@ public class SOSSensor  extends LODResource {
 		this.label = label;
 		this.description = description;
 		this.identifier = identifier;
+		this.isFilled = true;
 	}
 
 
-	public void fill(){
-		
-	}
+
 	
 }

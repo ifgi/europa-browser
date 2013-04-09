@@ -10,7 +10,12 @@ public class SOSFeatureOfInterest  extends LODResource {
 	String name;
 	String label;	
 	SOSPoint defaultGeometry;
+	boolean isFilled = false;
 	
+	
+	public boolean isFilled() {
+		return isFilled;
+	}
 	public long getId() {
 		return id;
 	}
@@ -47,7 +52,15 @@ public class SOSFeatureOfInterest  extends LODResource {
 	public void setDefaultGeometry(SOSPoint defaultGeometry) {
 		this.defaultGeometry = defaultGeometry;
 	}	
-	
+
+
+	public SOSFeatureOfInterest() {
+		super();
+	}
+	public SOSFeatureOfInterest(URI uri) {
+		super();
+		this.uri = uri;
+	}	
 	public SOSFeatureOfInterest(long id, URI uri, String identifier,
 			String name, String label, SOSPoint defaultGeometry) {
 		super();
@@ -57,13 +70,9 @@ public class SOSFeatureOfInterest  extends LODResource {
 		this.name = name;
 		this.label = label;
 		this.defaultGeometry = defaultGeometry;
+		this.isFilled = true;
 	}
 	
-	public SOSFeatureOfInterest() {
-		super();
-	}	
 
-	public void fill(){
-		
-	}
+
 }

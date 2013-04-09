@@ -6,6 +6,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import de.ifgi.europa.constants.Constants;
+import de.ifgi.europa.constants.Util;
 import de.ifgi.europa.core.Fact;
 import de.ifgi.europa.core.SOSObservation;
 import de.ifgi.europa.core.SOSProperty;
@@ -152,6 +153,13 @@ public class JenaConnector {
 		return result;	
 	}
 
+	
+	
+	/**
+	 * This ask for all the triples with the same subject
+	 * @param subject It's the RDF triple subject
+	 * @return A fact
+	 */
 	public Fact getFact(URI subject){
 
 		String templateQuery = Constants.SPARQL_ListSubjectElements;
@@ -163,14 +171,14 @@ public class JenaConnector {
 		Triple triple = new Triple(subject);
 
 		while (results.hasNext()) {
-
 			QuerySolution soln = results.nextSolution();
 			String predicate = soln.get("?p").toString();
 			String object = soln.get("?o").toString();
 			try {
 				URI predicateUri;
 				predicateUri = new URI(predicate);
-				if(this.isURI(object)){
+				//The object could be either a URI or a literal
+				if(Util.isURI(object)){
 					URI objectUri = new URI(object);
 					triple.add(predicateUri, objectUri);
 				}else{
@@ -185,18 +193,6 @@ public class JenaConnector {
 		Fact f = triple.toFact(); 
 		return f;
 	}
-
-	private boolean isURI(String uri){
-		boolean res = true;
-		try {
-			new URI(uri);
-		} catch (URISyntaxException e) {
-			res = false;
-		}
-		return res;
-	}
-
-
 
 	class Triple{
 		private URI subject;
