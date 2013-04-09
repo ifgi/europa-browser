@@ -151,4 +151,17 @@ public class Constants {
 	
 	public static String SPARQL_ListSubjectElements = "SELECT DISTINCT ?s ?p ?o ?dataType WHERE { <PARAM_URI> ?p ?o .}";
 											
+	
+	public enum FactTypes {
+		UNKNOWN,
+		FEATUREOFINTEREST,
+		OBSERVATION,
+		POINT,
+		PROPERTY,
+		SENSING,
+		SENSOR,
+		SENSOROUTPUT,
+		STIMULUS,
+		VALUE
+	}
 }

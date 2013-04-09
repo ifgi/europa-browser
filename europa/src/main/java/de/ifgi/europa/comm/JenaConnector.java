@@ -6,7 +6,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import de.ifgi.europa.constants.Constants;
-import de.ifgi.europa.core.ObservationSet;
+import de.ifgi.europa.core.Fact;
 import de.ifgi.europa.core.SOSObservation;
 import de.ifgi.europa.core.SOSProperty;
 
@@ -152,8 +152,8 @@ public class JenaConnector {
 		return result;	
 	}
 
-	public ObservationSet getObjectElement(URI subject){
-		
+	public Fact getFact(URI subject){
+
 		String templateQuery = Constants.SPARQL_ListSubjectElements;
 		templateQuery = templateQuery.replace("PARAM_URI", subject.toString());
 		Query query = QueryFactory.create(templateQuery);
@@ -161,7 +161,7 @@ public class JenaConnector {
 		ResultSet results = qexec.execSelect();
 
 		Triple triple = new Triple(subject);
-		
+
 		while (results.hasNext()) {
 
 			QuerySolution soln = results.nextSolution();
@@ -182,8 +182,8 @@ public class JenaConnector {
 			}
 		}
 
-		ObservationSet os = triple.toObservationSet(); 
-		return os;
+		Fact f = triple.toFact(); 
+		return f;
 	}
 
 	private boolean isURI(String uri){
@@ -233,13 +233,13 @@ public class JenaConnector {
 			}
 			this.predicate.add(predicate.toString());
 			this.object.add(tmp[0]);
-			
+
 			if(datatype == null){
 				this.datatype.add("");
 			}else{
 				this.datatype.add(datatype.toString());
 			}
-			
+
 		}
 
 		public void add(URI predicate,URI object){
@@ -248,35 +248,16 @@ public class JenaConnector {
 			this.datatype.add(null);
 		}
 
-		//TODO: Implement an interface with this method. That way TUPLE for DBs implements the same method ad the factory does not change
-		//TODO: I feel dirty, clean me!
-		public ObservationSet toObservationSet(){
-			ArrayList<String> subject = new ArrayList<String>();
-			ArrayList<String> predicate = new ArrayList<String>();
-			ArrayList<String> object = new ArrayList<String>();
-			ArrayList<String> datatype = new ArrayList<String>();
-			for(int i=0; i < this.predicate.size(); i++){
-				subject.add(this.subject.toString());
-				predicate.add(this.predicate.get(i).toString());
-				object.add(this.object.get(i).toString());
-				if(this.datatype.get(i) == null){
-					datatype.add("");
-				}else{
-					datatype.add(this.datatype.get(i).toString());
-				}
-			}
-			ObservationSet os = null;
+		public Fact toFact(){
+			Fact res = null;
 			try {
-				os = new ObservationSet(subject,predicate,object,datatype);
+				res = new Fact(this.subject.toString(),this.predicate,this.object,this.datatype);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			return os;
+			return res;
 		}
-
 	}
-
-
 
 }

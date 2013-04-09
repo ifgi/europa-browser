@@ -4,7 +4,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import de.ifgi.europa.comm.JenaConnector;
 import de.ifgi.europa.constants.Constants;
-import de.ifgi.europa.core.ObservationSet;
+import de.ifgi.europa.core.Fact;
+import de.ifgi.europa.core.FactCollection;
 
 public class TestingSPARQL {
 
