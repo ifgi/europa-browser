@@ -22,7 +22,7 @@ public class TestingSPARQL {
 		//cnnLS.getListGraphs();
 		
 		
-		URI subject = new URI("http://ifgi.uni-muenster.de/hydrolod#OBSERVATION_1");
+		URI subject = new URI("http://ifgi.uni-muenster.de/hydrolod#SENSOR_1");
 		ObservationSet os = cnn.getObjectElement(subject);
 		
 		for(int i=0;i<os.getSubject().size();i++){
