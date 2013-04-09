@@ -11,7 +11,7 @@ public class SOSSensor  extends LODResource {
 	 ArrayList<SOSProperty> property;
 	 String label;
 	 String description;
-	 URI identifier;
+	 String identifier;
 	boolean isFilled = false;
 	
 	public URI getUri() {
@@ -62,11 +62,11 @@ public class SOSSensor  extends LODResource {
 		this.description = description;
 	}
 
-	public URI getIdentifier() {
+	public String getIdentifier() {
 		return identifier;
 	}
 
-	public void setIdentifier(URI identifier) {
+	public void setIdentifier(String identifier) {
 		this.identifier = identifier;
 	}
 
@@ -79,7 +79,7 @@ public class SOSSensor  extends LODResource {
 	}
 	public SOSSensor(URI uri, ArrayList<SOSSensing> sensing,
 			ArrayList<SOSStimulus> stimulus, ArrayList<SOSProperty> property,
-			String label, String description, URI identifier) {
+			String label, String description, String identifier) {
 		super();
 		this.uri = uri;
 		this.sensing = sensing;

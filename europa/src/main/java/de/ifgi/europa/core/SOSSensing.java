@@ -6,7 +6,7 @@ import java.util.ArrayList;
 public class SOSSensing  extends LODResource {
 
 	 URI uri;
-	 ArrayList<URI> description;
+	 ArrayList<String> description;
 	 String label;
 	boolean isFilled = false;
 	
@@ -26,7 +26,7 @@ public class SOSSensing  extends LODResource {
 		super();
 		this.uri = uri;
 	}
-	public SOSSensing(URI uri, ArrayList<URI> description, String label) {
+	public SOSSensing(URI uri, ArrayList<String> description, String label) {
 		super();
 		this.uri = uri;
 		this.description = description;
@@ -34,11 +34,11 @@ public class SOSSensing  extends LODResource {
 		this.isFilled = true;
 	}
 
-	public ArrayList<URI> getDescription() {
+	public ArrayList<String> getDescription() {
 		return description;
 	}
 
-	public void setDescription(ArrayList<URI> description) {
+	public void setDescription(ArrayList<String> description) {
 		this.description = description;
 	}
 

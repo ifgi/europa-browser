@@ -6,7 +6,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
@@ -22,6 +21,8 @@ import de.ifgi.europa.core.SOSProperty;
 import de.ifgi.europa.core.SOSSensing;
 import de.ifgi.europa.core.SOSSensor;
 import de.ifgi.europa.core.SOSSensorOutput;
+import de.ifgi.europa.core.SOSStimulus;
+import de.ifgi.europa.core.SOSValue;
 
 public class LODResourceFactory {
 
@@ -32,9 +33,10 @@ public class LODResourceFactory {
 	 * @param uri URI of the object
 	 * @return
 	 */
+	@SuppressWarnings("null")
 	public LODResource create(URI uri){
 
-		//TODO: Send to constants
+		//TODO: Send to constants - FOI
 		String templateTypeof = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type";
 		//TODO: Send to constants - FOI
 		String templateId = "http://www.w3.org/1999/02/22-rdf-syntax-ns#ID"; 
@@ -50,8 +52,14 @@ public class LODResourceFactory {
 		String templateSensor = "http://purl.oclc.org/NET/ssnx/ssn#observedBy";
 		String templateSensing = "http://purl.oclc.org/NET/ssnx/ssn#sensingMethodUsed";
 		String templateSensorOutput = "http://purl.oclc.org/NET/ssnx/ssn#observationResult";
-
-
+		//TODO: Send to constants - POINT
+		String templateAsWKT = "http://www.opengis.net/ont/geosparql#asWKT";
+		//TODO: Send to constants - PROPERTY
+		String templateDescription = "http://purl.oclc.org/NET/ssnx/ssn#isDescribedBy";
+		//TODO: Send to constants - SENSOR
+		String templateStimulus = "http://purl.oclc.org/NET/ssnx/ssn#detects";
+		//TODO: Send to constants - SENSOR OUTPUT
+		String templateValue = "http://purl.oclc.org/NET/ssnx/ssn#hasValue";
 
 		LODResource res = null;
 		ObjectTypes objType = null;
@@ -69,11 +77,14 @@ public class LODResourceFactory {
 			}
 		}
 		//Create the object depending on the type
+		long id = -1; 
 		String label = null;
+		String description = null;
+		String identifier = null;
+		SOSSensor sensor = null;
+		ArrayList<SOSProperty> propertyList = new ArrayList<SOSProperty>();
 		switch (objType) {
 		case FEATUREOFINTEREST:
-			long id = -1; 
-			String identifier = null;
 			String name = null;
 			SOSPoint defaultGeometry = null;
 			for (int i=0; i<fact.getSize(); i++){
@@ -103,8 +114,6 @@ public class LODResourceFactory {
 			Date startTime = null;
 			Date endTime = null;
 			SOSFeatureOfInterest featureOfInterest = null;
-			ArrayList<SOSProperty> property = new ArrayList<SOSProperty>();
-			SOSSensor sensor = null;
 			SOSSensing sensing = null;
 			ArrayList<SOSSensorOutput> sensorOutput = new ArrayList<SOSSensorOutput>();
 			for (int i=0; i<fact.getSize(); i++){
@@ -134,7 +143,7 @@ public class LODResourceFactory {
 				}else if(p.equals(templateProperty)){
 					try {
 						SOSProperty prop = new SOSProperty(new URI(o));
-						property.add(prop);
+						propertyList.add(prop);
 					} catch (URISyntaxException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -154,7 +163,6 @@ public class LODResourceFactory {
 						e.printStackTrace();
 					}
 				}else if(p.equals(templateSensorOutput)){
-
 					try {
 						SOSSensorOutput sOutput = new SOSSensorOutput(new URI(o));
 						sensorOutput.add(sOutput);
@@ -166,22 +174,164 @@ public class LODResourceFactory {
 					label = o;
 				}
 			}
-			SOSObservation so = new SOSObservation(uri, startTime,endTime,featureOfInterest,property,sensor,sensing,sensorOutput,label);
+			SOSObservation so = new SOSObservation(uri, startTime,endTime,featureOfInterest,propertyList,sensor,sensing,sensorOutput,label);
 			res = so;
 			break;
 		case POINT:
-			break;			
+			String asWKT = null;
+			for (int i=0; i<fact.getSize(); i++){
+				p = fact.getPredicate(i);
+				o = fact.getObject(i);
+				if(p.equals(templateAsWKT)){
+					asWKT  = o;
+				}else if(p.equals(templateLabel)){
+					label = o;
+				}
+			}
+			SOSPoint sp = new SOSPoint(uri,asWKT,label);
+			res = sp;
+			break;
 		case PROPERTY:
+			ArrayList<SOSFeatureOfInterest> foi = new ArrayList<SOSFeatureOfInterest>();
+			for (int i=0; i<fact.getSize(); i++){
+				p = fact.getPredicate(i);
+				o = fact.getObject(i);
+				if(p.equals(templateDescription)){
+					description = o;
+				}else if(p.equals(templateFeatureOfInterest)){
+					try {
+						featureOfInterest = new SOSFeatureOfInterest(new URI(o));
+						foi.add(featureOfInterest);
+					} catch (URISyntaxException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}else if(p.equals(templateLabel)){
+					label = o;
+				}
+			}
+			SOSProperty sprop = new SOSProperty(uri, foi, description, label);
+			res = sprop;
 			break;			
 		case SENSING:
+			ArrayList<String> descriptionList = new ArrayList<String>();
+			for (int i=0; i<fact.getSize(); i++){
+				p = fact.getPredicate(i);
+				o = fact.getObject(i);
+				if(p.equals(templateDescription)){
+					descriptionList.add(o);
+				}else if(p.equals(templateLabel)){
+					label = o;
+				}
+			}
+			SOSSensing ss = new SOSSensing(uri, descriptionList, label);
+			res = ss;
 			break;			
 		case SENSOR:
+			ArrayList<SOSSensing> sensingList = new ArrayList<SOSSensing>();
+			ArrayList<SOSStimulus> stimulusList = null;
+			for (int i=0; i<fact.getSize(); i++){
+				p = fact.getPredicate(i);
+				o = fact.getObject(i);
+				if(p.equals(templateSensing)){
+					SOSSensing sen = null;
+					try {
+						sen = new SOSSensing(new URI(o));
+					} catch (URISyntaxException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} 
+					sensingList.add(sen);
+				}else if(p.equals(templateStimulus)){
+					SOSStimulus ssti = null;
+					try {
+						ssti = new SOSStimulus(new URI(o));
+					} catch (URISyntaxException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					stimulusList.add(ssti);
+				}else if(p.equals(templateIdentifier)){
+					identifier = o;
+				}else if(p.equals(templateDescription)){
+					description = o;
+				}else if(p.equals(templateLabel)){
+					label = o;
+				}
+			}
+			SOSSensor ssen = new SOSSensor(uri, sensingList, stimulusList, propertyList, label, description, identifier);
+			res = ssen;
 			break;
 		case SENSOROUTPUT:
+			SOSValue value = null;
+			Date samplingTime = null;
+			for (int i=0; i<fact.getSize(); i++){
+				p = fact.getPredicate(i);
+				o = fact.getObject(i);
+				if(p.equals(templateSensor)){
+					try {
+						sensor = new SOSSensor(new URI(o));
+					} catch (URISyntaxException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}else if(p.equals(templateValue)){
+					try {
+						value = new SOSValue(new URI(o));
+					} catch (URISyntaxException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}else if(p.equals(templateLabel)){
+					label = o;
+				}
+			}
+			SOSSensorOutput sout = new SOSSensorOutput(uri, sensor, label,value, samplingTime);
+			res = sout;
 			break;			
 		case STIMULUS:
+			for (int i=0; i<fact.getSize(); i++){
+				p = fact.getPredicate(i);
+				o = fact.getObject(i);
+				if(p.equals(templateProperty)){
+					SOSProperty prop = null;
+					try {
+						prop = new SOSProperty(new URI(o));
+					} catch (URISyntaxException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					propertyList.add(prop);
+				}else if(p.equals(templateDescription)){
+					description = o;
+				}else if(p.equals(templateLabel)){
+					label = o;
+				}
+			}			
+			SOSStimulus ssti = new SOSStimulus(uri, propertyList, description, label);
+			res = ssti;
 			break;			
 		case VALUE:
+			double valueNumber = 0;
+			SOSProperty property = null;
+			for (int i=0; i<fact.getSize(); i++){
+				p = fact.getPredicate(i);
+				o = fact.getObject(i);
+				if(p.equals(templateId)){
+					id = Long.parseLong(o, 10);
+				}else if(p.equals(templateValue)){
+					valueNumber = Double.parseDouble(o);
+				}else if(p.equals(templateProperty)){
+					try {
+						property = new SOSProperty(new URI(o));
+					} catch (URISyntaxException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}
+			SOSValue sv = new SOSValue(id, valueNumber, property);
+			res = sv;
 			break;
 		default:
 			break;
@@ -203,10 +353,10 @@ public class LODResourceFactory {
 		String tmpObjectType = null;
 		for (String key : map.keySet()) {
 			String value = map.get(key);
-		    if(value.equals(type)){
-		    	tmpObjectType = key;
-		    	break;
-		    }
+			if(value.equals(type)){
+				tmpObjectType = key;
+				break;
+			}
 		}
 		//Gets the enumeration element from the object type
 		for (ObjectTypes t : ObjectTypes.values()) {
@@ -224,20 +374,9 @@ public class LODResourceFactory {
 	 * @return An object whose attribute values are filled
 	 */
 	public LODResource fill(LODResource lr){
-
-		//
-		//URI uri = lr.getUri();
-
-
-
-		//Find the type of object
-
-		if(lr instanceof SOSFeatureOfInterest){
-			//	SOSFeatureOfInterest sfoi = 
-		}
-
-
-		return null;
+		URI uri = lr.getUri();
+		LODResource newLr = this.create(uri);
+		return newLr;
 	}
 
 }
