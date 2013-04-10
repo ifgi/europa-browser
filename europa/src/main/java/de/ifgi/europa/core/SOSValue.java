@@ -6,8 +6,8 @@ public class SOSValue  extends LODResource {
 
 	URI uri;
 	long id;
-	double hasValue;
-	SOSProperty forProperty;
+	double value;
+	SOSProperty property;
 	boolean isFilled = false;
 	
 
@@ -18,11 +18,11 @@ public class SOSValue  extends LODResource {
 		super();
 		this.uri = uri;
 	}
-	public SOSValue(long id, double hasValue, SOSProperty forProperty) {
+	public SOSValue(long id, double value, SOSProperty property) {
 		super();
 		this.id = id;
-		this.hasValue = hasValue;
-		this.forProperty = forProperty;
+		this.value = value;
+		this.property = property;
 		this.isFilled = true;
 	}
 
@@ -40,19 +40,19 @@ public class SOSValue  extends LODResource {
 	}
 
 	public double getHasValue() {
-		return hasValue;
+		return value;
 	}
 
 	public void setHasValue(double hasValue) {
-		this.hasValue = hasValue;
+		this.value = hasValue;
 	}
 
 	public SOSProperty getForProperty() {
-		return forProperty;
+		return property;
 	}
 
 	public void setForProperty(SOSProperty forProperty) {
-		this.forProperty = forProperty;
+		this.property = forProperty;
 	}
 
 

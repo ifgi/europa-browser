@@ -7,7 +7,9 @@ public class SOSStimulus  extends LODResource {
 
 	URI uri;
 	ArrayList<SOSProperty> property;
-	URI description;
+	String description;
+	String label;
+
 	boolean isFilled = false;
 	
 	public URI getUri() {
@@ -22,13 +24,18 @@ public class SOSStimulus  extends LODResource {
 	public void setProperty(ArrayList<SOSProperty> property) {
 		this.property = property;
 	}
-	public URI getDescription() {
+	public String getDescription() {
 		return description;
 	}
-	public void setDescription(URI description) {
+	public void setDescription(String description) {
 		this.description = description;
 	}
-	
+	public String getLabel() {
+		return label;
+	}
+	public void setLabel(String label) {
+		this.label = label;
+	}
 	
 	public SOSStimulus() {
 		super();
@@ -37,11 +44,12 @@ public class SOSStimulus  extends LODResource {
 		super();
 		this.uri = uri;
 	}
-	public SOSStimulus(URI uri, ArrayList<SOSProperty> property, URI description) {
+	public SOSStimulus(URI uri, ArrayList<SOSProperty> property, String description, String label) {
 		super();
 		this.uri = uri;
 		this.property = property;
 		this.description = description;
+		this.label = label;
 		this.isFilled = true;
 	}
 
