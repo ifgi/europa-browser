@@ -191,5 +191,24 @@ public class Constants {
 		VALUE
 	}
 	
+	//Ontology properties
+	public static String PREDICATE_Type = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type";
+	public static String PREDICATE_Id = "http://www.w3.org/1999/02/22-rdf-syntax-ns#ID";
+	public static String PREDICATE_Identifier = "http://dublincore.org/documents/dcmi-type-vocabulary/#identifier";
+	public static String PREDICATE_Name = "http://xmlns.com/foaf/spec/#name";
+	public static String PREDICATE_Label = "http://www.w3.org/2000/01/rdf-schema#label";
+	public static String PREDICATE_DefaultGeometry = "http://www.opengis.net/ont/geosparql#defaultGeometry";
+	public static String PREDICATE_StartTime = "http://purl.oclc.org/NET/ssnx/ssn#startTime";
+	public static String PREDICATE_EndTime = "http://purl.oclc.org/NET/ssnx/ssn#endTime";
+	public static String PREDICATE_FeatureOfInterest = "http://purl.oclc.org/NET/ssnx/ssn#featureOfInterest";
+	public static String PREDICATE_ObservedProperty = "http://purl.oclc.org/NET/ssnx/ssn#observedProperty";
+	public static String PREDICATE_ObservedBy = "http://purl.oclc.org/NET/ssnx/ssn#observedBy";
+	public static String PREDICATE_SensingMethodUsed = "http://purl.oclc.org/NET/ssnx/ssn#sensingMethodUsed";
+	public static String PREDICATE_ObservationResult = "http://purl.oclc.org/NET/ssnx/ssn#observationResult";
+	public static String PREDICATE_AsWkt = "http://www.opengis.net/ont/geosparql#asWKT";
+	public static String PREDICATE_IsDescribedBy = "http://purl.oclc.org/NET/ssnx/ssn#isDescribedBy";
+	public static String PREDICATE_Detects = "http://purl.oclc.org/NET/ssnx/ssn#detects";
+	public static String PREDICATE_HasValue = "http://purl.oclc.org/NET/ssnx/ssn#hasValue";
+	
 	
 }
