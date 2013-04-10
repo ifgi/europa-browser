@@ -155,7 +155,7 @@ public class Constants {
 
 	public static String SPARQL_ListSubjectElements = "SELECT DISTINCT ?s ?p ?o ?dataType WHERE { <PARAM_URI> ?p ?o .}";
 
-	public static String DATE_Format = "MMMM d, yyyy";
+	public static String DATE_Format = "yyyy-MM-dd HH:mm:ss";
 
 
 
