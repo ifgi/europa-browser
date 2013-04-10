@@ -25,7 +25,7 @@ import de.ifgi.europa.core.SOSStimulus;
 import de.ifgi.europa.core.SOSValue;
 
 public class LODResourceFactory {
-
+	LODResourceCache cache = LODResourceCache.getInstance();
 
 
 	/**
@@ -37,7 +37,6 @@ public class LODResourceFactory {
 	public LODResource create(URI uri){
 		LODResource res = null;
 		//Check the cache for existing versions of the object
-		LODResourceCache cache = LODResourceCache.getInstance();
 		res = cache.get(uri);
 		if(res == null){
 			//Predicates
