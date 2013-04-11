@@ -4,8 +4,6 @@ package de.ifgi.europa.tests;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import de.ifgi.europa.comm.JenaConnector;
-import de.ifgi.europa.constants.Constants;
 import de.ifgi.europa.core.LODResource;
 import de.ifgi.europa.core.SOSSensing;
 import de.ifgi.europa.factory.LODResourceFactory;
