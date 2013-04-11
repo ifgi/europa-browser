@@ -16,10 +16,12 @@ public class Constants {
 	 * Returns all PROPERTIES from a SPARQL ENDPOINT.
 	 */
 	public static String SPARQL_getListOfProperties = "PREFIX purl:  <http://purl.oclc.org/NET/ssnx/ssn#> " +  
-			"SELECT ?property ?propertyDescription  "  + 
+			"SELECT ?s ?p  ?o " + 
 			"WHERE {  " + 
-			"    ?property a purl:Property . " + 
-			"     ?property purl:isDescribedBy ?propertyDescription . } "; 
+			"?s ?p ?o . " + 
+			"?s a purl:Property . " +  
+			"?s purl:isDescribedBy ?o . } ";
+
 	/**
 	 * Returns the min and max dates for a given property.
 	 * INPUT: a property (hyd:PARAM_PROPERTY)
@@ -177,7 +179,7 @@ public class Constants {
 		ONTOLOGY_OBJECTS_MAPPING = Collections.unmodifiableMap(aMap);
 	}
 
-	
+
 	public enum ObjectTypes {
 		UNKNOWN,
 		FEATUREOFINTEREST,
@@ -190,7 +192,7 @@ public class Constants {
 		STIMULUS,
 		VALUE
 	}
-	
+
 	//Ontology properties
 	public static String PREDICATE_Type = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type";
 	public static String PREDICATE_Id = "http://www.w3.org/1999/02/22-rdf-syntax-ns#ID";
@@ -209,6 +211,6 @@ public class Constants {
 	public static String PREDICATE_IsDescribedBy = "http://purl.oclc.org/NET/ssnx/ssn#isDescribedBy";
 	public static String PREDICATE_Detects = "http://purl.oclc.org/NET/ssnx/ssn#detects";
 	public static String PREDICATE_HasValue = "http://purl.oclc.org/NET/ssnx/ssn#hasValue";
-	
-	
+
+
 }

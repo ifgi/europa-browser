@@ -13,6 +13,7 @@ import de.ifgi.europa.comm.JenaConnector;
 import de.ifgi.europa.constants.Constants;
 import de.ifgi.europa.constants.Constants.ObjectTypes;
 import de.ifgi.europa.core.Fact;
+import de.ifgi.europa.core.FactCollection;
 import de.ifgi.europa.core.LODResource;
 import de.ifgi.europa.core.SOSFeatureOfInterest;
 import de.ifgi.europa.core.SOSObservation;
@@ -27,11 +28,59 @@ import de.ifgi.europa.core.SOSValue;
 public class LODResourceFactory {
 	LODResourceCache cache = LODResourceCache.getInstance();
 
+	public ArrayList<SOSProperty> listAvailableProperties() {
+		ArrayList<SOSProperty> res = new ArrayList<SOSProperty>();
+		
+		JenaConnector cnn = new JenaConnector(Constants.SII_Lecture_Endpoint);
+		FactCollection fc = cnn.executeQuery(Constants.SPARQL_getListOfProperties);
+
+		String templateLabel = Constants.PREDICATE_Label; 
+		String templateFeatureOfInterest = Constants.PREDICATE_FeatureOfInterest;
+		String templateDescription = Constants.PREDICATE_IsDescribedBy;
+		
+		for(int j=0;j < fc.Size();j++){
+			Fact fact = fc.get(j);
+			ArrayList<SOSFeatureOfInterest> foi = new ArrayList<SOSFeatureOfInterest>();
+			SOSFeatureOfInterest featureOfInterest;
+			String p;
+			String o;
+			String description = null;
+			String label = null;
+			for (int i=0; i<fact.getSize(); i++){
+				p = fact.getPredicate(i);
+				o = fact.getObject(i);
+				if(p.equals(templateDescription)){
+					description = o;
+				}else if(p.equals(templateFeatureOfInterest)){
+					try {
+						featureOfInterest = new SOSFeatureOfInterest(new URI(o));
+						foi.add(featureOfInterest);
+					} catch (URISyntaxException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}else if(p.equals(templateLabel)){
+					label = o;
+				}
+			}
+			
+			try {
+				URI uri = new URI(fact.getSubject());
+				SOSProperty sprop = new SOSProperty(uri, foi, description, label);
+				res.add(sprop);
+			} catch (URISyntaxException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} 
+		}
+		return res;
+	}
 
 	/**
 	 * Creates an object with all their attribute values
 	 * @param uri URI of the object
 	 * @return
+	 * @author Alber Sánchez
 	 */
 	@SuppressWarnings("null")
 	public LODResource create(URI uri){
@@ -58,7 +107,7 @@ public class LODResourceFactory {
 			String templateStimulus = Constants.PREDICATE_Detects;
 			String templateValue = Constants.PREDICATE_HasValue;
 
-			
+
 			ObjectTypes objType = null;
 			JenaConnector cnn = new JenaConnector(Constants.SII_Lecture_Endpoint);
 			Fact fact = cnn.getFact(uri);
@@ -370,6 +419,7 @@ public class LODResourceFactory {
 	 * Creates a new object with attribute values filled
 	 * @param lr An object whose values could be missing
 	 * @return An object whose attribute values are filled
+	 * @author Alber Sánchez
 	 */
 	public LODResource fill(LODResource lr){
 		URI uri = lr.getUri();
