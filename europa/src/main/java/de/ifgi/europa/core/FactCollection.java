@@ -6,24 +6,58 @@ import java.util.Iterator;
 
 public class FactCollection implements Iterable<FactCollection.FactCollectionIterator<Fact>> {
 
-	private ArrayList<Fact> factCollection;
+	private ArrayList<Fact> factCollection = new ArrayList<Fact>();
 
-	
+
 	public ArrayList<Fact> getFactCollection() {
 		return factCollection;
 	}
 	public void setFactCollection(ArrayList<Fact> factCollection) {
 		this.factCollection = factCollection;
 	}
-	
-	
+
+
 	public FactCollection() {
 
 	}
-	public FactCollection(ArrayList<Fact> factCollection) {
+	/**
+	 * @author Alber Sánchez
+	 * @param factList
+	 */
+	
+	public FactCollection(ArrayList<Fact> factList) {
 		super();
-		this.factCollection = factCollection;
+
+		ArrayList<String> subject = new ArrayList<String>();
+		ArrayList<String> predicate = new ArrayList<String>();
+		ArrayList<String> object = new ArrayList<String>();
+		ArrayList<String> datatype = new ArrayList<String>();
+		for(int i=0;i < factList.size();i++){
+			Fact f = factList.get(i);
+			for(int j=0;j<f.getSize();j++){
+				subject.add(f.getSubject());
+				predicate.add(f.getPredicate(j));
+				object.add(f.getObject(j));
+				datatype.add(f.getDatatype(j));
+			}
+		}
+		try {
+			this.factCollection = this.buildFacts(subject, predicate, object, datatype);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
+	
+	/**
+	 * @author Alber Sánchez
+	 * @param subject
+	 * @param predicate
+	 * @param object
+	 * @param datatype
+	 * @throws Exception
+	 */
+	
 	public FactCollection(ArrayList<String> subject,ArrayList<String> predicate, ArrayList<String> object,ArrayList<String> datatype) throws Exception {
 		super();
 		if(subject.size() == predicate.size() && predicate.size() == object.size() && object.size() == datatype.size()){
@@ -35,6 +69,15 @@ public class FactCollection implements Iterable<FactCollection.FactCollectionIte
 
 	}
 
+	/**
+	 * Collapses the duplicated facts into one
+	 * @author Alber Sánchez
+	 * @param subjectClone
+	 * @param predicateFactCollection
+	 * @param objectClone
+	 * @param datatypeClone
+	 * @return
+	 */
 	private ArrayList<Fact> buildFacts(ArrayList<String> subject,ArrayList<String> predicate, ArrayList<String> object,ArrayList<String> datatype){
 		ArrayList<Fact> res = new ArrayList<Fact>();
 		if(subject.size() == predicate.size() && predicate.size() == object.size() && object.size() == datatype.size()){
@@ -49,6 +92,7 @@ public class FactCollection implements Iterable<FactCollection.FactCollectionIte
 				for(int i=subject.size()-1;i>=0;i--){
 					if(subject.get(i).equals(sub)){
 						newFact.add(predicate.get(i), object.get(i), datatype.get(i));
+						subject.remove(i);
 						predicate.remove(i);
 						object.remove(i);
 						datatype.remove(i);
@@ -88,7 +132,7 @@ public class FactCollection implements Iterable<FactCollection.FactCollectionIte
 		return new FactCollectionIterator(this);
 	}
 
-	
+
 	@SuppressWarnings("hiding")
 	public class FactCollectionIterator<Fact> implements Iterator<Object> {
 
@@ -117,6 +161,6 @@ public class FactCollection implements Iterable<FactCollection.FactCollectionIte
 			factCollection.remove(position);
 		}
 	}
-	
-	
+
+
 }
