@@ -13,6 +13,9 @@ import de.ifgi.europa.core.SOSObservation;
 import de.ifgi.europa.core.SOSProperty;
 
 import javax.swing.text.Position;
+
+import org.apache.log4j.Logger;
+
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.QueryExecutionFactory;
@@ -22,7 +25,9 @@ import com.hp.hpl.jena.query.ResultSet;
 
 public class JenaConnector {
 	String endpointURL;
-
+	static Logger  logger = Logger.getLogger("JenaConnector.class");
+	
+	
 	public JenaConnector(String url) {
 		super();
 		endpointURL = url;
