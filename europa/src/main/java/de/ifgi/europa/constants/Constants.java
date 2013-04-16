@@ -152,7 +152,20 @@ public class Constants {
 			"     <PARAM_URI> rdfs:label ?label . " + 
 			"     <PARAM_URI> geo:asWKT ?asWKT .}";
 
-
+	public static String SPARQL_getObservation_TimeInterval ="prefix purl:  <http://purl.oclc.org/NET/ssnx/ssn#>  " +
+															"prefix my:   <http://ifgi.uni-muenster.de/hydrolod#> " +  
+															"SELECT * WHERE { " + 
+															"	?output a purl:SensorOutput . " + 
+															"    ?output purl:hasValue ?value . " + 
+															"    ?output purl:observationSamplingTime ?time . " + 
+															"    ?value a purl:ObservationValue . " + 
+															"    FILTER (xsd:dateTime(?time) >= \"PARAM_DATE3\"^^xsd:dateTime && " + 
+															"            xsd:dateTime(?time) <= \"PARAM_DATE2\"^^xsd:dateTime) . " + 
+															"   ?value purl:forProperty ?property . " + 
+															"   FILTER (?property = PARAM_PROPERTY1 ||  " + 
+															"           ?property = PARAM_PROPERTY2  ||  " + 
+															"           ?property = PARAM_PROPERTY3 ) .}";
+	
 	public static String SPARQL_ListAvailableGraphs = "SELECT DISTINCT ?graph WHERE { GRAPH ?graph { ?s ?p ?o } }";
 
 	public static String SPARQL_ListSubjectElements = "SELECT DISTINCT ?s ?p ?o ?dataType WHERE { <PARAM_URI> ?p ?o .}";
