@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -15,6 +16,9 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+
+import de.ifgi.europa.core.LODResource;
+import de.ifgi.europa.core.SOSProperty;
 import de.ifgi.europa.facade.Facade;
 
 public class FilterPanel extends JPanel {
@@ -99,7 +103,10 @@ public class FilterPanel extends JPanel {
 				} catch (URISyntaxException e1) {
 					System.out.println(e1.toString());
 				}
-//				fac.getResourceAttributes(uri);
+				ArrayList<SOSProperty> test = fac.listProperties();
+				LODResource res = fac.getResourceAttributes(null);
+				System.out.println("after listproperties");
+				
 //				fac.listProperties();
 			}
 		});

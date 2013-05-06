@@ -1,6 +1,7 @@
 package de.ifgi.europa.gui;
 
 import java.awt.BorderLayout;
+import java.awt.GridLayout;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -27,10 +28,11 @@ public class MainFrame extends JFrame {
 	    pnlFilter = new FilterPanel(this);
 	    pnlMap = new MapPanel(this);
 	    pnlWebViewer = new WebViewerPanel(this);
-	    
+	    JPanel splittedPanel = new JPanel(new GridLayout(2,1));
+	    splittedPanel.add(pnlMap);
+	    splittedPanel.add(pnlWebViewer);
 	    panelCont.add(pnlFilter,BorderLayout.WEST);
-	    panelCont.add(pnlMap,BorderLayout.CENTER);
-	    panelCont.add(pnlWebViewer,BorderLayout.SOUTH);
+	    panelCont.add(splittedPanel,BorderLayout.CENTER);
 	    
 	    add(panelCont,BorderLayout.CENTER);
 	    
