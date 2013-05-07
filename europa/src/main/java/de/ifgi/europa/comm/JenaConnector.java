@@ -109,24 +109,24 @@ public class JenaConnector {
 	 * @throws ParseException
 	 */
 
-	public de.ifgi.europa.core.TimeInterval getPropertyInterval(String property) throws ParseException{
-
-		//TODO: Delete me
-		//String SPARQL = new String();
-		//SPARQL = Constants.SPARQL_getPropertyInterval.replace("PARAM_PROPERTY", property);		
-		//Query querTripley = QueryFactory.create(SPARQL);
-		String query = null;
-		QueryExecution qexec = QueryExecutionFactory.sparqlService(this.endpointURL, query);
-
-		ResultSet results = qexec.execSelect();
-		QuerySolution soln = results.nextSolution();
-
-		de.ifgi.europa.core.TimeInterval timePeriod = new de.ifgi.europa.core.TimeInterval(soln.get("min"), soln.get("max"));
-
-		qexec.close();
-
-		return timePeriod;
-	}
+//	public de.ifgi.europa.core.TimeInterval getPropertyInterval(String property) throws ParseException{
+//
+//		//TODO: Delete me
+//		//String SPARQL = new String();
+//		//SPARQL = Constants.SPARQL_getPropertyInterval.replace("PARAM_PROPERTY", property);		
+//		//Query querTripley = QueryFactory.create(SPARQL);
+//		String query = null;
+//		QueryExecution qexec = QueryExecutionFactory.sparqlService(this.endpointURL, query);
+//
+//		ResultSet results = qexec.execSelect();
+//		QuerySolution soln = results.nextSolution();
+//
+//		de.ifgi.europa.core.TimeInterval timePeriod = new de.ifgi.europa.core.TimeInterval(soln.get("min"), soln.get("max"));
+//
+//		qexec.close();
+//
+//		return timePeriod;
+//	}
 
 
 	/**

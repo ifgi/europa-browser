@@ -8,6 +8,7 @@ import de.ifgi.europa.core.SOSFeatureOfInterest;
 import de.ifgi.europa.core.SOSObservation;
 import de.ifgi.europa.core.SOSPoint;
 import de.ifgi.europa.core.SOSProperty;
+import de.ifgi.europa.core.TimeInterval;
 import de.ifgi.europa.factory.LODResourceFactory;
 
 /**
@@ -39,6 +40,7 @@ public class Facade {
 	public LODResource getResourceAttributes(URI uri){
 
 		return factory.create(uri);
+		
 	}
 	
 	public ArrayList<SOSProperty> listProperties(){
@@ -56,6 +58,12 @@ public class Facade {
 	public SOSObservation getFOILastObservation(SOSFeatureOfInterest featureOfInterest){
 		
 		return factory.getFOILastObservation(featureOfInterest);
+		
+	}
+	
+	public ArrayList<SOSObservation> getObservationByInterval(SOSFeatureOfInterest featureOfInterest, TimeInterval interval){
+		
+		return factory.getObservationTimeInterval(featureOfInterest, interval);
 		
 	}
 	

@@ -1,29 +1,27 @@
 package de.ifgi.europa.core;
 
-import com.hp.hpl.jena.rdf.model.RDFNode;
-
 public class TimeInterval {
 
-	public RDFNode getStartDate() {
+	public String getStartDate() {
 		return minDate;
 	}
-	public void setStartDate(RDFNode startDate) {
+	public void setStartDate(String startDate) {
 		this.minDate = startDate;
 	}
-	public RDFNode getEndDate() {
+	public String getEndDate() {
 		return maxDate;
 	}
-	public void setEndDate(RDFNode endDate) {
+	public void setEndDate(String endDate) {
 		this.maxDate = endDate;
 	}
 	
-	public TimeInterval(RDFNode startDate, RDFNode endDate) {
+	public TimeInterval(String startDate, String endDate) {
 		super();
 		this.minDate = startDate;
 		this.maxDate = endDate;
 	}
 
-	public RDFNode minDate;
-	public RDFNode maxDate;
+	public String minDate;
+	public String maxDate;
 	
 }

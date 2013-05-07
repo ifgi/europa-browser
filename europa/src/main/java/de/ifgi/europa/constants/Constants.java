@@ -51,6 +51,22 @@ public class Constants {
 			"   ?point geo:asWKT ?wkt  . " +
 			"} ORDER BY DESC(?end) LIMIT 1";
 	
+	public static String getObservationsbyTimeInterval=prefixes+
+			" SELECT  ?wkt ?value ?samplingTime " +
+			"           WHERE { " +
+			"           ?property purl:isPropertyOf ?foi . " +
+		    "           ?property purl:isPropertyOf <PARAM_FOI> . " +
+		    "           ?observation purl:featureOfInterest ?foi . " +
+		    "           ?observation purl:observationResult ?sensorOutput . " +
+		    "           ?sensorOutput purl:hasValue ?observationValue . " +
+		    "           ?sensorOutput purl:observationSamplingTime ?samplingTime . " +
+		    "           ?observationValue purl:hasValue ?value . " +
+		    "           ?foi geo:defaultGeometry ?point . " +
+		    "           ?point geo:asWKT ?wkt  . " +
+		    "           FILTER (xsd:dateTime(?samplingTime) >= \"PARAM_DATE1\"^^xsd:dateTime && " +  
+	    	"					xsd:dateTime(?samplingTime) <= \"PARAM_DATE2\"^^xsd:dateTime) .  " +
+	    	"} ORDER BY ?samplingTime ";
+	
 	/**
 	 * Returns all PROPERTIES from a SPARQL ENDPOINT.
 	 */

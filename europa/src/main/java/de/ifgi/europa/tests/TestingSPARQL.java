@@ -8,8 +8,10 @@ import java.util.ArrayList;
 import de.ifgi.europa.constants.Constants;
 import de.ifgi.europa.core.LODResource;
 import de.ifgi.europa.core.SOSFeatureOfInterest;
+import de.ifgi.europa.core.SOSObservation;
 import de.ifgi.europa.core.SOSProperty;
 import de.ifgi.europa.core.SOSSensing;
+import de.ifgi.europa.core.TimeInterval;
 import de.ifgi.europa.facade.Facade;
 import de.ifgi.europa.factory.LODResourceFactory;
 
@@ -45,17 +47,37 @@ public class TestingSPARQL {
 //		}
 		
 		
+		
+		
+//		Facade facade = new Facade();
+//		
+//		ArrayList<SOSFeatureOfInterest> sosprop = new ArrayList<SOSFeatureOfInterest>(); 
+//		SOSProperty property = new SOSProperty();
+//		property.setUri(URI.create("http://ifgi.uni-muenster.de/hydrolod#PROPERTY_1"));
+//		
+//		sosprop = facade.listFeaturesOfInterest(property);
+//		
+//		for (int i = 0; i < sosprop.size(); i++) {
+//			System.out.println(sosprop.get(i).getName());
+//		}
+//		
+
+
 		Facade facade = new Facade();
+					
+		ArrayList<SOSObservation> observation = new ArrayList<SOSObservation>();
+		SOSFeatureOfInterest featureOfInterest = new SOSFeatureOfInterest();
+		featureOfInterest.setUri(URI.create("http://ifgi.uni-muenster.de/hydrolod#FOI_1"));
 		
-		ArrayList<SOSFeatureOfInterest> sosprop = new ArrayList<SOSFeatureOfInterest>(); 
-		SOSProperty property = new SOSProperty();
-		property.setUri(URI.create("http://ifgi.uni-muenster.de/hydrolod#PROPERTY_1"));
+		TimeInterval interval = new TimeInterval("2012-11-19T13:02:00Z", "2012-11-19T13:04:00Z");
+		observation = facade.getObservationByInterval(featureOfInterest, interval);
 		
-		sosprop = facade.listFeaturesOfInterest(property);
-		
-		for (int i = 0; i < sosprop.size(); i++) {
-			System.out.println(sosprop.get(i).getUri());
+		for (int i = 0; i < observation.size(); i++) {
+			System.out.println("WKT --> " + observation.get(i).getFeatureOfInterest().getDefaultGeometry().getAsWKT());
+			System.out.println("Date --> " + observation.get(i).getSensorOutput().get(0).getSamplingTime());
+			System.out.println("Value --> " + observation.get(i).getSensorOutput().get(0).getValue().getHasValue());
 		}
+
 		
 		
 	}

@@ -11,7 +11,7 @@ public class SOSSensorOutput  extends LODResource {
 	 SOSSensor sensor;
 	 String label;
 	 SOSValue value;
-	 Date samplingTime;
+	 String samplingTime;
 	boolean isFilled = false;
 	
 	
@@ -39,10 +39,10 @@ public class SOSSensorOutput  extends LODResource {
 	public void setValue(SOSValue value) {
 		this.value = value;
 	}
-	public Date getSamplingTime() {
+	public String getSamplingTime() {
 		return samplingTime;
 	}
-	public void setSamplingTime(Date samplingTime) {
+	public void setSamplingTime(String samplingTime) {
 		this.samplingTime = samplingTime;
 	}
 	
@@ -54,7 +54,7 @@ public class SOSSensorOutput  extends LODResource {
 		this.uri = uri;
 	}
 	public SOSSensorOutput(URI uri, SOSSensor sensor, String label,
-			SOSValue value, Date samplingTime) {
+			SOSValue value, String samplingTime) {
 		super();
 		this.uri = uri;
 		this.sensor = sensor;

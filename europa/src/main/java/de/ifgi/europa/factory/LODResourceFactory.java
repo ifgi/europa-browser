@@ -27,9 +27,7 @@ import de.ifgi.europa.core.SOSSensor;
 import de.ifgi.europa.core.SOSSensorOutput;
 import de.ifgi.europa.core.SOSStimulus;
 import de.ifgi.europa.core.SOSValue;
-import de.ifgi.lod4wfs.core.GlobalSettings;
-import de.ifgi.lod4wfs.core.SPARQL;
-import de.ifgi.lod4wfs.core.SpatialObject;
+import de.ifgi.europa.core.TimeInterval;
 
 public class LODResourceFactory {
 	LODResourceCache cache = LODResourceCache.getInstance();
@@ -338,7 +336,7 @@ public class LODResourceFactory {
 						label = o;
 					}
 				}
-				SOSSensorOutput sout = new SOSSensorOutput(uri, sensor, label,value, samplingTime);
+				SOSSensorOutput sout = new SOSSensorOutput(uri, sensor, label,value, samplingTime.toString());
 				res = sout;
 				break;			
 			case STIMULUS:
@@ -433,7 +431,11 @@ public class LODResourceFactory {
 		return newLr;
 	}
 
-	
+	/**
+	 * @author jones
+	 * @param property
+	 * @return SOSFeatureOfInterest
+	 */
 	public ArrayList<SOSFeatureOfInterest> listFeaturesOfInterest(SOSProperty property){
 
 		JenaConnector cnn = new JenaConnector(Constants.SII_Lecture_Endpoint);
@@ -451,6 +453,12 @@ public class LODResourceFactory {
 	}
 	
 
+	/**
+	 * @author jones
+	 * @param featureOfInterest
+	 * @return SOSObservation
+	 * 
+	 */
 	public SOSObservation getFOILastObservation(SOSFeatureOfInterest featureOfInterest){
 
 		JenaConnector cnn = new JenaConnector(Constants.SII_Lecture_Endpoint);
@@ -460,12 +468,47 @@ public class LODResourceFactory {
 		ArrayList<SOSSensorOutput> sensorOutput = new ArrayList<SOSSensorOutput>();
 		
 		SOSFeatureOfInterest foi = new SOSFeatureOfInterest();
-		//SOSProperty property = new SOSProperty();
 		SOSPoint point = new SOSPoint();
 		SOSValue value = new SOSValue();
 		SOSObservation observation = new SOSObservation();
 		SOSSensorOutput output = new SOSSensorOutput();
 		
+
+		QuerySolution soln = rs.nextSolution();
+		
+		point.setAsWKT(soln.get("?wkt").toString());		
+		foi.setDefaultGeometry(point);
+		
+		value.setHasValue(soln.getLiteral("?value").getDouble());			
+		output.setValue(value);						
+		sensorOutput.add(output);
+		
+		observation.setSensorOutput(sensorOutput);
+		observation.setFeatureOfInterest(foi);					
+				
+		return observation;		
+	}
+	
+	public ArrayList<SOSObservation> getObservationTimeInterval(SOSFeatureOfInterest featureOfInterest, TimeInterval interval){
+		
+		JenaConnector cnn = new JenaConnector(Constants.SII_Lecture_Endpoint);
+		
+		String query = new String();
+		query = Constants.getObservationsbyTimeInterval.replace("PARAM_DATE1", interval.getStartDate());
+		query = query.replace("PARAM_DATE2", interval.getEndDate());
+		query = query.replace("PARAM_FOI", featureOfInterest.getUri().toString());
+		
+		ResultSet rs = cnn.executeSPARQLQuery(query);
+		
+		ArrayList<SOSObservation> result = new ArrayList<SOSObservation>();
+		
+		while (rs.hasNext()) {
+			ArrayList<SOSSensorOutput> sensorOutput = new ArrayList<SOSSensorOutput>();
+			SOSFeatureOfInterest foi = new SOSFeatureOfInterest();
+			SOSPoint point = new SOSPoint();
+			SOSValue value = new SOSValue();
+			SOSObservation observation = new SOSObservation();
+			SOSSensorOutput output = new SOSSensorOutput();
 
 			QuerySolution soln = rs.nextSolution();
 			
@@ -474,11 +517,14 @@ public class LODResourceFactory {
 			
 			value.setHasValue(soln.getLiteral("?value").getDouble());			
 			output.setValue(value);						
+			output.setSamplingTime(soln.getLiteral("?samplingTime").getValue().toString());
 			sensorOutput.add(output);
 			
 			observation.setSensorOutput(sensorOutput);
-			observation.setFeatureOfInterest(foi);					
-				
-		return observation;
+			observation.setFeatureOfInterest(foi);	
+			result.add(observation);
+		}
+
+		return result;
 	}
 }
