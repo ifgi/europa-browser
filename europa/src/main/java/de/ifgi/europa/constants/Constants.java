@@ -24,10 +24,33 @@ public class Constants {
 			" PREFIX my:   <http://ifgi.uni-muenster.de/hydrolod#> "; 
 
 
+	/**
+	 * @author jones 
+	 * */
+	
 	public static String listFeaturesOfInterest = prefixes +
 			" SELECT ?foi  " +
 			" WHERE { <PARAM_PROPERTY> purl:isPropertyOf ?foi } ";
 
+	/**
+	 * @author jones
+	 */
+	
+	public static String geFOILastObservation = prefixes +
+			" SELECT  ?wkt ?value " + 
+			" WHERE { " +
+			"   ?property purl:isPropertyOf ?foi . " +
+			"   ?property purl:isPropertyOf <PARAM_FOI> ." +
+			"   ?observation purl:featureOfInterest ?foi . " +
+			"   ?observation purl:observationResult ?sensorOutput . " +
+			"   ?observation purl:startTime ?start . " +
+			"   ?observation purl:endTime ?end . " +
+			"   ?sensorOutput purl:hasValue ?observationValue . " +
+			"   ?observationValue purl:hasValue ?value . " +
+			"   ?foi geo:defaultGeometry ?point . " +
+			"   ?point geo:asWKT ?wkt  . " +
+			"} ORDER BY DESC(?end) LIMIT 1";
+	
 	/**
 	 * Returns all PROPERTIES from a SPARQL ENDPOINT.
 	 */

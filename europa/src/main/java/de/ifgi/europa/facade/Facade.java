@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 import de.ifgi.europa.core.LODResource;
 import de.ifgi.europa.core.SOSFeatureOfInterest;
+import de.ifgi.europa.core.SOSObservation;
 import de.ifgi.europa.core.SOSPoint;
 import de.ifgi.europa.core.SOSProperty;
 import de.ifgi.europa.factory.LODResourceFactory;
@@ -51,5 +52,12 @@ public class Facade {
 		return factory.listFeaturesOfInterest(property);
 		
 	}
+	
+	public SOSObservation getFOILastObservation(SOSFeatureOfInterest featureOfInterest){
+		
+		return factory.getFOILastObservation(featureOfInterest);
+		
+	}
+	
 }
 

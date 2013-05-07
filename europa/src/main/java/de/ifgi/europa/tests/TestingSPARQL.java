@@ -5,6 +5,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 
+import de.ifgi.europa.constants.Constants;
 import de.ifgi.europa.core.LODResource;
 import de.ifgi.europa.core.SOSFeatureOfInterest;
 import de.ifgi.europa.core.SOSProperty;
@@ -26,8 +27,7 @@ public class TestingSPARQL {
 		
 		//JenaConnector cnnLS = new JenaConnector(Constants.LinkedScience_Endpoint);
 		//cnnLS.getListGraphs();
-		
-		
+				
 //		URI uri = new URI("http://ifgi.uni-muenster.de/hydrolod#SENSING_1");
 //		LODResourceFactory lrf = new LODResourceFactory();
 //		LODResource lr = lrf.create(uri);

@@ -449,4 +449,36 @@ public class LODResourceFactory {
 
 		return result;
 	}
+	
+
+	public SOSObservation getFOILastObservation(SOSFeatureOfInterest featureOfInterest){
+
+		JenaConnector cnn = new JenaConnector(Constants.SII_Lecture_Endpoint);
+		ResultSet rs = cnn.executeSPARQLQuery(Constants.geFOILastObservation.replace("PARAM_FOI", featureOfInterest.getUri().toString()));
+						
+		ArrayList<SOSFeatureOfInterest> feature = new ArrayList<SOSFeatureOfInterest>();
+		ArrayList<SOSSensorOutput> sensorOutput = new ArrayList<SOSSensorOutput>();
+		
+		SOSFeatureOfInterest foi = new SOSFeatureOfInterest();
+		//SOSProperty property = new SOSProperty();
+		SOSPoint point = new SOSPoint();
+		SOSValue value = new SOSValue();
+		SOSObservation observation = new SOSObservation();
+		SOSSensorOutput output = new SOSSensorOutput();
+		
+
+			QuerySolution soln = rs.nextSolution();
+			
+			point.setAsWKT(soln.get("?wkt").toString());		
+			foi.setDefaultGeometry(point);
+			
+			value.setHasValue(soln.getLiteral("?value").getDouble());			
+			output.setValue(value);						
+			sensorOutput.add(output);
+			
+			observation.setSensorOutput(sensorOutput);
+			observation.setFeatureOfInterest(foi);					
+				
+		return observation;
+	}
 }
