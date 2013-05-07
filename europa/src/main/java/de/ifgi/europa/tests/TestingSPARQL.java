@@ -6,6 +6,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 
 import de.ifgi.europa.core.LODResource;
+import de.ifgi.europa.core.SOSFeatureOfInterest;
 import de.ifgi.europa.core.SOSProperty;
 import de.ifgi.europa.core.SOSSensing;
 import de.ifgi.europa.facade.Facade;
@@ -33,15 +34,29 @@ public class TestingSPARQL {
 //		SOSSensing so = (SOSSensing)lr;
 //		System.out.println(so.getUri());
 		
+//		Facade facade = new Facade();
+//		
+//		ArrayList<SOSProperty> sosprop = new ArrayList<SOSProperty>(); 
+//		
+//		sosprop = facade.listProperties();
+//		
+//		for (int i = 0; i < sosprop.size(); i++) {
+//			System.out.println(sosprop.get(i).getUri());
+//		}
+		
+		
 		Facade facade = new Facade();
 		
-		ArrayList<SOSProperty> sosprop = new ArrayList<SOSProperty>(); 
+		ArrayList<SOSFeatureOfInterest> sosprop = new ArrayList<SOSFeatureOfInterest>(); 
+		SOSProperty property = new SOSProperty();
+		property.setUri(URI.create("http://ifgi.uni-muenster.de/hydrolod#PROPERTY_1"));
 		
-		sosprop = facade.listProperties();
+		sosprop = facade.listFeaturesOfInterest(property);
 		
 		for (int i = 0; i < sosprop.size(); i++) {
 			System.out.println(sosprop.get(i).getUri());
 		}
+		
 		
 	}
 

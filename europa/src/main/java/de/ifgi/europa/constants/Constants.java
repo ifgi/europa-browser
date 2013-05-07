@@ -12,6 +12,22 @@ public class Constants {
 	public static String SII_Lecture_Endpoint = "http://giv-siidemo.uni-muenster.de:8081/parliament/sparql";
 	public static String LinkedScience_Endpoint = "http://spatial.linkedscience.org/sparql";
 
+	private static String prefixes = " PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> " +  
+			" PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> " + 
+			" PREFIX xsd:  <http://www.w3.org/2001/XMLSchema#>" +  
+			" PREFIX purl:  <http://purl.oclc.org/NET/ssnx/ssn#> " + 
+			" PREFIX dc:  	<http://dublincore.org/documents/dcmi-type-vocabulary/#>" +  
+			" PREFIX foaf: <http://xmlns.com/foaf/spec/#> " + 
+			" PREFIX geo:  <http://www.opengis.net/def/geosparql/>" +  
+			" PREFIX dbpedia:  <http://dbpedia.org/resource/> " + 
+			" PREFIX hyd:  <http://ifgi.uni-muenster.de/hydrolodVocabulary#>" +  
+			" PREFIX my:   <http://ifgi.uni-muenster.de/hydrolod#> "; 
+
+
+	public static String listFeaturesOfInterest = prefixes +
+			" SELECT ?foi  " +
+			" WHERE { <PARAM_PROPERTY> purl:isPropertyOf ?foi } ";
+
 	/**
 	 * Returns all PROPERTIES from a SPARQL ENDPOINT.
 	 */
@@ -153,19 +169,19 @@ public class Constants {
 			"     <PARAM_URI> geo:asWKT ?asWKT .}";
 
 	public static String SPARQL_getObservation_TimeInterval ="prefix purl:  <http://purl.oclc.org/NET/ssnx/ssn#>  " +
-															"prefix my:   <http://ifgi.uni-muenster.de/hydrolod#> " +  
-															"SELECT * WHERE { " + 
-															"	?output a purl:SensorOutput . " + 
-															"    ?output purl:hasValue ?value . " + 
-															"    ?output purl:observationSamplingTime ?time . " + 
-															"    ?value a purl:ObservationValue . " + 
-															"    FILTER (xsd:dateTime(?time) >= \"PARAM_DATE3\"^^xsd:dateTime && " + 
-															"            xsd:dateTime(?time) <= \"PARAM_DATE2\"^^xsd:dateTime) . " + 
-															"   ?value purl:forProperty ?property . " + 
-															"   FILTER (?property = PARAM_PROPERTY1 ||  " + 
-															"           ?property = PARAM_PROPERTY2  ||  " + 
-															"           ?property = PARAM_PROPERTY3 ) .}";
-	
+			"prefix my:   <http://ifgi.uni-muenster.de/hydrolod#> " +  
+			"SELECT * WHERE { " + 
+			"	?output a purl:SensorOutput . " + 
+			"    ?output purl:hasValue ?value . " + 
+			"    ?output purl:observationSamplingTime ?time . " + 
+			"    ?value a purl:ObservationValue . " + 
+			"    FILTER (xsd:dateTime(?time) >= \"PARAM_DATE3\"^^xsd:dateTime && " + 
+			"            xsd:dateTime(?time) <= \"PARAM_DATE2\"^^xsd:dateTime) . " + 
+			"   ?value purl:forProperty ?property . " + 
+			"   FILTER (?property = PARAM_PROPERTY1 ||  " + 
+			"           ?property = PARAM_PROPERTY2  ||  " + 
+			"           ?property = PARAM_PROPERTY3 ) .}";
+
 	public static String SPARQL_ListAvailableGraphs = "SELECT DISTINCT ?graph WHERE { GRAPH ?graph { ?s ?p ?o } }";
 
 	public static String SPARQL_ListSubjectElements = "SELECT DISTINCT ?s ?p ?o ?dataType WHERE { <PARAM_URI> ?p ?o .}";

@@ -4,6 +4,7 @@ import java.net.URI;
 import java.util.ArrayList;
 
 import de.ifgi.europa.core.LODResource;
+import de.ifgi.europa.core.SOSFeatureOfInterest;
 import de.ifgi.europa.core.SOSPoint;
 import de.ifgi.europa.core.SOSProperty;
 import de.ifgi.europa.factory.LODResourceFactory;
@@ -45,5 +46,10 @@ public class Facade {
 		
 	}
 
+	public ArrayList<SOSFeatureOfInterest> listFeaturesOfInterest(SOSProperty property){
+		
+		return factory.listFeaturesOfInterest(property);
+		
+	}
 }
 

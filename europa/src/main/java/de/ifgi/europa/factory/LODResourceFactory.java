@@ -9,6 +9,9 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
 
+import com.hp.hpl.jena.query.QuerySolution;
+import com.hp.hpl.jena.query.ResultSet;
+
 import de.ifgi.europa.comm.JenaConnector;
 import de.ifgi.europa.constants.Constants;
 import de.ifgi.europa.constants.Constants.ObjectTypes;
@@ -24,6 +27,9 @@ import de.ifgi.europa.core.SOSSensor;
 import de.ifgi.europa.core.SOSSensorOutput;
 import de.ifgi.europa.core.SOSStimulus;
 import de.ifgi.europa.core.SOSValue;
+import de.ifgi.lod4wfs.core.GlobalSettings;
+import de.ifgi.lod4wfs.core.SPARQL;
+import de.ifgi.lod4wfs.core.SpatialObject;
 
 public class LODResourceFactory {
 	LODResourceCache cache = LODResourceCache.getInstance();
@@ -427,4 +433,20 @@ public class LODResourceFactory {
 		return newLr;
 	}
 
+	
+	public ArrayList<SOSFeatureOfInterest> listFeaturesOfInterest(SOSProperty property){
+
+		JenaConnector cnn = new JenaConnector(Constants.SII_Lecture_Endpoint);
+		ResultSet rs = cnn.executeSPARQLQuery(Constants.listFeaturesOfInterest.replace("PARAM_PROPERTY", property.getUri().toString()));
+		ArrayList<SOSFeatureOfInterest> result = new ArrayList<SOSFeatureOfInterest>();
+		SOSFeatureOfInterest foi = new SOSFeatureOfInterest();
+
+		while (rs.hasNext()) {
+			QuerySolution soln = rs.nextSolution();
+			foi.setName(soln.get("?foi").toString());			
+			result.add(foi);
+		}
+
+		return result;
+	}
 }

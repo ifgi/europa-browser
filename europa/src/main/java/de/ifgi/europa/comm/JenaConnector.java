@@ -27,6 +27,17 @@ public class JenaConnector {
 	String endpointURL;
 	static Logger  logger = Logger.getLogger("JenaConnector.class");
 	
+
+	public ResultSet executeSPARQLQuery(String SPARQL){
+		
+		Query query = QueryFactory.create(SPARQL);
+		QueryExecution qexec = QueryExecutionFactory.sparqlService(this.endpointURL, query);
+		ResultSet results = qexec.execSelect();
+
+		return results;
+		
+	}
+	
 	
 	public JenaConnector(String url) {
 		super();
