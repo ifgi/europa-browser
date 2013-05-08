@@ -49,21 +49,21 @@ public class TestingSPARQL {
 		
 		
 		
-//		Facade facade = new Facade();
-//		
-//		ArrayList<SOSFeatureOfInterest> sosprop = new ArrayList<SOSFeatureOfInterest>(); 
-//		SOSProperty property = new SOSProperty();
-//		property.setUri(URI.create("http://ifgi.uni-muenster.de/hydrolod#PROPERTY_1"));
-//		
-//		sosprop = facade.listFeaturesOfInterest(property);
-//		
-//		for (int i = 0; i < sosprop.size(); i++) {
-//			System.out.println(sosprop.get(i).getName());
-//		}
-//		
-
-
 		Facade facade = new Facade();
+		
+		ArrayList<SOSFeatureOfInterest> sosprop = new ArrayList<SOSFeatureOfInterest>(); 
+		SOSProperty property = new SOSProperty();
+		property.setUri(URI.create("http://ifgi.uni-muenster.de/hydrolod#PROPERTY_1"));
+		
+		sosprop = facade.listFeaturesOfInterest(property);
+		
+		for (int i = 0; i < sosprop.size(); i++) {
+			System.out.println(sosprop.get(i).getName());
+		}
+		
+
+
+//		Facade facade = new Facade();
 					
 		ArrayList<SOSObservation> observation = new ArrayList<SOSObservation>();
 		SOSFeatureOfInterest featureOfInterest = new SOSFeatureOfInterest();

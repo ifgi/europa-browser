@@ -84,7 +84,7 @@ public class LODResourceFactory {
 	 * Creates an object with all their attribute values
 	 * @param uri URI of the object
 	 * @return
-	 * @author Alber Sánchez
+	 * @author Alber Sanchez
 	 */
 	@SuppressWarnings("null")
 	public LODResource create(URI uri){
@@ -411,9 +411,11 @@ public class LODResourceFactory {
 		}
 		//Gets the enumeration element from the object type
 		for (ObjectTypes t : ObjectTypes.values()) {
-			if(tmpObjectType.equals(t.toString())){
-				res = t;
-				break;
+			if(t !=null && tmpObjectType !=null){
+				if(tmpObjectType.equals(t.toString())){
+					res = t;
+					break;
+				}
 			}
 		}		
 		return res;
@@ -423,7 +425,7 @@ public class LODResourceFactory {
 	 * Creates a new object with attribute values filled
 	 * @param lr An object whose values could be missing
 	 * @return An object whose attribute values are filled
-	 * @author Alber Sánchez
+	 * @author Alber Sanchez
 	 */
 	public LODResource fill(LODResource lr){
 		URI uri = lr.getUri();
