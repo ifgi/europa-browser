@@ -9,6 +9,10 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
 
+import com.hp.hpl.jena.query.Query;
+import com.hp.hpl.jena.query.QueryExecution;
+import com.hp.hpl.jena.query.QueryExecutionFactory;
+import com.hp.hpl.jena.query.QueryFactory;
 import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
 
@@ -30,6 +34,7 @@ import de.ifgi.europa.core.SOSValue;
 import de.ifgi.europa.core.TimeInterval;
 
 public class LODResourceFactory {
+	
 	LODResourceCache cache = LODResourceCache.getInstance();
 
 	public ArrayList<SOSProperty> listAvailableProperties() {
@@ -433,11 +438,53 @@ public class LODResourceFactory {
 		return newLr;
 	}
 
+	
+	
 	/**
+	 * Retrieves all graphs available in the triple store.
+	 * 
 	 * @author jones
 	 * @param property
-	 * @return SOSFeatureOfInterest
+	 * @return ArrayList<URI>
 	 */
+
+	public ArrayList<URI> getListGraphs(){
+
+		Query query = QueryFactory.create(Constants.SPARQL_ListAvailableGraphs);
+		QueryExecution qexec = QueryExecutionFactory.sparqlService(Constants.SII_Lecture_Endpoint, query);
+
+		ArrayList<URI> result = new ArrayList<URI>();
+
+		ResultSet results = qexec.execSelect();
+
+		while (results.hasNext()) {
+			QuerySolution soln = results.nextSolution();
+
+			try {
+
+				result.add(new URI(soln.get("?graph").toString()));
+
+			} catch (URISyntaxException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+
+		}
+
+		qexec.close();
+
+		return result;	
+	}
+		
+	/**
+	 * Retrieves an array list of features of interest (SOSFeatureOfInterest) for a given property (SOSProperty)
+	 * 
+	 * @author jones
+	 * @param SOSProperty 
+	 * @return ArrayList<SOSFeatureOfInterest>
+	 */
+	
 	public ArrayList<SOSFeatureOfInterest> listFeaturesOfInterest(SOSProperty property){
 
 		JenaConnector cnn = new JenaConnector(Constants.SII_Lecture_Endpoint);
@@ -456,11 +503,14 @@ public class LODResourceFactory {
 	
 
 	/**
+	 * Retrieves the last observation for a given feature of interest (SOSFeatureOfInterest)
+	 * 
 	 * @author jones
-	 * @param featureOfInterest
+	 * @param SOSFeatureOfInterest
 	 * @return SOSObservation
 	 * 
 	 */
+	
 	public SOSObservation getFOILastObservation(SOSFeatureOfInterest featureOfInterest){
 
 		JenaConnector cnn = new JenaConnector(Constants.SII_Lecture_Endpoint);
@@ -490,6 +540,17 @@ public class LODResourceFactory {
 				
 		return observation;		
 	}
+	
+	/**
+	 * Retrieves a list of observations related to a given feature of interest (SOSFeatureOfInterest), 
+	 * constrained by a time interval (TimeInterval).
+	 * 
+	 * @author jones
+	 * @param featureOfInterest
+	 * @param SOSFeatureOfInterest TimeInterval
+	 * @return ArrayList<SOSObservation>
+	 */
+
 	
 	public ArrayList<SOSObservation> getObservationTimeInterval(SOSFeatureOfInterest featureOfInterest, TimeInterval interval){
 		
@@ -529,4 +590,5 @@ public class LODResourceFactory {
 
 		return result;
 	}
+	
 }

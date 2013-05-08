@@ -12,6 +12,17 @@ public class Constants {
 	public static String SII_Lecture_Endpoint = "http://giv-siidemo.uni-muenster.de:8081/parliament/sparql";
 	public static String LinkedScience_Endpoint = "http://spatial.linkedscience.org/sparql";
 
+	/**
+	 * Lists all graphs available in the triple store.
+	 * @author jones
+	 */
+	
+	public static String SPARQL_ListAvailableGraphs = "SELECT DISTINCT ?graph WHERE { GRAPH ?graph { ?s ?p ?o } }";
+	
+	/**
+	 * Standard prefixes used by all SPARQL Queries used in the project
+	 * @author jones
+	 */
 	private static String prefixes = " PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> " +  
 			" PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> " + 
 			" PREFIX xsd:  <http://www.w3.org/2001/XMLSchema#>" +  
@@ -25,7 +36,9 @@ public class Constants {
 
 
 	/**
+	 * Lists all features of interest for a given SOSParameter
 	 * @author jones 
+	 * 
 	 * */
 	
 	public static String listFeaturesOfInterest = prefixes +
@@ -33,6 +46,7 @@ public class Constants {
 			" WHERE { <PARAM_PROPERTY> purl:isPropertyOf ?foi } ";
 
 	/**
+	 * Retrieves the last observation for a given feature of interest (SOSFeatureOfInterest)
 	 * @author jones
 	 */
 	
@@ -51,6 +65,13 @@ public class Constants {
 			"   ?point geo:asWKT ?wkt  . " +
 			"} ORDER BY DESC(?end) LIMIT 1";
 	
+	
+	/**
+	 * Retrieves a list of observations related to a given feature of interest (SOSFeatureOfInterest), 
+	 * constrained by a time interval (TimeInterval).
+	 * @author jones
+	 */
+	
 	public static String getObservationsbyTimeInterval=prefixes+
 			" SELECT  ?wkt ?value ?samplingTime " +
 			"           WHERE { " +
@@ -66,6 +87,25 @@ public class Constants {
 		    "           FILTER (xsd:dateTime(?samplingTime) >= \"PARAM_DATE1\"^^xsd:dateTime && " +  
 	    	"					xsd:dateTime(?samplingTime) <= \"PARAM_DATE2\"^^xsd:dateTime) .  " +
 	    	"} ORDER BY ?samplingTime ";
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	/**
 	 * Returns all PROPERTIES from a SPARQL ENDPOINT.
@@ -221,8 +261,7 @@ public class Constants {
 			"           ?property = PARAM_PROPERTY2  ||  " + 
 			"           ?property = PARAM_PROPERTY3 ) .}";
 
-	public static String SPARQL_ListAvailableGraphs = "SELECT DISTINCT ?graph WHERE { GRAPH ?graph { ?s ?p ?o } }";
-
+	
 	public static String SPARQL_ListSubjectElements = "SELECT DISTINCT ?s ?p ?o ?dataType WHERE { <PARAM_URI> ?p ?o .}";
 
 	public static String DATE_Format = "yyyy-MM-dd HH:mm:ss";

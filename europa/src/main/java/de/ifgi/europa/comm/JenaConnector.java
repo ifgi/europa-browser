@@ -2,7 +2,6 @@ package de.ifgi.europa.comm;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import de.ifgi.europa.constants.Constants;
@@ -28,6 +27,13 @@ public class JenaConnector {
 	static Logger  logger = Logger.getLogger("JenaConnector.class");
 	
 
+	/**
+	 * Generic method to execute SPARQL Queries.
+	 * 
+	 * @author jones
+	 * @param SPARQL Query
+	 * @return ResultSet
+	 */
 	public ResultSet executeSPARQLQuery(String SPARQL){
 		
 		Query query = QueryFactory.create(SPARQL);
@@ -44,11 +50,18 @@ public class JenaConnector {
 		endpointURL = url;
 	}
 
+	
+	
+	
+	
+	
+	
+	
 	/**
 	 * This is generic
 	 * @return 
 	 * @throws URISyntaxException
-	 * @author Alber Sánchez 
+	 * @author Alber Sanchez 
 	 */
 
 	public FactCollection executeQuery(String SPARQL){
@@ -103,113 +116,12 @@ public class JenaConnector {
 	}
 
 	/**
-	 * 
-	 * @param property
-	 * @return
-	 * @throws ParseException
-	 */
-
-//	public de.ifgi.europa.core.TimeInterval getPropertyInterval(String property) throws ParseException{
-//
-//		//TODO: Delete me
-//		//String SPARQL = new String();
-//		//SPARQL = Constants.SPARQL_getPropertyInterval.replace("PARAM_PROPERTY", property);		
-//		//Query querTripley = QueryFactory.create(SPARQL);
-//		String query = null;
-//		QueryExecution qexec = QueryExecutionFactory.sparqlService(this.endpointURL, query);
-//
-//		ResultSet results = qexec.execSelect();
-//		QuerySolution soln = results.nextSolution();
-//
-//		de.ifgi.europa.core.TimeInterval timePeriod = new de.ifgi.europa.core.TimeInterval(soln.get("min"), soln.get("max"));
-//
-//		qexec.close();
-//
-//		return timePeriod;
-//	}
-
-
-	/**
-	 * Lists the properties regarding a certain BBOX and time interval.
-	 * 
-	 * @param property
-	 * @param startTime
-	 * @param endTime
-	 * @param lowerLeft
-	 * @param upperRight
-	 * @return
-	 * 
-	 */
-
-	public ArrayList<Date> getPropertyBBOX(String property, Date startTime, Date endTime, Position lowerLeft, Position upperRight){
-
-		return null;		
-	}
-
-	/**
-	 * 
-	 * @param property
-	 * @param startTime
-	 * @param endTime
-	 * @param lowerLeft
-	 * @param upperRight
-	 * @param aggregationMethod
-	 * @return
-	 */
-	public ArrayList<SOSObservation> dataLoader(String property, Date startTime, Date endTime,
-			gov.nasa.worldwind.geom.Position lowerLeft, gov.nasa.worldwind.geom.Position upperRight, String aggregationMethod){
-
-
-		return null;
-
-	}
-
-	/**
-	 * Gets the last observation of a certain property
-	 * 
-	 * @param property
-	 * @return
-	 */
-
-
-	public ArrayList<URI> getListGraphs(){
-
-		Query query = QueryFactory.create(Constants.SPARQL_ListAvailableGraphs);
-		QueryExecution qexec = QueryExecutionFactory.sparqlService(this.endpointURL, query);
-
-		ArrayList<URI> result = new ArrayList<URI>();
-
-		ResultSet results = qexec.execSelect();
-
-		while (results.hasNext()) {
-			QuerySolution soln = results.nextSolution();
-
-			try {
-
-				result.add(new URI(soln.get("?graph").toString()));
-				System.out.println(new URI(soln.get("?graph").toString()));
-
-			} catch (URISyntaxException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-
-
-		}
-
-		qexec.close();
-
-		return result;	
-	}
-
-
-
-	/**
 	 * This ask for all the triples with the same subject
 	 * @param subject It's the RDF triple subject
 	 * @return A fact
-	 * @author Alber Sánchez
+	 * @author Alber Sanchez
 	 */
+	
 	public Fact getFact(URI subject){
 
 		String templateQuery = Constants.SPARQL_ListSubjectElements;
