@@ -22,7 +22,7 @@ public class LODResourceCache {
 	/**
 	 * Adds an object to the cache
 	 * @param lres Object to be added
-	 * @author Alber Sánchez
+	 * @author Alber Sanchez
 	 */
 	public void addObject(LODResource lres){
 		URI uri = lres.getUri();
@@ -33,7 +33,7 @@ public class LODResourceCache {
 	 * Checks if an object exists in the cache
 	 * @param lres Object to be checked
 	 * @return TRUE if the object exists in the cache, FALSE otherwise
-	 * @author Alber Sánchez
+	 * @author Alber Sanchez
 	 */
 	public boolean exists(URI uri){
 		boolean res = true;
@@ -46,7 +46,7 @@ public class LODResourceCache {
 	/**
 	 * Removes an object from the cache
 	 * @param lres Object to be removed
-	 * @author Alber Sánchez
+	 * @author Alber Sanchez
 	 */
 	public void remove(LODResource lres){
 		URI uri = lres.getUri();
@@ -54,7 +54,7 @@ public class LODResourceCache {
 	}
 
 	/**
-	 * @author Alber Sánchez
+	 * @author Alber Sanchez
 	 * @param uri
 	 * @return
 	 */

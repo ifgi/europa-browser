@@ -1,6 +1,7 @@
 package de.ifgi.europa.tests;
 
 
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -79,6 +80,18 @@ public class TestingSPARQL {
 		}
 
 		
+		
+		ArrayList<URI> uris = new ArrayList<URI>();
+		uris = facade.getListGraphs();
+		
+		for (int i = 0; i < uris.size(); i++) {
+			try {
+				System.out.println(uris.get(i).toURL().toString());
+			} catch (MalformedURLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		
 	}
 
