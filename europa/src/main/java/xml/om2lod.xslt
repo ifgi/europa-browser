@@ -20,10 +20,12 @@
 					<rdfs:label>
 						<xsl:copy-of select="concat('OBS_',$ObservationId)" />
 					</rdfs:label>
-					
-					
 					<purl:startTime>"<xsl:value-of select="./om:samplingTime/gml:TimePeriod/gml:beginPosition"/>"^^xsd:dateTime</purl:startTime>
 					<purl:endTime>"<xsl:value-of select="./om:samplingTime/gml:TimePeriod/gml:endPosition"/>"^^xsd:dateTime</purl:endTime>
+					
+					
+					
+					
 					
 					
 					
