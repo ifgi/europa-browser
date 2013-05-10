@@ -400,7 +400,9 @@ public class LODResourceFactory {
 	 * Finds the kind of object given the type
 	 * @param type
 	 * @return
+	 * @author Alber Sanchez
 	 */
+	
 	private ObjectTypes getObjectType(String type){
 		ObjectTypes res = ObjectTypes.UNKNOWN;
 
@@ -448,7 +450,7 @@ public class LODResourceFactory {
 	 * @return ArrayList<URI>
 	 */
 
-	public ArrayList<URI> getListGraphs(){
+	public ArrayList<URI> getListGraphs(URI endpoint){
 
 		Query query = QueryFactory.create(Constants.SPARQL_ListAvailableGraphs);
 		QueryExecution qexec = QueryExecutionFactory.sparqlService(Constants.SII_Lecture_Endpoint, query);

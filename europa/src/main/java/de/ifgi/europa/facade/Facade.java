@@ -69,9 +69,9 @@ public class Facade {
 	 * @return ArrayList<URI>
 	 */
 
-	public ArrayList<URI> getListGraphs(){
+	public ArrayList<URI> getListGraphs(URI endpoint){
 		
-		return factory.getListGraphs();
+		return factory.getListGraphs(endpoint);
 		
 	}		
 	
