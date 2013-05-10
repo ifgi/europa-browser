@@ -25,6 +25,12 @@ public class TestingSPARQL {
 	
 	public static void main(String[] args) throws URISyntaxException {
 		
+		
+//		SELECT COUNT(*)
+//		WHERE { GRAPH <http://parliament.semwebcentral.org/parliament#TestGraph> {
+//		?A ?B ?C }
+//		} 
+
 		//JenaConnector cnn = new JenaConnector(Constants.SII_Lecture_Endpoint);
 		//cnn.getListOfProperties();
 		

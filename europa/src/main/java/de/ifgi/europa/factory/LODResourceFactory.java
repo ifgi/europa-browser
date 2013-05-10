@@ -494,7 +494,7 @@ public class LODResourceFactory {
 
 		while (rs.hasNext()) {
 			QuerySolution soln = rs.nextSolution();
-			foi.setName(soln.get("?foi").toString());			
+			foi.setUri(URI.create(soln.get("?foi").toString()));			
 			result.add(foi);
 		}
 
