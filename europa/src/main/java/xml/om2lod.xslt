@@ -7,14 +7,14 @@
 	xmlns:om="http://www.opengis.net/om/1.0" 
 	xmlns:xlink="http://www.w3.org/1999/xlink"
 	xmlns:sa="http://www.opengis.net/sampling/1.0"
+	xmlns:geo="http://www.opengis.net/def/geosparql/" 
 	xmlns:foaf="http://xmlns.com/foaf/spec/#" 
 	xmlns:dcterms="http://purl.org/dc/terms/" 
 	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"  
 	xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
 	xmlns:purl="http://purl.oclc.org/NET/ssnx/ssn#" 
 	xmlns:dul="http://www.w3.org/2005/Incubator/ssn/wiki/DUL_ssn#"
-	xmlns:my="http://ifgi.uni-muenster.de/hydrolod#"
-	>
+	xmlns:my="http://ifgi.uni-muenster.de/hydrolod#">
 
 	<!-- 
 	ONTOLOGY
@@ -38,9 +38,11 @@
 	<xsl:template match="/om:ObservationCollection/gml:metaDataProperty | 
 						/om:ObservationCollection/gml:boundedBy | 
 						/om:ObservationCollection/om:member/om:Observation/* | 
-						/om:ObservationCollection/om:member/om:Observation/om:observedProperty/swe:CompositePhenomenon/*
+						/om:ObservationCollection/om:member/om:Observation/om:observedProperty/swe:CompositePhenomenon/* |
+						/om:ObservationCollection/om:member/om:Observation/om:featureOfInterest/gml:FeatureCollection/gml:featureMember/sa:SamplingPoint/gml:description |
+						/om:ObservationCollection/om:member/om:Observation/om:featureOfInterest/gml:FeatureCollection/gml:featureMember/sa:SamplingPoint/gml:name |
+						/om:ObservationCollection/om:member/om:Observation/om:featureOfInterest/gml:FeatureCollection/gml:metaDataProperty/gml:name
 						" />
-	
 	
 	<!-- OBSERVATION (om:Observation) -->
 	<xsl:template match="/om:ObservationCollection/om:member/om:Observation">
@@ -48,6 +50,8 @@
 		<xsl:variable name="SensingId" select="./om:procedure/@xlink:href | 
 		                                       ./om:procedure/om:Process/gml:member/@xlink:href" />
 		<xsl:variable name="PropertyId" select="generate-id(./om:observedProperty)" />
+		<xsl:variable name="FoiId" select="./om:featureOfInterest/gml:FeatureCollection/gml:featureMember/sa:SamplingPoint/@gml:id | 
+								   		   ./om:featureOfInterest/gml:FeatureCollection/gml:location/gml:MultiPoint/gml:pointMembers/gml:Point/gml:name" />
 		<rdf:Description>
 			<xsl:attribute name="rdf:about"><xsl:value-of select="concat('my:OBSERVATION_', $ObservationId)" /></xsl:attribute>
 			<rdf:type rdf:resource="purl:Observation" />
@@ -57,9 +61,13 @@
 			<dcterms:description><xsl:value-of select="./gml:description" /></dcterms:description>
 			
 			<!-- links 
-<purl:featureOfInterest></purl:featureOfInterest> 
 <purl:observationResult></purl:observationResult> SENSOROUTPUT
 			-->
+			<purl:featureOfInterest>
+				<rdf:Description>
+					<xsl:attribute name="rdf:about"><xsl:value-of select="$FoiId" /></xsl:attribute>
+				</rdf:Description>
+			</purl:featureOfInterest>
 			<purl:observedBy>
 				<rdf:Description>
 					<xsl:attribute name="rdf:about"><xsl:value-of select="concat('my:SENSOR_', $ObservationId)" /></xsl:attribute><!-- Sensor data not available in SOS GetObservation request -->				
@@ -111,7 +119,7 @@
 			<xsl:attribute name="rdf:about"><xsl:value-of select="$SensingId" /></xsl:attribute>
 			<rdf:type rdf:resource="purl:Sensing" />
 		</rdf:Description>
-		<xsl:apply-templates/>
+		<!-- <xsl:apply-templates/> -->
 	</xsl:template>
 
 
@@ -122,9 +130,14 @@
 			<xsl:attribute name="rdf:about"><xsl:value-of select="concat('my:PROPERTY_', $PropertyId)" /></xsl:attribute>
 			<rdf:type rdf:resource="purl:Property" />
 			<rdfs:label><xsl:copy-of select="concat('PROPERTY_',$PropertyId)" /></rdfs:label>
-			<!-- links 
-<purl:isPropertyOf></purl:isPropertyOf> FOI
-			-->
+			<!-- links -->
+			<purl:isPropertyOf>
+				<rdf:Description>
+					<xsl:variable name="FoiId" select="../om:featureOfInterest/gml:FeatureCollection/gml:featureMember/sa:SamplingPoint/@gml:id | 
+				   									   ../om:featureOfInterest/gml:FeatureCollection/gml:location/gml:MultiPoint/gml:pointMembers/gml:Point/gml:name" />
+					<xsl:attribute name="rdf:about"><xsl:value-of select="$FoiId" /></xsl:attribute>
+				</rdf:Description>
+			</purl:isPropertyOf>
 		</rdf:Description>
 		<xsl:apply-templates/>
  	</xsl:template>	
@@ -143,7 +156,6 @@
 				</rdf:Description>
 			</purl:isProxyFor>
 		</rdf:Description>
-		<xsl:apply-templates/>
 	</xsl:template>
 
 	
@@ -155,6 +167,9 @@
 			<xsl:variable name="FoiName" select="./gml:FeatureCollection/gml:featureMember/sa:SamplingPoint/gml:name/text()" />									   		   
 			<xsl:attribute name="rdf:about"><xsl:value-of select="$FoiId" /></xsl:attribute>
 			<rdf:type rdf:resource="purl:FeatureOfInterest" />
+			<!-- links 
+<geo:defaultGeometry>my:POINT_1</geo:defaultGeometry>
+			-->
 			<xsl:choose>
 				<xsl:when test="$FoiName != ''">
 					<foaf:name><xsl:copy-of select="$FoiName" /></foaf:name>
@@ -165,22 +180,29 @@
 					<rdfs:label><xsl:value-of select="$FoiId" /></rdfs:label>
 				</xsl:otherwise>
 			</xsl:choose>
-			<dcterms:description>
-				<xsl:value-of select="./gml:FeatureCollection/gml:featureMember/sa:SamplingPoint/gml:description" />
-			</dcterms:description>
-
-				
-			
-			
-			
-			
-
-			
-			
+			<dcterms:description><xsl:value-of select="./gml:FeatureCollection/gml:featureMember/sa:SamplingPoint/gml:description" /></dcterms:description>
 		</rdf:Description>
+		<xsl:apply-templates/>
 	</xsl:template>
 	
 	
+	<!-- POINT -->
+	<xsl:template match="/om:ObservationCollection/om:member/om:Observation/om:featureOfInterest/gml:FeatureCollection/gml:featureMember/sa:SamplingPoint/sa:position/gml:Point | 
+						 /om:ObservationCollection/om:member/om:Observation/om:featureOfInterest/gml:FeatureCollection/gml:location/gml:MultiPoint/gml:pointMembers/gml:Point">
+		<rdf:Description>
+			<xsl:variable name="PointId" select="generate-id()" />
+			<xsl:variable name="SrsId" select="./gml:pos/@srsName |
+											   ../../@srsName" />
+			<xsl:attribute name="rdf:about"><xsl:value-of select="concat('my:POINT_', $PointId)" /></xsl:attribute>
+			<rdf:type rdf:resource="geo:Point" />
+			<rdfs:label><xsl:copy-of select="concat('POINT_', $PointId)" /></rdfs:label>
+			<geo:asWKT rdf:datatype="http://www.opengis.net/def/geosparql/wktLiteral">
+				<xsl:variable name="Coords" select="./gml:pos/text()" />
+				<xsl:variable name="Wkt" select="concat('&lt;', $SrsId, '&gt;', ' POINT(', $Coords, ')')"  disable-output-escaping="no"/>
+				<xsl:value-of select="$Wkt" disable-output-escaping="no" />
+			</geo:asWKT>
+		</rdf:Description>
+	</xsl:template>
 	
 	<!-- SENSOR OUTPUT -->
 	
