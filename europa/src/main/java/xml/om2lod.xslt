@@ -6,10 +6,11 @@
 	xmlns:swe="http://www.opengis.net/swe/1.0.1" 
 	xmlns:om="http://www.opengis.net/om/1.0" 
 	xmlns:xlink="http://www.w3.org/1999/xlink"
+	xmlns:dcterms="http://purl.org/dc/terms/" 
 	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"  
 	xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
 	xmlns:purl="http://purl.oclc.org/NET/ssnx/ssn#" 
-	xmlns:dul="http://www.w3.org/2005/Incubator/ssn/wiki/DUL_ssn#" 
+	xmlns:dul="http://www.w3.org/2005/Incubator/ssn/wiki/DUL_ssn#"
 	xmlns:my="http://ifgi.uni-muenster.de/hydrolod#"
 	>
 
@@ -41,19 +42,24 @@
 	
 	<!-- OBSERVATION (om:Observation) -->
 	<xsl:template match="/om:ObservationCollection/om:member/om:Observation">
+		<xsl:variable name="ObservationId" select="generate-id()" />
 		<rdf:Description>
-			<xsl:variable name="ObservationId" select="generate-id()" />
 			<xsl:attribute name="rdf:about"><xsl:value-of select="concat('my:OBSERVATION_', $ObservationId)" /></xsl:attribute>
 			<rdf:type rdf:resource="purl:Observation" />
 			<rdfs:label><xsl:copy-of select="concat('OBSERVATION_',$ObservationId)" /></rdfs:label>
 			<purl:startTime rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime"><xsl:value-of select="./om:samplingTime/gml:TimePeriod/gml:beginPosition"/></purl:startTime>
 			<purl:endTime rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime"><xsl:value-of select="./om:samplingTime/gml:TimePeriod/gml:endPosition"/></purl:endTime>
-			<rdf:Description><xsl:value-of select="./gml:description" /></rdf:Description>
+			<dcterms:description><xsl:value-of select="./gml:description" /></dcterms:description>
+			
 			<!-- links 
 <purl:featureOfInterest></purl:featureOfInterest> 
-<purl:observedBy></purl:observedBy> SENSOR
 <purl:observationResult></purl:observationResult> SENSOROUTPUT
 			-->
+			<purl:observedBy>
+				<rdf:Description>
+					<xsl:attribute name="rdf:about"><xsl:value-of select="concat('my:SENSOR_', $ObservationId)" /></xsl:attribute><!-- Sensor data not available in SOS GetObservation request -->				
+				</rdf:Description>	
+			</purl:observedBy>
 			<purl:sensingMethodUsed>
 				<rdf:Description>
 					<xsl:attribute name="rdf:about"><xsl:value-of select="concat('my:SENSING_', generate-id(om:procedure))" /></xsl:attribute>
@@ -64,6 +70,24 @@
 					<xsl:attribute name="rdf:about"><xsl:value-of select="concat('my:PROPERTY_', generate-id(om:observedProperty))" /></xsl:attribute>
 				</rdf:Description>
 			</purl:observedProperty>
+		</rdf:Description>
+		<!-- SENSOR 
+			 It needs a SOS DescribeSensor request to retrieve data
+			 LOD discourages blank nodes, so the sensor has the same ID as the observation -->
+		<rdf:Description>
+			<xsl:attribute name="rdf:about"><xsl:value-of select="concat('my:SENSOR_', $ObservationId)" /></xsl:attribute>
+			<rdf:type rdf:resource="purl:Sensor" />
+			<!-- links -->
+			<purl:detects>
+				<rdf:Description>
+					<xsl:attribute name="rdf:about"><xsl:value-of select="./om:observedProperty/swe:CompositePhenomenon/swe:component/@xlink:href" /></xsl:attribute>					
+				</rdf:Description>
+			</purl:detects>
+			<purl:observes>
+				<rdf:Description>
+					<xsl:attribute name="rdf:about"><xsl:value-of select="concat('my:PROPERTY_', generate-id(om:observedProperty))" /></xsl:attribute>
+				</rdf:Description>
+			</purl:observes>
 		</rdf:Description>
 		<xsl:apply-templates/>
 	</xsl:template>
@@ -112,6 +136,13 @@
 	</xsl:template>
 
 	
+
+	
+	
+	
+	
+	
+	<!-- SENSOR OUTPUT -->
 	
 	
 	
