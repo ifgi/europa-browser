@@ -6,6 +6,8 @@
 	xmlns:swe="http://www.opengis.net/swe/1.0.1" 
 	xmlns:om="http://www.opengis.net/om/1.0" 
 	xmlns:xlink="http://www.w3.org/1999/xlink"
+	xmlns:sa="http://www.opengis.net/sampling/1.0"
+	xmlns:foaf="http://xmlns.com/foaf/spec/#" 
 	xmlns:dcterms="http://purl.org/dc/terms/" 
 	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"  
 	xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
@@ -43,6 +45,9 @@
 	<!-- OBSERVATION (om:Observation) -->
 	<xsl:template match="/om:ObservationCollection/om:member/om:Observation">
 		<xsl:variable name="ObservationId" select="generate-id()" />
+		<xsl:variable name="SensingId" select="./om:procedure/@xlink:href | 
+		                                       ./om:procedure/om:Process/gml:member/@xlink:href" />
+		<xsl:variable name="PropertyId" select="generate-id(./om:observedProperty)" />
 		<rdf:Description>
 			<xsl:attribute name="rdf:about"><xsl:value-of select="concat('my:OBSERVATION_', $ObservationId)" /></xsl:attribute>
 			<rdf:type rdf:resource="purl:Observation" />
@@ -62,12 +67,12 @@
 			</purl:observedBy>
 			<purl:sensingMethodUsed>
 				<rdf:Description>
-					<xsl:attribute name="rdf:about"><xsl:value-of select="concat('my:SENSING_', generate-id(om:procedure))" /></xsl:attribute>
+					<xsl:attribute name="rdf:about"><xsl:value-of select="$SensingId" /></xsl:attribute>
 				</rdf:Description>	
 			</purl:sensingMethodUsed>
 			<purl:observedProperty>
 				<rdf:Description>
-					<xsl:attribute name="rdf:about"><xsl:value-of select="concat('my:PROPERTY_', generate-id(om:observedProperty))" /></xsl:attribute>
+					<xsl:attribute name="rdf:about"><xsl:value-of select="concat('my:PROPERTY_', $PropertyId)" /></xsl:attribute>
 				</rdf:Description>
 			</purl:observedProperty>
 		</rdf:Description>
@@ -77,6 +82,7 @@
 		<rdf:Description>
 			<xsl:attribute name="rdf:about"><xsl:value-of select="concat('my:SENSOR_', $ObservationId)" /></xsl:attribute>
 			<rdf:type rdf:resource="purl:Sensor" />
+			<rdfs:label><xsl:copy-of select="concat('SENSOR_',$ObservationId)" /></rdfs:label>
 			<!-- links -->
 			<purl:detects>
 				<rdf:Description>
@@ -85,9 +91,14 @@
 			</purl:detects>
 			<purl:observes>
 				<rdf:Description>
-					<xsl:attribute name="rdf:about"><xsl:value-of select="concat('my:PROPERTY_', generate-id(om:observedProperty))" /></xsl:attribute>
+					<xsl:attribute name="rdf:about"><xsl:value-of select="concat('my:PROPERTY_', $PropertyId)" /></xsl:attribute>
 				</rdf:Description>
 			</purl:observes>
+			<purl:implements>
+				<rdf:Description>
+					<xsl:attribute name="rdf:about"><xsl:value-of select="$SensingId" /></xsl:attribute>
+				</rdf:Description>
+			</purl:implements>
 		</rdf:Description>
 		<xsl:apply-templates/>
 	</xsl:template>
@@ -136,9 +147,38 @@
 	</xsl:template>
 
 	
+	<!-- FEATURE OF INTEREST -->
+	<xsl:template match="/om:ObservationCollection/om:member/om:Observation/om:featureOfInterest">
+		<rdf:Description>
+			<xsl:variable name="FoiId" select="./gml:FeatureCollection/gml:featureMember/sa:SamplingPoint/@gml:id | 
+									   		   ./gml:FeatureCollection/gml:location/gml:MultiPoint/gml:pointMembers/gml:Point/gml:name" />
+			<xsl:variable name="FoiName" select="./gml:FeatureCollection/gml:featureMember/sa:SamplingPoint/gml:name/text()" />									   		   
+			<xsl:attribute name="rdf:about"><xsl:value-of select="$FoiId" /></xsl:attribute>
+			<rdf:type rdf:resource="purl:FeatureOfInterest" />
+			<xsl:choose>
+				<xsl:when test="$FoiName != ''">
+					<foaf:name><xsl:copy-of select="$FoiName" /></foaf:name>
+					<rdfs:label><xsl:copy-of select="$FoiName" /></rdfs:label>
+				</xsl:when>
+				<xsl:otherwise>
+					<foaf:name><xsl:value-of select="$FoiId" /></foaf:name>
+					<rdfs:label><xsl:value-of select="$FoiId" /></rdfs:label>
+				</xsl:otherwise>
+			</xsl:choose>
+			<dcterms:description>
+				<xsl:value-of select="./gml:FeatureCollection/gml:featureMember/sa:SamplingPoint/gml:description" />
+			</dcterms:description>
 
-	
-	
+				
+			
+			
+			
+			
+
+			
+			
+		</rdf:Description>
+	</xsl:template>
 	
 	
 	
