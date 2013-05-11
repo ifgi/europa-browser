@@ -25,6 +25,12 @@ public class TestingSPARQL {
 	
 	public static void main(String[] args) throws URISyntaxException {
 		
+		
+//		SELECT COUNT(*)
+//		WHERE { GRAPH <http://parliament.semwebcentral.org/parliament#TestGraph> {
+//		?A ?B ?C }
+//		} 
+
 		//JenaConnector cnn = new JenaConnector(Constants.SII_Lecture_Endpoint);
 		//cnn.getListOfProperties();
 		
@@ -82,7 +88,7 @@ public class TestingSPARQL {
 		
 		
 		ArrayList<URI> uris = new ArrayList<URI>();
-		uris = facade.getListGraphs();
+		uris = facade.getListGraphs(URI.create(Constants.SII_Lecture_Endpoint));
 		
 		for (int i = 0; i < uris.size(); i++) {
 			try {
