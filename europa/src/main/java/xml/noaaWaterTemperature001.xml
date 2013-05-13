@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Data taken from NOAA http://sdf.ndbc.noaa.gov/sos/test.shtml
+Query: GetObservation Water Temperature (Time series) 
+-->
+
 <om:ObservationCollection xmlns:om="http://www.opengis.net/om/1.0"
 	xmlns:gml="http://www.opengis.net/gml" xmlns:swe="http://www.opengis.net/swe/1.0.1"
 	xmlns:swe2="http://www.opengis.net/swe/2.0" xmlns:xlink="http://www.w3.org/1999/xlink"
