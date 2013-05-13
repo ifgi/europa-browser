@@ -7,8 +7,6 @@ import java.util.ArrayList;
 
 import gov.nasa.worldwind.BasicModel;
 import gov.nasa.worldwind.awt.WorldWindowGLCanvas;
-import gov.nasa.worldwind.event.SelectEvent;
-import gov.nasa.worldwind.event.SelectListener;
 import gov.nasa.worldwind.geom.Angle;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.globes.Earth;
@@ -20,7 +18,7 @@ import gov.nasa.worldwind.layers.MarkerLayer;
 import gov.nasa.worldwind.layers.ScalebarLayer;
 import gov.nasa.worldwind.layers.StarsLayer;
 import gov.nasa.worldwind.layers.ViewControlsLayer;
-import gov.nasa.worldwind.layers.WorldMapLayer;
+import gov.nasa.worldwind.layers.ViewControlsSelectListener;
 import gov.nasa.worldwind.layers.Earth.BMNGWMSLayer;
 import gov.nasa.worldwind.layers.Earth.LandsatI3WMSLayer;
 import gov.nasa.worldwind.render.Material;
@@ -30,6 +28,8 @@ import gov.nasa.worldwind.render.markers.BasicMarkerShape;
 import gov.nasa.worldwind.render.markers.Marker;
 
 import javax.swing.JPanel;
+
+import de.ifgi.europa.core.SOSObservation;
 
 public class MapPanel extends JPanel {
 
@@ -44,18 +44,22 @@ public class MapPanel extends JPanel {
 		
         layer.setOverrideMarkerElevation(true);
         layer.setKeepSeparated(false);
-        layer.setElevation(1000d);
-		
+        layer.setElevation(0d);
+        
+        AnnotationWindowLayer awl = new AnnotationWindowLayer(wwd);
+        AnnotationWindow tip = new AnnotationWindow(Position.fromDegrees(0, 0, 0), wwd);
+        tip.setPanel(new awTip());
+        awl.addWindow(tip);
+        
 		Layer[] layers = new Layer[]
         {
-			new ViewControlsLayer(),
             new StarsLayer(),
             new CompassLayer(),
             new BMNGWMSLayer(),
             new LandsatI3WMSLayer(),
             layer,
+            awl,
             new ScalebarLayer(),
-            new WorldMapLayer(),
         };
 		
 		Globe earth = new Earth();
@@ -64,6 +68,11 @@ public class MapPanel extends JPanel {
 		modelForWindowA.setLayers(new LayerList(layers));
         wwd.setPreferredSize(new java.awt.Dimension(800, 600));
         wwd.setModel(modelForWindowA);
+        ViewControlsLayer viewControlsA = new ViewControlsLayer();
+        wwd.getModel().getLayers().add(viewControlsA);
+        wwd.addSelectListener(new ViewControlsSelectListener(wwd, viewControlsA));
+        
+        
         this.add(wwd, java.awt.BorderLayout.CENTER);
         
         wwd.addMouseListener(new MouseListener() {
@@ -90,26 +99,24 @@ public class MapPanel extends JPanel {
 			
 			public void mouseClicked(MouseEvent arg0) {
 				// TODO Auto-generated method stub
-				ArrayList<Marker> markers = new ArrayList<Marker>();
-		        Marker marker = new BasicMarker(Position.fromDegrees(52, 7, 0), new BasicMarkerAttributes(Material.YELLOW, BasicMarkerShape.ORIENTED_CYLINDER_LINE, 0.9));
-		        marker.setPosition(Position.fromDegrees(52, 7, 0));
-		        marker.setHeading(Angle.fromDegrees(52 * 5));
-		        markers.add(marker);
-		        
-		        layer.setMarkers(markers);
-			}
-		});
-        
-        wwd.addSelectListener(new SelectListener() {
-			
-			public void selected(SelectEvent arg0) {
-				System.out.println("selected");
 			}
 		});
 	}
 	
-	public void updateGlobe() {
-		System.out.println("updateGlobe");
+	public void updateGlobe(SOSObservation observation) {
+		String wkt = observation.getFeatureOfInterest().getDefaultGeometry().getAsWKT();
+		String[] splitArray = wkt.split("\\s+");
+		String[] splitArrayLat = splitArray[0].split("\\(");
+		String[] splitArrayLon = splitArray[1].split("\\)");
+		Double lat = Double.parseDouble(splitArrayLat[1]);
+		Double lon = Double.parseDouble(splitArrayLon[0]);
+		ArrayList<Marker> markers = new ArrayList<Marker>();
+        Marker marker = new BasicMarker(Position.fromDegrees(Double.parseDouble(splitArrayLat[1]), Double.parseDouble(splitArrayLon[0]), 0), new BasicMarkerAttributes(Material.YELLOW, BasicMarkerShape.ORIENTED_CYLINDER_LINE, 0.9));
+        marker.setPosition(Position.fromDegrees(lat, lon, 0));
+        marker.setHeading(Angle.fromDegrees(52 * 5));
+        markers.add(marker);
+        layer.setMarkers(markers);
+        wwd.redrawNow();
 	}
 
 	public MainFrame getMainFrame() {

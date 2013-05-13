@@ -146,7 +146,6 @@ public class FilterPanel extends JPanel {
 				for (int i = 0; i < getProperties().size(); i++) {
 					if(getProperties().get(i).getUri().toString().compareTo(selected) == 0) {
 						fois = getFacade().listFeaturesOfInterest(getProperties().get(i));
-						ArrayList<SOSFeatureOfInterest> test = fois;
 						for (int j = 0; j < fois.size(); j++) {
 							String name = fois.get(j).getName();
 							resultsTableModel.addRow(new Object[] {name});
@@ -163,8 +162,9 @@ public class FilterPanel extends JPanel {
 				
 				for(int row : resultsTable.getSelectedRows()) {
 					SOSFeatureOfInterest foi = fois.get(row);
+					foi.setUri(URI.create(foi.getName()));
 					SOSObservation observation = getFacade().getFOILastObservation(foi);
-					((MapPanel) mainFrame.getMapPanel()).updateGlobe();
+					((MapPanel) mainFrame.getMapPanel()).updateGlobe(observation);
 				}
 				
 			}
