@@ -39,4 +39,8 @@ public class MainFrame extends JFrame {
 	    pack();
 	    setVisible(true);
 	}
+	
+	public JPanel getMapPanel() {
+		return pnlMap;
+	}
 }
