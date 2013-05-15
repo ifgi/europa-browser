@@ -100,8 +100,7 @@ Query: GetObservation Water Temperature (Time series)
 								</swe2:Vector>
 							</swe2:field>
 							<swe2:field name="time">
-								<swe2:Time
-									definition="http://www.opengis.net/def/property/OGC/0/SamplingTime">
+								<swe2:Time definition="http://www.opengis.net/def/property/OGC/0/SamplingTime">
 									<swe2:uom xlink:href="http://www.opengis.net/def/uom/ISO-8601/0/Gregorian" />
 								</swe2:Time>
 							</swe2:field>
