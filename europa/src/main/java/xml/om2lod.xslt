@@ -53,7 +53,7 @@
 												/om:ObservationCollection/om:member/om:Observation/om:result/swe2:DataStream/swe2:elementType/swe2:DataRecord/swe2:field/*/@definition" />
 		<rdf:Description>
 			<xsl:attribute name="rdf:about"><xsl:value-of select="concat('my:OBSERVATION_', $ObservationId)" /></xsl:attribute>
-			<rdf:type rdf:resource="purl:Observation" />
+				<rdf:type rdf:resource="http://purl.oclc.org/NET/ssnx/ssn#Observation" />
 			<rdfs:label><xsl:copy-of select="concat('OBSERVATION_',$ObservationId)" /></rdfs:label>
 			<purl:startTime rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime"><xsl:value-of select="./om:samplingTime/gml:TimePeriod/gml:beginPosition"/></purl:startTime>
 			<purl:endTime rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime"><xsl:value-of select="./om:samplingTime/gml:TimePeriod/gml:endPosition"/></purl:endTime>
@@ -80,7 +80,7 @@
 		<!-- sensing -->
 		<rdf:Description>
 			<xsl:attribute name="rdf:about"><xsl:value-of select="$SensingId" /></xsl:attribute>
-			<rdf:type rdf:resource="purl:Sensing" />
+			<rdf:type rdf:resource="http://purl.oclc.org/NET/ssnx/ssn#Sensing" />
 		</rdf:Description>
 	</xsl:template>
 	
@@ -90,7 +90,17 @@
 	<xsl:template match="/om:ObservationCollection/om:member/om:Observation/om:result/swe:DataArray/swe:elementType/swe:DataRecord/swe:field | 
 						 /om:ObservationCollection/om:member/om:Observation/om:result/swe2:DataStream/swe2:elementType/swe2:DataRecord/swe2:field">
 		<xsl:if test="not(descendant::swe2:value)"><!-- Skips fields including values within themselves -->
-			<xsl:variable name="PropertyId" select="./*/@definition" />
+			<xsl:variable name="PropertyIdTest"><xsl:value-of select="./*/@definition" /></xsl:variable>
+			<xsl:variable name="PropertyId">
+				<xsl:choose>
+					<xsl:when test="contains($PropertyIdTest, 'http://')">
+						<xsl:value-of select="$PropertyIdTest" />
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:value-of select="concat('my:', $PropertyIdTest)" />
+					</xsl:otherwise>
+				</xsl:choose>
+			</xsl:variable>
 			<xsl:variable name="ObservationId" select="generate-id(../../../../..)" />
 			<!-- Incoming relations -->
 			<rdf:Description>
@@ -104,7 +114,7 @@
 			<!-- property -->
 			<rdf:Description>
 				<xsl:attribute name="rdf:about"><xsl:value-of select="$PropertyId" /></xsl:attribute>
-				<rdf:type rdf:resource="purl:Property" />
+				<rdf:type rdf:resource="http://purl.oclc.org/NET/ssnx/ssn#Property" />
 				<rdfs:label><xsl:value-of select="./@name" /></rdfs:label>
 				<gr:hasUnitOfMeasurement>
 					<xsl:if test="./*/swe:uom/@code | ./*/swe2:uom/@code">
@@ -151,7 +161,7 @@
 		<rdf:Description>
 			<xsl:variable name="FoiName" select="./gml:FeatureCollection/gml:featureMember/sa:SamplingPoint/gml:name/text()" />									   		   
 			<xsl:attribute name="rdf:about"><xsl:value-of select="$FoiId" /></xsl:attribute>
-			<rdf:type rdf:resource="purl:FeatureOfInterest" />
+			<rdf:type rdf:resource="http://purl.oclc.org/NET/ssnx/ssn#FeatureOfInterest" />
 			<!-- links -->
 			<xsl:choose>
 				<xsl:when test="$FoiName != ''">
@@ -265,7 +275,7 @@
 				</rdf:Description>
 				<rdf:Description>
 					<xsl:attribute name="rdf:about"><xsl:value-of select="concat('my:SENSOR_OUTPUT_', $ObservationId, '_', $SensorOutputId)" /></xsl:attribute>
-					<rdf:type rdf:resource="purl:SensorOutput" />
+					<rdf:type rdf:resource="http://purl.oclc.org/NET/ssnx/ssn#SensorOutput" />
 				</rdf:Description>
 				<!-- Goes for the observed values --> 
 				<xsl:call-template name="processDataRow">
@@ -327,7 +337,7 @@
 														  | ../swe2:elementType/swe2:DataRecord/swe2:field[not (descendant::swe2:value)][$drCount]/*/@definition" />
 
 					<xsl:attribute name="rdf:about"><xsl:value-of select="concat('my:OBS_VALUE_', $ObservationId, '_', $SensorOutputId, '_', $ObservedValueId)" /></xsl:attribute>
-					<rdf:type rdf:resource="purl:ObservationValue" />
+					<rdf:type rdf:resource="http://purl.oclc.org/NET/ssnx/ssn#ObservationValue" />
 					<purl:forProperty>
 						<rdf:Description>
 							<xsl:attribute name="rdf:about"><xsl:value-of select="$PropertyId" /></xsl:attribute>
