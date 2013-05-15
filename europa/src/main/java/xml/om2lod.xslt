@@ -105,7 +105,7 @@
 			<rdf:Description>
 				<xsl:attribute name="rdf:about"><xsl:value-of select="$PropertyId" /></xsl:attribute>
 				<rdf:type rdf:resource="purl:Property" />
-				<rdfs:label><xsl:copy-of select="./@name" /></rdfs:label>
+				<rdfs:label><xsl:value-of select="./@name" /></rdfs:label>
 				<gr:hasUnitOfMeasurement>
 					<xsl:if test="./*/swe:uom/@code | ./*/swe2:uom/@code">
 						<xsl:value-of select="./*/swe:uom/@code | ./*/swe2:uom/@code" />
@@ -234,17 +234,9 @@
 		<xsl:param name="daCount" />
 		
 		<xsl:param name="normDataArray" select="normalize-space(string($dataArray))" />
-
-
-
 <!-- All rows except the 1st -->
 <!-- EL PROBLEMA SE DA AL USAR ENTER COMO SEPARADOR DE ROWS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
 <xsl:param name="remainingDataArray" select="substring-after($normDataArray, $rowSep)" />
-
-
-
-
-
 
 		<xsl:param name="row"><!-- Current row -->
 			<xsl:choose>
@@ -256,21 +248,6 @@
 				</xsl:otherwise>
 			</xsl:choose>
 		</xsl:param> 
-			
-			
-
-
-
-
-
-
-
-
-
-
-
-
-
 		
 		<xsl:choose>
 			<xsl:when test="string-length(string($normDataArray)) &gt; 0"><!-- Termination condition -->
@@ -346,8 +323,16 @@
 					</purl:hasValue>
 				</rdf:Description>
 				<rdf:Description>
+					<xsl:variable name="PropertyId" select="../swe:elementType/swe:DataRecord/swe:field[not (descendant::swe2:value)][$drCount]/*/@definition
+														  | ../swe2:elementType/swe2:DataRecord/swe2:field[not (descendant::swe2:value)][$drCount]/*/@definition" />
+
 					<xsl:attribute name="rdf:about"><xsl:value-of select="concat('my:OBS_VALUE_', $ObservationId, '_', $SensorOutputId, '_', $ObservedValueId)" /></xsl:attribute>
 					<rdf:type rdf:resource="purl:ObservationValue" />
+					<purl:forProperty>
+						<rdf:Description>
+							<xsl:attribute name="rdf:about"><xsl:value-of select="$PropertyId" /></xsl:attribute>
+						</rdf:Description>
+					</purl:forProperty>
 					<purl:hasValue>
 						<xsl:value-of select="$token" />
 					</purl:hasValue>
