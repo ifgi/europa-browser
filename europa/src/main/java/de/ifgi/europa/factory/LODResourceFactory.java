@@ -9,6 +9,8 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
 
+import cern.colt.matrix.impl.SparseDoubleMatrix1D;
+
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.QueryExecutionFactory;
@@ -442,6 +444,60 @@ public class LODResourceFactory {
 
 	
 	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	/**
+	 * @author jones
+	 * @return
+	 */
+	
+	public ArrayList<SOSProperty> getListProperties(){
+		
+		JenaConnector cnn = new JenaConnector(GlobalSettings.CurrentSPARQLEndpoint);
+		String SPARQL = new String();
+		
+		SPARQL = GlobalSettings.SPARQL_getListProperties.replace("PARAM_GRAPH", GlobalSettings.CurrentNamedGraph);
+		ArrayList<SOSProperty> result = new ArrayList<SOSProperty>();
+
+		ResultSet results = cnn.executeSPARQLQuery(SPARQL);
+		
+		
+		while (results.hasNext()) {
+			SOSProperty property = new SOSProperty();
+			QuerySolution soln = results.nextSolution();
+
+			try {
+				
+				property.setUri(new URI(soln.get("?property").toString()));
+				property.setDescription(soln.get("?description").toString());
+				result.add(property);
+
+			} catch (URISyntaxException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+
+		}
+
+		return result;
+	}
+	
+	
 	/**
 	 * Retrieves all graphs available in the triple store.
 	 * 
@@ -490,7 +546,12 @@ public class LODResourceFactory {
 	public ArrayList<SOSFeatureOfInterest> listFeaturesOfInterest(SOSProperty property){
 
 		JenaConnector cnn = new JenaConnector(GlobalSettings.CurrentSPARQLEndpoint);
-		ResultSet rs = cnn.executeSPARQLQuery(GlobalSettings.listFeaturesOfInterest.replace("PARAM_PROPERTY", property.getUri().toString()));
+		
+		String SPARQL = new String();
+		SPARQL = GlobalSettings.listFeaturesOfInterest.replace("PARAM_PROPERTY", property.getUri().toString());
+		SPARQL = SPARQL.replace("PARAM_GRAPH", GlobalSettings.CurrentNamedGraph);
+				
+		ResultSet rs = cnn.executeSPARQLQuery(SPARQL);
 		ArrayList<SOSFeatureOfInterest> result = new ArrayList<SOSFeatureOfInterest>();
 		SOSFeatureOfInterest foi = new SOSFeatureOfInterest();
 
@@ -516,7 +577,10 @@ public class LODResourceFactory {
 	public SOSObservation getFOILastObservation(SOSFeatureOfInterest featureOfInterest){
 
 		JenaConnector cnn = new JenaConnector(GlobalSettings.CurrentSPARQLEndpoint);
-		ResultSet rs = cnn.executeSPARQLQuery(GlobalSettings.geFOILastObservation.replace("PARAM_FOI", featureOfInterest.getUri().toString()));
+		String SPARQL = new String();
+		SPARQL = GlobalSettings.geFOILastObservation.replace("PARAM_FOI", featureOfInterest.getUri().toString());
+		SPARQL = SPARQL.replace("PARAM_GRAPH", GlobalSettings.CurrentNamedGraph);
+		ResultSet rs = cnn.executeSPARQLQuery(SPARQL);
 						
 		ArrayList<SOSFeatureOfInterest> feature = new ArrayList<SOSFeatureOfInterest>();
 		ArrayList<SOSSensorOutput> sensorOutput = new ArrayList<SOSSensorOutput>();
@@ -539,7 +603,7 @@ public class LODResourceFactory {
 		
 		observation.setSensorOutput(sensorOutput);
 		observation.setFeatureOfInterest(foi);					
-				
+		output.setSamplingTime(soln.get("?samplingTime").toString());
 		return observation;		
 	}
 	
@@ -558,12 +622,13 @@ public class LODResourceFactory {
 		
 		JenaConnector cnn = new JenaConnector(GlobalSettings.CurrentSPARQLEndpoint);
 		
-		String query = new String();
-		query = GlobalSettings.getObservationsbyTimeInterval.replace("PARAM_DATE1", interval.getStartDate());
-		query = query.replace("PARAM_DATE2", interval.getEndDate());
-		query = query.replace("PARAM_FOI", featureOfInterest.getUri().toString());
+		String SPARQL = new String();
+		SPARQL = GlobalSettings.getObservationsbyTimeInterval.replace("PARAM_DATE1", interval.getStartDate());
+		SPARQL = SPARQL.replace("PARAM_DATE2", interval.getEndDate());
+		SPARQL = SPARQL.replace("PARAM_FOI", featureOfInterest.getUri().toString());
+		SPARQL = SPARQL.replace("PARAM_GRAPH", GlobalSettings.CurrentNamedGraph);
 		
-		ResultSet rs = cnn.executeSPARQLQuery(query);
+		ResultSet rs = cnn.executeSPARQLQuery(SPARQL);
 		
 		ArrayList<SOSObservation> result = new ArrayList<SOSObservation>();
 		

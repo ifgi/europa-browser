@@ -37,16 +37,25 @@ public class Facade {
 	}
 
 	
+	
+	
+	
+	
+	
+	
+	
+
+	
+	/**
+	 * @author jones
+	 * @return
+	 */
 	public ArrayList<SOSProperty> listProperties(){
 		
-		return factory.listAvailableProperties();
+		return factory.getListProperties();
 		
 	}
-
 	
-	
-	
-
 	
 	/**
 	 * Singleton for getting a facade object instance.
