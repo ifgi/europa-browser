@@ -1,4 +1,4 @@
-package de.ifgi.europa.constants;
+package de.ifgi.europa.settings;
 
 import java.net.URI;
 import java.net.URISyntaxException;

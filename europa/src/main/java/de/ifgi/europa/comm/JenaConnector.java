@@ -4,12 +4,12 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Date;
-import de.ifgi.europa.constants.Constants;
-import de.ifgi.europa.constants.Util;
 import de.ifgi.europa.core.Fact;
 import de.ifgi.europa.core.FactCollection;
 import de.ifgi.europa.core.SOSObservation;
 import de.ifgi.europa.core.SOSProperty;
+import de.ifgi.europa.settings.GlobalSettings;
+import de.ifgi.europa.settings.Util;
 
 import javax.swing.text.Position;
 
@@ -97,7 +97,7 @@ public class JenaConnector {
 
 	public ArrayList<SOSProperty> getListOfProperties() throws URISyntaxException{
 
-		Query query = QueryFactory.create(Constants.SPARQL_getListOfProperties);
+		Query query = QueryFactory.create(GlobalSettings.SPARQL_getListOfProperties);
 		QueryExecution qexec = QueryExecutionFactory.sparqlService(this.endpointURL, query);
 		ArrayList<SOSProperty> result = new ArrayList<SOSProperty>();
 		ResultSet results = qexec.execSelect();
@@ -124,7 +124,7 @@ public class JenaConnector {
 	
 	public Fact getFact(URI subject){
 
-		String templateQuery = Constants.SPARQL_ListSubjectElements;
+		String templateQuery = GlobalSettings.SPARQL_ListSubjectElements;
 		templateQuery = templateQuery.replace("PARAM_URI", subject.toString());
 		Query query = QueryFactory.create(templateQuery);
 		QueryExecution qexec = QueryExecutionFactory.sparqlService(this.endpointURL, query);

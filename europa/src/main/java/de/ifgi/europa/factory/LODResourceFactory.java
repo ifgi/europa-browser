@@ -17,8 +17,6 @@ import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
 
 import de.ifgi.europa.comm.JenaConnector;
-import de.ifgi.europa.constants.Constants;
-import de.ifgi.europa.constants.Constants.ObjectTypes;
 import de.ifgi.europa.core.Fact;
 import de.ifgi.europa.core.FactCollection;
 import de.ifgi.europa.core.LODResource;
@@ -32,6 +30,8 @@ import de.ifgi.europa.core.SOSSensorOutput;
 import de.ifgi.europa.core.SOSStimulus;
 import de.ifgi.europa.core.SOSValue;
 import de.ifgi.europa.core.TimeInterval;
+import de.ifgi.europa.settings.GlobalSettings;
+import de.ifgi.europa.settings.GlobalSettings.ObjectTypes;
 
 public class LODResourceFactory {
 	
@@ -40,12 +40,12 @@ public class LODResourceFactory {
 	public ArrayList<SOSProperty> listAvailableProperties() {
 		ArrayList<SOSProperty> res = new ArrayList<SOSProperty>();
 		
-		JenaConnector cnn = new JenaConnector(Constants.SII_Lecture_Endpoint);
-		FactCollection fc = cnn.executeQuery(Constants.SPARQL_getListOfProperties);
+		JenaConnector cnn = new JenaConnector(GlobalSettings.CurrentSPARQLEndpoint);
+		FactCollection fc = cnn.executeQuery(GlobalSettings.SPARQL_getListOfProperties);
 
-		String templateLabel = Constants.PREDICATE_Label; 
-		String templateFeatureOfInterest = Constants.PREDICATE_FeatureOfInterest;
-		String templateDescription = Constants.PREDICATE_IsDescribedBy;
+		String templateLabel = GlobalSettings.PREDICATE_Label; 
+		String templateFeatureOfInterest = GlobalSettings.PREDICATE_FeatureOfInterest;
+		String templateDescription = GlobalSettings.PREDICATE_IsDescribedBy;
 		
 		for(int j=0;j < fc.Size();j++){
 			Fact fact = fc.get(j);
@@ -98,27 +98,27 @@ public class LODResourceFactory {
 		res = cache.get(uri);
 		if(res == null){
 			//Predicates
-			String templateTypeof = Constants.PREDICATE_Type;
-			String templateId = Constants.PREDICATE_Id; 
-			String templateIdentifier = Constants.PREDICATE_Identifier;
-			String templateName = Constants.PREDICATE_Name;
-			String templateLabel = Constants.PREDICATE_Label; 
-			String templateDefaultGeometry = Constants.PREDICATE_DefaultGeometry;
-			String templateStartTime = Constants.PREDICATE_StartTime;
-			String templateEndTime = Constants.PREDICATE_EndTime;
-			String templateFeatureOfInterest = Constants.PREDICATE_FeatureOfInterest;
-			String templateProperty = Constants.PREDICATE_ObservedProperty;
-			String templateSensor = Constants.PREDICATE_ObservedBy;
-			String templateSensing = Constants.PREDICATE_SensingMethodUsed;
-			String templateSensorOutput = Constants.PREDICATE_ObservationResult;
-			String templateAsWKT = Constants.PREDICATE_AsWkt;
-			String templateDescription = Constants.PREDICATE_IsDescribedBy;
-			String templateStimulus = Constants.PREDICATE_Detects;
-			String templateValue = Constants.PREDICATE_HasValue;
+			String templateTypeof = GlobalSettings.PREDICATE_Type;
+			String templateId = GlobalSettings.PREDICATE_Id; 
+			String templateIdentifier = GlobalSettings.PREDICATE_Identifier;
+			String templateName = GlobalSettings.PREDICATE_Name;
+			String templateLabel = GlobalSettings.PREDICATE_Label; 
+			String templateDefaultGeometry = GlobalSettings.PREDICATE_DefaultGeometry;
+			String templateStartTime = GlobalSettings.PREDICATE_StartTime;
+			String templateEndTime = GlobalSettings.PREDICATE_EndTime;
+			String templateFeatureOfInterest = GlobalSettings.PREDICATE_FeatureOfInterest;
+			String templateProperty = GlobalSettings.PREDICATE_ObservedProperty;
+			String templateSensor = GlobalSettings.PREDICATE_ObservedBy;
+			String templateSensing = GlobalSettings.PREDICATE_SensingMethodUsed;
+			String templateSensorOutput = GlobalSettings.PREDICATE_ObservationResult;
+			String templateAsWKT = GlobalSettings.PREDICATE_AsWkt;
+			String templateDescription = GlobalSettings.PREDICATE_IsDescribedBy;
+			String templateStimulus = GlobalSettings.PREDICATE_Detects;
+			String templateValue = GlobalSettings.PREDICATE_HasValue;
 
 
 			ObjectTypes objType = null;
-			JenaConnector cnn = new JenaConnector(Constants.SII_Lecture_Endpoint);
+			JenaConnector cnn = new JenaConnector(GlobalSettings.CurrentSPARQLEndpoint);
 			Fact fact = cnn.getFact(uri);
 			//Find the TYPEOF property
 			String p;
@@ -176,14 +176,14 @@ public class LODResourceFactory {
 					o = fact.getObject(i);
 					if(p.equals(templateStartTime)){
 						try {
-							startTime = new SimpleDateFormat(Constants.DATE_Format, Locale.ENGLISH).parse(o);
+							startTime = new SimpleDateFormat(GlobalSettings.DATE_Format, Locale.ENGLISH).parse(o);
 						} catch (ParseException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 					}else if(p.equals(templateEndTime)){
 						try {
-							endTime = new SimpleDateFormat(Constants.DATE_Format, Locale.ENGLISH).parse(o);
+							endTime = new SimpleDateFormat(GlobalSettings.DATE_Format, Locale.ENGLISH).parse(o);
 						} catch (ParseException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
@@ -406,7 +406,7 @@ public class LODResourceFactory {
 	private ObjectTypes getObjectType(String type){
 		ObjectTypes res = ObjectTypes.UNKNOWN;
 
-		Map<String,String> map = Constants.ONTOLOGY_OBJECTS_MAPPING;
+		Map<String,String> map = GlobalSettings.ONTOLOGY_OBJECTS_MAPPING;
 		//Gets the object type as string from the mapping
 		String tmpObjectType = null;
 		for (String key : map.keySet()) {
@@ -452,8 +452,8 @@ public class LODResourceFactory {
 
 	public ArrayList<URI> getListGraphs(URI endpoint){
 
-		Query query = QueryFactory.create(Constants.SPARQL_ListAvailableGraphs);
-		QueryExecution qexec = QueryExecutionFactory.sparqlService(Constants.SII_Lecture_Endpoint, query);
+		Query query = QueryFactory.create(GlobalSettings.SPARQL_ListAvailableGraphs);
+		QueryExecution qexec = QueryExecutionFactory.sparqlService(GlobalSettings.CurrentSPARQLEndpoint, query);
 
 		ArrayList<URI> result = new ArrayList<URI>();
 
@@ -489,8 +489,8 @@ public class LODResourceFactory {
 	
 	public ArrayList<SOSFeatureOfInterest> listFeaturesOfInterest(SOSProperty property){
 
-		JenaConnector cnn = new JenaConnector(Constants.SII_Lecture_Endpoint);
-		ResultSet rs = cnn.executeSPARQLQuery(Constants.listFeaturesOfInterest.replace("PARAM_PROPERTY", property.getUri().toString()));
+		JenaConnector cnn = new JenaConnector(GlobalSettings.CurrentSPARQLEndpoint);
+		ResultSet rs = cnn.executeSPARQLQuery(GlobalSettings.listFeaturesOfInterest.replace("PARAM_PROPERTY", property.getUri().toString()));
 		ArrayList<SOSFeatureOfInterest> result = new ArrayList<SOSFeatureOfInterest>();
 		SOSFeatureOfInterest foi = new SOSFeatureOfInterest();
 
@@ -515,8 +515,8 @@ public class LODResourceFactory {
 	
 	public SOSObservation getFOILastObservation(SOSFeatureOfInterest featureOfInterest){
 
-		JenaConnector cnn = new JenaConnector(Constants.SII_Lecture_Endpoint);
-		ResultSet rs = cnn.executeSPARQLQuery(Constants.geFOILastObservation.replace("PARAM_FOI", featureOfInterest.getUri().toString()));
+		JenaConnector cnn = new JenaConnector(GlobalSettings.CurrentSPARQLEndpoint);
+		ResultSet rs = cnn.executeSPARQLQuery(GlobalSettings.geFOILastObservation.replace("PARAM_FOI", featureOfInterest.getUri().toString()));
 						
 		ArrayList<SOSFeatureOfInterest> feature = new ArrayList<SOSFeatureOfInterest>();
 		ArrayList<SOSSensorOutput> sensorOutput = new ArrayList<SOSSensorOutput>();
@@ -556,10 +556,10 @@ public class LODResourceFactory {
 	
 	public ArrayList<SOSObservation> getObservationTimeInterval(SOSFeatureOfInterest featureOfInterest, TimeInterval interval){
 		
-		JenaConnector cnn = new JenaConnector(Constants.SII_Lecture_Endpoint);
+		JenaConnector cnn = new JenaConnector(GlobalSettings.CurrentSPARQLEndpoint);
 		
 		String query = new String();
-		query = Constants.getObservationsbyTimeInterval.replace("PARAM_DATE1", interval.getStartDate());
+		query = GlobalSettings.getObservationsbyTimeInterval.replace("PARAM_DATE1", interval.getStartDate());
 		query = query.replace("PARAM_DATE2", interval.getEndDate());
 		query = query.replace("PARAM_FOI", featureOfInterest.getUri().toString());
 		
