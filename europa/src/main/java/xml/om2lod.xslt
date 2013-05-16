@@ -18,17 +18,11 @@
 	xmlns:gr="http://purl.org/goodrelations/v1#" 
 	xmlns:my="http://ifgi.uni-muenster.de/hydrolod#">
 	
-
-
-
-
-
 	<xsl:template match="/">
 		<rdf:RDF>
 			<xsl:apply-templates/>
 		</rdf:RDF>
 	</xsl:template>
-	
 	
 	
 	<!-- IGNORE LIST -->
@@ -38,6 +32,7 @@
 					| /om:ObservationCollection/om:member/om:Observation/om:samplingTime/gml:TimePeriod/gml:beginPosition
 					| /om:ObservationCollection/om:member/om:Observation/om:samplingTime/gml:TimePeriod/gml:endPosition
 					| /om:ObservationCollection/om:member/om:Observation/om:observedProperty/swe:CompositePhenomenon/*
+					| /om:ObservationCollection/om:member/om:Observation/om:result/swe:DataArray/swe:elementCount/* 
 					| /om:ObservationCollection/om:member/om:Observation/om:featureOfInterest/gml:FeatureCollection/gml:boundedBy/gml:Envelope/* 
 					| /om:ObservationCollection/om:member/om:Observation/om:featureOfInterest/gml:FeatureCollection/gml:featureMember/sa:SamplingPoint/gml:description 
 					| /om:ObservationCollection/om:member/om:Observation/om:featureOfInterest/gml:FeatureCollection/gml:featureMember/sa:SamplingPoint/gml:name 
@@ -110,7 +105,7 @@
 			<rdf:Description>
 				<xsl:attribute name="rdf:about"><xsl:value-of select="$PropertyId" /></xsl:attribute>
 				<rdf:type rdf:resource="purl:Property" />
-				<rdfs:label><xsl:copy-of select="./@name" /></rdfs:label>
+				<rdfs:label><xsl:value-of select="./@name" /></rdfs:label>
 				<gr:hasUnitOfMeasurement>
 					<xsl:if test="./*/swe:uom/@code | ./*/swe2:uom/@code">
 						<xsl:value-of select="./*/swe:uom/@code | ./*/swe2:uom/@code" />
@@ -230,41 +225,6 @@
 		</xsl:call-template>
 	</xsl:template>
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-
-
-	
-	
-	
 	<!-- PARSING DATA ARRAY -->
 	<xsl:template name="processDataArray">
 		<xsl:param name="dataArray" /><!-- text to process -->
@@ -274,8 +234,20 @@
 		<xsl:param name="daCount" />
 		
 		<xsl:param name="normDataArray" select="normalize-space(string($dataArray))" />
-		<xsl:param name="remainingDataArray" select="substring-after($normDataArray, $rowSep)" /><!-- All rows except the 1st -->
-		<xsl:param name="row" select="substring-before($normDataArray, $rowSep)" /><!-- Current row -->
+<!-- All rows except the 1st -->
+<!-- EL PROBLEMA SE DA AL USAR ENTER COMO SEPARADOR DE ROWS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
+<xsl:param name="remainingDataArray" select="substring-after($normDataArray, $rowSep)" />
+
+		<xsl:param name="row"><!-- Current row -->
+			<xsl:choose>
+				<xsl:when test="contains($normDataArray, $rowSep)">
+					<xsl:value-of select="substring-before($normDataArray, $rowSep)" />
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:value-of select="$normDataArray" />
+				</xsl:otherwise>
+			</xsl:choose>
+		</xsl:param> 
 		
 		<xsl:choose>
 			<xsl:when test="string-length(string($normDataArray)) &gt; 0"><!-- Termination condition -->
@@ -283,25 +255,23 @@
 <!-- ****************************************************************************************************** -->
 <xsl:variable name="SensorOutputId" select="$daCount" /><!-- XSLT RANDOM NUMBERS??????????????????????????????????????????????? -->
 <!-- ****************************************************************************************************** -->
-<!-- 
-EL PROBLEMA SE DA AL USAR ENTER COMO SEPARADOR DE ROWS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
- -->
 				<rdf:Description>
  					<xsl:attribute name="rdf:about"><xsl:value-of select="concat('my:OBSERVATION_', $ObservationId)" /></xsl:attribute>
 					<purl:observationResult>
 						<rdf:Description>
-							<xsl:attribute name="rdf:about"><xsl:value-of select="concat('my:SENSOR_OUTPUT_', $SensorOutputId)" /></xsl:attribute>
+							<xsl:attribute name="rdf:about"><xsl:value-of select="concat('my:SENSOR_OUTPUT_', $ObservationId, '_', $SensorOutputId)" /></xsl:attribute>							
 						</rdf:Description>
 					</purl:observationResult>
 				</rdf:Description>
 				<rdf:Description>
-					<xsl:attribute name="rdf:about"><xsl:value-of select="concat('my:SENSOR_OUTPUT_', $SensorOutputId)" /></xsl:attribute>
+					<xsl:attribute name="rdf:about"><xsl:value-of select="concat('my:SENSOR_OUTPUT_', $ObservationId, '_', $SensorOutputId)" /></xsl:attribute>
 					<rdf:type rdf:resource="purl:SensorOutput" />
 				</rdf:Description>
 				<!-- Goes for the observed values --> 
 				<xsl:call-template name="processDataRow">
 					<xsl:with-param name="dataRow" select="$row" />
 					<xsl:with-param name="tokenSep" select="$tokenSep" />
+					<xsl:with-param name="ObservationId" select="$ObservationId" />
 					<xsl:with-param name="SensorOutputId" select="$SensorOutputId" />
 					<xsl:with-param name="drCount" select="1" />
 				</xsl:call-template>
@@ -322,30 +292,47 @@ EL PROBLEMA SE DA AL USAR ENTER COMO SEPARADOR DE ROWS!!!!!!!!!!!!!!!!!!!!!!!!!!
 	<xsl:template name="processDataRow">
 		<xsl:param name="dataRow" /><!-- text to process -->
 		<xsl:param name="tokenSep" /><!-- Token separator -->
+		<xsl:param name="ObservationId" />
 		<xsl:param name="SensorOutputId" />
 		<xsl:param name="drCount" />
-	
 		<xsl:param name="normDataRow" select="normalize-space(string($dataRow))" />
 		<xsl:param name="remainingDataRow" select="substring-after($normDataRow, $tokenSep)" /><!-- All tokens except the 1st -->
-		<xsl:param name="token" select="substring-before($normDataRow, $tokenSep)" /><!-- Current token -->
+		<xsl:param name="token"><!-- Current token -->
+			<xsl:choose>
+				<xsl:when test="contains($normDataRow, $tokenSep)">
+					<xsl:value-of select="substring-before($normDataRow, $tokenSep)" />
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:value-of select="$normDataRow" />
+				</xsl:otherwise>
+			</xsl:choose>
+		</xsl:param>
 		
 		<xsl:choose>
 			<xsl:when test="string-length(string($normDataRow)) &gt; 0"><!-- Termination condition -->
 				<!-- Operation code -->
-	<!-- ****************************************************************************************************** -->			
-	<xsl:variable name="ObservedValueId" select="$drCount" /><!-- XSLT RANDOM NUMBERS??????????????????????????????????????????????? -->
-	<!-- ****************************************************************************************************** -->
+<!-- ****************************************************************************************************** -->			
+<xsl:variable name="ObservedValueId" select="$drCount" /><!-- XSLT RANDOM NUMBERS??????????????????????????????????????????????? -->
+<!-- ****************************************************************************************************** -->
 				<rdf:Description>
-					<xsl:attribute name="rdf:about"><xsl:value-of select="concat('my:SENSOR_OUTPUT_', $SensorOutputId)" /></xsl:attribute>
+					<xsl:attribute name="rdf:about"><xsl:value-of select="concat('my:SENSOR_OUTPUT_', $ObservationId, '_', $SensorOutputId)" /></xsl:attribute>
 					<purl:hasValue>
 						<rdf:Description>
-							<xsl:attribute name="rdf:about"><xsl:value-of select="concat('my:OBS_VALUE_', $SensorOutputId, '_', $ObservedValueId)" /></xsl:attribute>
+							<xsl:attribute name="rdf:about"><xsl:value-of select="concat('my:OBS_VALUE_', $ObservationId, '_', $SensorOutputId, '_', $ObservedValueId)" /></xsl:attribute>
 						</rdf:Description>
-					</purl:hasValue>		
+					</purl:hasValue>
 				</rdf:Description>
 				<rdf:Description>
-					<xsl:attribute name="rdf:about"><xsl:value-of select="concat('my:OBS_VALUE_', $SensorOutputId, '_', $ObservedValueId)" /></xsl:attribute>
+					<xsl:variable name="PropertyId" select="../swe:elementType/swe:DataRecord/swe:field[not (descendant::swe2:value)][$drCount]/*/@definition
+														  | ../swe2:elementType/swe2:DataRecord/swe2:field[not (descendant::swe2:value)][$drCount]/*/@definition" />
+
+					<xsl:attribute name="rdf:about"><xsl:value-of select="concat('my:OBS_VALUE_', $ObservationId, '_', $SensorOutputId, '_', $ObservedValueId)" /></xsl:attribute>
 					<rdf:type rdf:resource="purl:ObservationValue" />
+					<purl:forProperty>
+						<rdf:Description>
+							<xsl:attribute name="rdf:about"><xsl:value-of select="$PropertyId" /></xsl:attribute>
+						</rdf:Description>
+					</purl:forProperty>
 					<purl:hasValue>
 						<xsl:value-of select="$token" />
 					</purl:hasValue>
@@ -354,15 +341,12 @@ EL PROBLEMA SE DA AL USAR ENTER COMO SEPARADOR DE ROWS!!!!!!!!!!!!!!!!!!!!!!!!!!
 				<xsl:call-template name="processDataRow">
 					<xsl:with-param name="dataRow" select="$remainingDataRow" />
 					<xsl:with-param name="tokenSep" select="$tokenSep" />
+					<xsl:with-param name="ObservationId" select="$ObservationId" />
 					<xsl:with-param name="SensorOutputId" select="$SensorOutputId" />
 					<xsl:with-param name="drCount" select="$drCount + 1" />
 				</xsl:call-template>
 			</xsl:when>
 		</xsl:choose>
 	</xsl:template>	
-
-	
-		
-	
 	
 </xsl:stylesheet>
