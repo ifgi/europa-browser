@@ -56,7 +56,7 @@ TRANSFORMATION OF A SOS GET OBSERVATION RESPONSE TO RDF TRIPLES
 		<xsl:variable name="PropertyId" select="/om:ObservationCollection/om:member/om:Observation/om:result/swe:DataArray/swe:elementType/swe:DataRecord/swe:field/*/@definition |
 												/om:ObservationCollection/om:member/om:Observation/om:result/swe2:DataStream/swe2:elementType/swe2:DataRecord/swe2:field/*/@definition" />
 		<rdf:Description>
-			<xsl:attribute name="rdf:about"><xsl:value-of select="concat('my:OBSERVATION_', $ObservationId)" /></xsl:attribute>
+			<xsl:attribute name="rdf:about"><xsl:value-of select="concat('http://ifgi.uni-muenster.de/hydrolod#', 'OBSERVATION_', $ObservationId)" /></xsl:attribute>
 				<rdf:type rdf:resource="http://purl.oclc.org/NET/ssnx/ssn#Observation" />
 			<rdfs:label><xsl:copy-of select="concat('OBSERVATION_',$ObservationId)" /></rdfs:label>
 			<purl:startTime rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime"><xsl:value-of select="./om:samplingTime/gml:TimePeriod/gml:beginPosition"/></purl:startTime>
@@ -70,11 +70,21 @@ TRANSFORMATION OF A SOS GET OBSERVATION RESPONSE TO RDF TRIPLES
 	<!-- SENSING -->
 	<!-- **************************************************************** -->
 	<xsl:template match="/om:ObservationCollection/om:member/om:Observation/om:procedure">
-		<xsl:variable name="SensingId" select="./@xlink:href | ./om:Process/gml:member/@xlink:href" />
+		<xsl:variable name="SensingIdTest" select="./@xlink:href | ./om:Process/gml:member/@xlink:href" />
+		<xsl:variable name="SensingId">
+				<xsl:choose>
+				<xsl:when test="contains($SensingIdTest, 'http://')">
+					<xsl:value-of select="$SensingIdTest" />
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:value-of select="concat('http://ifgi.uni-muenster.de/hydrolod#', $SensingIdTest)" />
+				</xsl:otherwise>
+			</xsl:choose>
+		</xsl:variable>		
 		<!-- Incoming relations -->
 		<rdf:Description>
 			<xsl:variable name="ObservationId" select="generate-id(..)" />
-			<xsl:attribute name="rdf:about"><xsl:value-of select="concat('my:OBSERVATION_', $ObservationId)" /></xsl:attribute>
+			<xsl:attribute name="rdf:about"><xsl:value-of select="concat('http://ifgi.uni-muenster.de/hydrolod#', 'OBSERVATION_', $ObservationId)" /></xsl:attribute>
 			<purl:sensingMethodUsed>
 				<rdf:Description>
 					<xsl:attribute name="rdf:about"><xsl:value-of select="$SensingId" /></xsl:attribute>
@@ -108,7 +118,7 @@ TRANSFORMATION OF A SOS GET OBSERVATION RESPONSE TO RDF TRIPLES
 			<xsl:variable name="ObservationId" select="generate-id(../../../../..)" />
 			<!-- Incoming relations -->
 			<rdf:Description>
-				<xsl:attribute name="rdf:about"><xsl:value-of select="concat('my:OBSERVATION_', $ObservationId)" /></xsl:attribute>
+				<xsl:attribute name="rdf:about"><xsl:value-of select="concat('http://ifgi.uni-muenster.de/hydrolod#', 'OBSERVATION_', $ObservationId)" /></xsl:attribute>
 				<purl:observedProperty>
 					<rdf:Description>
 						<xsl:attribute name="rdf:about"><xsl:value-of select="$PropertyId" /></xsl:attribute>
@@ -135,8 +145,18 @@ TRANSFORMATION OF A SOS GET OBSERVATION RESPONSE TO RDF TRIPLES
 				<!-- links -->
 				<purl:isPropertyOf>
 					<rdf:Description>
-						<xsl:variable name="FoiId" select="../../../../../om:featureOfInterest/gml:FeatureCollection/gml:featureMember/sa:SamplingPoint/@gml:id | 
-												   		   ../../../../../om:featureOfInterest/gml:FeatureCollection/gml:location/gml:MultiPoint/gml:pointMembers/gml:Point/gml:name" />
+						<xsl:variable name="FoiIdTest" select="../../../../../om:featureOfInterest/gml:FeatureCollection/gml:featureMember/sa:SamplingPoint/@gml:id | 
+												   			   ../../../../../om:featureOfInterest/gml:FeatureCollection/gml:location/gml:MultiPoint/gml:pointMembers/gml:Point/gml:name" />
+						<xsl:variable name="FoiId" >						   		   
+							<xsl:choose>
+								<xsl:when test="contains($FoiIdTest, 'http://')">
+									<xsl:value-of select="$FoiIdTest" />
+								</xsl:when>
+								<xsl:otherwise>
+									<xsl:value-of select="concat('http://ifgi.uni-muenster.de/hydrolod#', $FoiIdTest)" />
+								</xsl:otherwise>
+							</xsl:choose>
+						</xsl:variable>			   		   
 						<xsl:attribute name="rdf:about"><xsl:value-of select="$FoiId" /></xsl:attribute>
 					</rdf:Description>
 				</purl:isPropertyOf>				
@@ -149,12 +169,22 @@ TRANSFORMATION OF A SOS GET OBSERVATION RESPONSE TO RDF TRIPLES
 	<!-- FEATURE OF INTEREST -->
 	<!-- **************************************************************** -->
 	<xsl:template match="/om:ObservationCollection/om:member/om:Observation/om:featureOfInterest">
-		<xsl:variable name="FoiId" select="./gml:FeatureCollection/gml:featureMember/sa:SamplingPoint/@gml:id | 
+		<xsl:variable name="FoiIdTest" select="./gml:FeatureCollection/gml:featureMember/sa:SamplingPoint/@gml:id | 
 								   		   ./gml:FeatureCollection/gml:location/gml:MultiPoint/gml:pointMembers/gml:Point/gml:name" />
+		<xsl:variable name="FoiId" >						   		   
+			<xsl:choose>
+				<xsl:when test="contains($FoiIdTest, 'http://')">
+					<xsl:value-of select="$FoiIdTest" />
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:value-of select="concat('http://ifgi.uni-muenster.de/hydrolod#', $FoiIdTest)" />
+				</xsl:otherwise>
+			</xsl:choose>
+		</xsl:variable>
 		<!-- Incoming relations -->
 		<rdf:Description>
 			<xsl:variable name="ObservationId" select="generate-id(..)" />
-			<xsl:attribute name="rdf:about"><xsl:value-of select="concat('my:OBSERVATION_', $ObservationId)" /></xsl:attribute>
+			<xsl:attribute name="rdf:about"><xsl:value-of select="concat('http://ifgi.uni-muenster.de/hydrolod#', 'OBSERVATION_', $ObservationId)" /></xsl:attribute>
 			<purl:featureOfInterest>
 				<rdf:Description>
 					<xsl:attribute name="rdf:about"><xsl:value-of select="$FoiId" /></xsl:attribute>
@@ -191,12 +221,22 @@ TRANSFORMATION OF A SOS GET OBSERVATION RESPONSE TO RDF TRIPLES
 		<xsl:variable name="PointId" select="generate-id()" />
 		<!-- Incoming relations -->
 		<rdf:Description>
-		<xsl:variable name="FoiId" select="../../@gml:id | 
-								   		   ./gml:name" />
+			<xsl:variable name="FoiIdTest" select="../../@gml:id | 
+									   		   ./gml:name" />
+			<xsl:variable name="FoiId">
+				<xsl:choose>
+					<xsl:when test="contains($FoiIdTest, 'http://')">
+						<xsl:value-of select="$FoiIdTest" />
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:value-of select="concat('http://ifgi.uni-muenster.de/hydrolod#', $FoiIdTest)" />
+					</xsl:otherwise>
+				</xsl:choose>
+			</xsl:variable> 		   
 			<xsl:attribute name="rdf:about"><xsl:value-of select="$FoiId" /></xsl:attribute>
 			<geo:defaultGeometry>
 				<rdf:Description>
-					<xsl:attribute name="rdf:about"><xsl:value-of select="concat('my:POINT_', $PointId)" /></xsl:attribute>
+					<xsl:attribute name="rdf:about"><xsl:value-of select="concat('http://ifgi.uni-muenster.de/hydrolod#', 'POINT_', $PointId)" /></xsl:attribute>
 				</rdf:Description>
 			</geo:defaultGeometry>
 		</rdf:Description>
@@ -204,7 +244,7 @@ TRANSFORMATION OF A SOS GET OBSERVATION RESPONSE TO RDF TRIPLES
 		<rdf:Description>
 			<xsl:variable name="SrsId" select="./gml:pos/@srsName |
 											   ../../@srsName" />
-			<xsl:attribute name="rdf:about"><xsl:value-of select="concat('my:POINT_', $PointId)" /></xsl:attribute>
+			<xsl:attribute name="rdf:about"><xsl:value-of select="concat('http://ifgi.uni-muenster.de/hydrolod#', 'POINT_', $PointId)" /></xsl:attribute>
 			<rdf:type rdf:resource="geo:Point" />
 			<rdfs:label><xsl:copy-of select="concat('POINT_', $PointId)" /></rdfs:label>
 			<geo:asWKT rdf:datatype="http://www.opengis.net/def/geosparql/wktLiteral">
@@ -246,7 +286,7 @@ TRANSFORMATION OF A SOS GET OBSERVATION RESPONSE TO RDF TRIPLES
 		<xsl:param name="tokenSep" /><!-- Token separator -->
 		<xsl:param name="ObservationId" />
 		<xsl:param name="daCount" />
-		
+
 		<xsl:param name="normDataArray" select="normalize-space(string($dataArray))" />
 <!-- All rows except the 1st -->
 <!-- EL PROBLEMA SE DA AL USAR ENTER COMO SEPARADOR DE ROWS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
@@ -270,15 +310,15 @@ TRANSFORMATION OF A SOS GET OBSERVATION RESPONSE TO RDF TRIPLES
 <xsl:variable name="SensorOutputId" select="$daCount" /><!-- XSLT RANDOM NUMBERS??????????????????????????????????????????????? -->
 <!-- ****************************************************************************************************** -->
 				<rdf:Description>
- 					<xsl:attribute name="rdf:about"><xsl:value-of select="concat('my:OBSERVATION_', $ObservationId)" /></xsl:attribute>
+ 					<xsl:attribute name="rdf:about"><xsl:value-of select="concat('http://ifgi.uni-muenster.de/hydrolod#', 'OBSERVATION_', $ObservationId)" /></xsl:attribute>
 					<purl:observationResult>
 						<rdf:Description>
-							<xsl:attribute name="rdf:about"><xsl:value-of select="concat('my:SENSOR_OUTPUT_', $ObservationId, '_', $SensorOutputId)" /></xsl:attribute>							
+							<xsl:attribute name="rdf:about"><xsl:value-of select="concat('http://ifgi.uni-muenster.de/hydrolod#', 'SENSOR_OUTPUT_', $ObservationId, '_', $SensorOutputId)" /></xsl:attribute>							
 						</rdf:Description>
 					</purl:observationResult>
 				</rdf:Description>
 				<rdf:Description>
-					<xsl:attribute name="rdf:about"><xsl:value-of select="concat('my:SENSOR_OUTPUT_', $ObservationId, '_', $SensorOutputId)" /></xsl:attribute>
+					<xsl:attribute name="rdf:about"><xsl:value-of select="concat('http://ifgi.uni-muenster.de/hydrolod#', 'SENSOR_OUTPUT_', $ObservationId, '_', $SensorOutputId)" /></xsl:attribute>
 					<rdf:type rdf:resource="http://purl.oclc.org/NET/ssnx/ssn#SensorOutput" />
 				</rdf:Description>
 				<!-- Goes for the observed values --> 
@@ -322,6 +362,7 @@ TRANSFORMATION OF A SOS GET OBSERVATION RESPONSE TO RDF TRIPLES
 			</xsl:choose>
 		</xsl:param>
 		
+		
 		<xsl:choose>
 			<xsl:when test="string-length(string($normDataRow)) &gt; 0"><!-- Termination condition -->
 				<!-- Operation code -->
@@ -329,10 +370,10 @@ TRANSFORMATION OF A SOS GET OBSERVATION RESPONSE TO RDF TRIPLES
 <xsl:variable name="ObservedValueId" select="$drCount" /><!-- XSLT RANDOM NUMBERS??????????????????????????????????????????????? -->
 <!-- ****************************************************************************************************** -->
 				<rdf:Description>
-					<xsl:attribute name="rdf:about"><xsl:value-of select="concat('my:SENSOR_OUTPUT_', $ObservationId, '_', $SensorOutputId)" /></xsl:attribute>
+					<xsl:attribute name="rdf:about"><xsl:value-of select="concat('http://ifgi.uni-muenster.de/hydrolod#' , 'SENSOR_OUTPUT_', $ObservationId, '_', $SensorOutputId)" /></xsl:attribute>
 					<purl:hasValue>
 						<rdf:Description>
-							<xsl:attribute name="rdf:about"><xsl:value-of select="concat('my:OBS_VALUE_', $ObservationId, '_', $SensorOutputId, '_', $ObservedValueId)" /></xsl:attribute>
+							<xsl:attribute name="rdf:about"><xsl:value-of select="concat('http://ifgi.uni-muenster.de/hydrolod#', 'OBS_VALUE_', $ObservationId, '_', $SensorOutputId, '_', $ObservedValueId)" /></xsl:attribute>
 						</rdf:Description>
 					</purl:hasValue>
 				</rdf:Description>
@@ -349,7 +390,7 @@ TRANSFORMATION OF A SOS GET OBSERVATION RESPONSE TO RDF TRIPLES
 							</xsl:otherwise>
 						</xsl:choose>
 					</xsl:variable>
-					<xsl:attribute name="rdf:about"><xsl:value-of select="concat('my:OBS_VALUE_', $ObservationId, '_', $SensorOutputId, '_', $ObservedValueId)" /></xsl:attribute>
+					<xsl:attribute name="rdf:about"><xsl:value-of select="concat('http://ifgi.uni-muenster.de/hydrolod#', 'OBS_VALUE_', $ObservationId, '_', $SensorOutputId, '_', $ObservedValueId)" /></xsl:attribute>
 					<rdf:type rdf:resource="http://purl.oclc.org/NET/ssnx/ssn#ObservationValue" />
 					<purl:forProperty>
 						<rdf:Description>
