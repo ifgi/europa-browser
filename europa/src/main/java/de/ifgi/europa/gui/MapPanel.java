@@ -37,6 +37,7 @@ public class MapPanel extends JPanel {
 	final MarkerLayer layer = new MarkerLayer();
 	final LayerList ll = new LayerList();
 	final WorldWindowGLCanvas wwd = new WorldWindowGLCanvas();
+	private ArrayList<Marker> markers = new ArrayList<Marker>();
 	
 	public MapPanel(MainFrame mF) {
 		super(new GridLayout(1, 1));
@@ -103,6 +104,12 @@ public class MapPanel extends JPanel {
 		});
 	}
 	
+	public void clearMarkers() {
+		markers.clear();
+		layer.setMarkers(markers);
+		wwd.redrawNow();
+	}
+	
 	public void updateGlobe(SOSObservation observation) {
 		String wkt = observation.getFeatureOfInterest().getDefaultGeometry().getAsWKT();
 		String[] splitArray = wkt.split("\\s+");
@@ -110,10 +117,9 @@ public class MapPanel extends JPanel {
 		String[] splitArrayLon = splitArray[1].split("\\)");
 		Double lat = Double.parseDouble(splitArrayLat[1]);
 		Double lon = Double.parseDouble(splitArrayLon[0]);
-		ArrayList<Marker> markers = new ArrayList<Marker>();
+		
         Marker marker = new BasicMarker(Position.fromDegrees(Double.parseDouble(splitArrayLat[1]), Double.parseDouble(splitArrayLon[0]), 0), new BasicMarkerAttributes(Material.YELLOW, BasicMarkerShape.ORIENTED_CYLINDER_LINE, 0.9));
         marker.setPosition(Position.fromDegrees(lat, lon, 0));
-        marker.setHeading(Angle.fromDegrees(52 * 5));
         markers.add(marker);
         layer.setMarkers(markers);
         wwd.redrawNow();

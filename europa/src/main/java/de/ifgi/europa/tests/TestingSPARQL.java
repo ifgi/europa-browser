@@ -6,7 +6,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 
-import de.ifgi.europa.constants.Constants;
 import de.ifgi.europa.core.LODResource;
 import de.ifgi.europa.core.SOSFeatureOfInterest;
 import de.ifgi.europa.core.SOSObservation;
@@ -15,6 +14,7 @@ import de.ifgi.europa.core.SOSSensing;
 import de.ifgi.europa.core.TimeInterval;
 import de.ifgi.europa.facade.Facade;
 import de.ifgi.europa.factory.LODResourceFactory;
+import de.ifgi.europa.settings.GlobalSettings;
 
 public class TestingSPARQL {
 
@@ -88,7 +88,7 @@ public class TestingSPARQL {
 		
 		
 		ArrayList<URI> uris = new ArrayList<URI>();
-		uris = facade.getListGraphs(URI.create(Constants.SII_Lecture_Endpoint));
+		uris = facade.getListGraphs(URI.create(GlobalSettings.CurrentSPARQLEndpoint));
 		
 		for (int i = 0; i < uris.size(); i++) {
 			try {

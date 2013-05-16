@@ -1,15 +1,16 @@
-package de.ifgi.europa.constants;
+package de.ifgi.europa.settings;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Constants {
+public class GlobalSettings {
 
 	/**
 	 * Address to sample SPARQL Endpoints 
 	 */
-	public static String SII_Lecture_Endpoint = "http://giv-siidemo.uni-muenster.de:8081/parliament/sparql";
+	public static String CurrentSPARQLEndpoint = "http://giv-siidemo.uni-muenster.de:8081/parliament/sparql";
+	public static String CurrentNamedGraph = "";
 	public static String LinkedScience_Endpoint = "http://spatial.linkedscience.org/sparql";
 
 	/**
