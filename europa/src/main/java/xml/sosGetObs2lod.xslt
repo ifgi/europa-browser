@@ -97,7 +97,7 @@
 						<xsl:value-of select="$PropertyIdTest" />
 					</xsl:when>
 					<xsl:otherwise>
-						<xsl:value-of select="concat('my:', $PropertyIdTest)" />
+						<xsl:value-of select="concat('http://ifgi.uni-muenster.de/hydrolod#', $PropertyIdTest)" />
 					</xsl:otherwise>
 				</xsl:choose>
 			</xsl:variable>
@@ -333,9 +333,18 @@
 					</purl:hasValue>
 				</rdf:Description>
 				<rdf:Description>
-					<xsl:variable name="PropertyId" select="../swe:elementType/swe:DataRecord/swe:field[not (descendant::swe2:value)][$drCount]/*/@definition
-														  | ../swe2:elementType/swe2:DataRecord/swe2:field[not (descendant::swe2:value)][$drCount]/*/@definition" />
-
+					<xsl:variable name="PropertyIdTest"><xsl:value-of select="../swe:elementType/swe:DataRecord/swe:field[not (descendant::swe2:value)][$drCount]/*/@definition
+				  														     | ../swe2:elementType/swe2:DataRecord/swe2:field[not (descendant::swe2:value)][$drCount]/*/@definition" /></xsl:variable>
+					<xsl:variable name="PropertyId">
+						<xsl:choose>
+							<xsl:when test="contains($PropertyIdTest, 'http://')">
+								<xsl:value-of select="$PropertyIdTest" />
+							</xsl:when>
+							<xsl:otherwise>
+								<xsl:value-of select="concat('http://ifgi.uni-muenster.de/hydrolod#', $PropertyIdTest)" />
+							</xsl:otherwise>
+						</xsl:choose>
+					</xsl:variable>
 					<xsl:attribute name="rdf:about"><xsl:value-of select="concat('my:OBS_VALUE_', $ObservationId, '_', $SensorOutputId, '_', $ObservedValueId)" /></xsl:attribute>
 					<rdf:type rdf:resource="http://purl.oclc.org/NET/ssnx/ssn#ObservationValue" />
 					<purl:forProperty>

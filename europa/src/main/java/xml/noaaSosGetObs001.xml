@@ -123,8 +123,14 @@ Query: GetObservation Water Temperature (Time series)
 						</swe2:DataRecord>
 					</swe2:elementType>
 					<swe2:encoding>
-						<swe2:TextEncoding decimalSeparator="."
-							tokenSeparator="," blockSeparator="&amp;#10;" />
+						<swe2:TextEncoding decimalSeparator="." tokenSeparator="," blockSeparator="&amp;#10;" />
+						<!-- <swe2:TextEncoding decimalSeparator="." tokenSeparator="," blockSeparator="&#x0a;" />
+						<swe2:TextEncoding decimalSeparator="." tokenSeparator="," blockSeparator="&#xA;" />
+						<swe2:TextEncoding decimalSeparator="." tokenSeparator="," blockSeparator="&#10;" /> 
+						<swe2:TextEncoding decimalSeparator="." tokenSeparator="," blockSeparator="'&#10;'" />
+						<swe2:TextEncoding decimalSeparator="." tokenSeparator="," blockSeparator=";" />
+						 -->
+						
 					</swe2:encoding>
 					<swe2:values>2012-11-01T00:50:00Z,urn:ioos:sensor:wmo:41012::watertemp1,25.30
 						2012-11-01T01:50:00Z,urn:ioos:sensor:wmo:41012::watertemp1,25.40
