@@ -1,16 +1,16 @@
 package de.ifgi.europa.gui;
 
 import java.awt.BorderLayout;
-import java.awt.Image;
+import java.awt.Component;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
-
-import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
+
+import net.sourceforge.jdatepicker.JDateComponentFactory;
+import net.sourceforge.jdatepicker.JDatePicker;
 
 public class awTip extends JPanel {
 //	Image imgPlay = null;
@@ -27,6 +27,17 @@ public class awTip extends JPanel {
 //			// TODO Auto-generated catch block
 //			e1.printStackTrace();
 //		}
+		JDatePicker dpFrom;
+		dpFrom = JDateComponentFactory.createJDatePicker();
+		dpFrom.setTextEditable(true);
+		dpFrom.setShowYearButtons(true);
+		
+		JDatePicker dpUntil;
+		dpUntil = JDateComponentFactory.createJDatePicker();
+		dpUntil.setTextEditable(true);
+		dpUntil.setShowYearButtons(true);
+		
+		JPanel pnlTime = new JPanel(new GridLayout(2, 1));
 		
 		slider.setMinorTickSpacing(2);
 		slider.setMajorTickSpacing(10);
@@ -37,6 +48,19 @@ public class awTip extends JPanel {
 		
 		add(btnPlay, BorderLayout.PAGE_START);
 		add(slider, BorderLayout.CENTER);
+		pnlTime.add((Component) dpFrom);
+		pnlTime.add((Component) dpUntil);
+		
+		add(pnlTime, BorderLayout.SOUTH);
+		
+		dpFrom.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				System.out.println("test");
+				
+			}
+		});
 		
 		int delay = 1000;
 		ActionListener taskPerformer = new ActionListener() {
