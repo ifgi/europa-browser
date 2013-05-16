@@ -9,9 +9,9 @@ public class GlobalSettings {
 	/**
 	 * Address to sample SPARQL Endpoints 
 	 */
-	public static String CurrentSPARQLEndpoint = "http://giv-siidemo.uni-muenster.de:8081/parliament/sparql";
+	public static String CurrentSPARQLEndpoint = "";
 	public static String CurrentNamedGraph = "";
-	public static String LinkedScience_Endpoint = "http://spatial.linkedscience.org/sparql";
+	//public static String LinkedScience_Endpoint = "http://spatial.linkedscience.org/sparql";
 
 	/**
 	 * Lists all graphs available in the triple store.
@@ -44,7 +44,7 @@ public class GlobalSettings {
 	
 	public static String listFeaturesOfInterest = prefixes +
 			" SELECT ?foi  " +
-			" WHERE { <PARAM_PROPERTY> purl:isPropertyOf ?foi } ";
+			" WHERE { GRAPH <PARAM_GRAPH> {<PARAM_PROPERTY> purl:isPropertyOf ?foi }} ";
 
 	/**
 	 * Retrieves the last observation for a given feature of interest (SOSFeatureOfInterest)
@@ -52,8 +52,8 @@ public class GlobalSettings {
 	 */
 	
 	public static String geFOILastObservation = prefixes +
-			" SELECT  ?wkt ?value " + 
-			" WHERE { " +
+			" SELECT  ?wkt ?value ?samplingTime " + 
+			" WHERE { GRAPH <PARAM_GRAPH> { " +
 			"   ?property purl:isPropertyOf ?foi . " +
 			"   ?property purl:isPropertyOf <PARAM_FOI> ." +
 			"   ?observation purl:featureOfInterest ?foi . " +
@@ -61,10 +61,11 @@ public class GlobalSettings {
 			"   ?observation purl:startTime ?start . " +
 			"   ?observation purl:endTime ?end . " +
 			"   ?sensorOutput purl:hasValue ?observationValue . " +
+			"   ?sensorOutput purl:observationSamplingTime ?samplingTime . " +
 			"   ?observationValue purl:hasValue ?value . " +
 			"   ?foi geo:defaultGeometry ?point . " +
 			"   ?point geo:asWKT ?wkt  . " +
-			"} ORDER BY DESC(?end) LIMIT 1";
+			"} } ORDER BY DESC(?end) LIMIT 1";
 	
 	
 	/**
@@ -75,7 +76,7 @@ public class GlobalSettings {
 	
 	public static String getObservationsbyTimeInterval=prefixes+
 			" SELECT  ?wkt ?value ?samplingTime " +
-			"           WHERE { " +
+			"           WHERE { GRAPH <PARAM_GRAPH> { " +
 			"           ?property purl:isPropertyOf ?foi . " +
 		    "           ?property purl:isPropertyOf <PARAM_FOI> . " +
 		    "           ?observation purl:featureOfInterest ?foi . " +
@@ -87,12 +88,20 @@ public class GlobalSettings {
 		    "           ?point geo:asWKT ?wkt  . " +
 		    "           FILTER (xsd:dateTime(?samplingTime) >= \"PARAM_DATE1\"^^xsd:dateTime && " +  
 	    	"					xsd:dateTime(?samplingTime) <= \"PARAM_DATE2\"^^xsd:dateTime) .  " +
-	    	"} ORDER BY ?samplingTime ";
+	    	"} } ORDER BY ?samplingTime ";
 	
 	
 	
 	
-	
+	/**
+	 * Returns all PROPERTIES from a given SPARQL Endpoint and Named Graph.
+	 */
+	public static String SPARQL_getListProperties = "PREFIX purl:  <http://purl.oclc.org/NET/ssnx/ssn#> " +  
+													"SELECT ?property " + 
+													"WHERE { GRAPH <PARAM_GRAPH> {  " + 
+													"?property a purl:Property . " +  
+													" } } ORDER BY ?property";
+
 	
 	
 	

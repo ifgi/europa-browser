@@ -30,23 +30,32 @@ public class Facade {
 	}
 
 
-	public LODResource getResourceAttributes(URI uri){
-
-		return factory.create(uri);
-		
-	}
+//	public LODResource getResourceAttributes(URI uri){
+//
+//		return factory.create(uri);
+//		
+//	}
 
 	
+	
+	
+	
+	
+	
+	
+	
+
+	
+	/**
+	 * @author jones
+	 * @return
+	 */
 	public ArrayList<SOSProperty> listProperties(){
 		
-		return factory.listAvailableProperties();
+		return factory.getListProperties();
 		
 	}
-
 	
-	
-	
-
 	
 	/**
 	 * Singleton for getting a facade object instance.
