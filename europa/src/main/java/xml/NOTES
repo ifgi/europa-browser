@@ -1,0 +1,91 @@
+ONTOLOGY
+http://www.w3.org/2005/Incubator/ssn/wiki/Report_Work_on_the_SSN_ontology 
+http://www.w3.org/2005/Incubator/ssn/wiki/SSN 
+http://www.w3.org/2005/Incubator/ssn/ssnx/ssn
+	
+XML/RDF
+http://www.w3.org/TR/REC-rdf-syntax/ O&M ONTOLOGY om1:procedure Sensing
+	
+	
+NOTES:
+	
+STIMULUS is ommited 
+Stimulus and property are identified by the same URI, so, get rid of STIMULUS because preserving property is more important
+
+PROPERTY
+http://www.w3.org/2005/Incubator/ssn/wiki/Report_Work_on_the_SSN_ontology:
+Types of properties, such as temperature or pressure should be added as SUBCLASSES of ObservedProperty instead of individuals
+
+
+
+
+
+
+
+
+
+
+
+
+
+XSLT code for creating STIMULUS
+<xsl:template match="/om:ObservationCollection/om:member/om:Observation/om:observedProperty/swe:CompositePhenomenon/swe:component">
+	<rdf:Description>
+		<xsl:variable name="StimulusId" select="./@xlink:href" />
+		<xsl:attribute name="rdf:about"><xsl:value-of select="$StimulusId" /></xsl:attribute>
+		<rdf:type rdf:resource="purl:Stimulus" />
+		<!-- links
+<purl:isProxyFor></purl:isProxyFor>
+			 --> 
+	</rdf:Description>
+</xsl:template>
+
+XSLT code for the relation to stimulus from OBSERVATION
+<purl:detects>
+	<rdf:Description>
+		<xsl:attribute name="rdf:about"><xsl:value-of select="./om:observedProperty/swe:CompositePhenomenon/swe:component/@xlink:href" /></xsl:attribute>					
+	</rdf:Description>
+</purl:detects>
+
+
+
+
+
+
+		<!-- SENSOR 
+			 It needs a SOS DescribeSensor request to retrieve data
+			 LOD discourages blank nodes, so the sensor has the same ID as the observation -->
+		<rdf:Description>
+			<xsl:attribute name="rdf:about"><xsl:value-of select="concat('my:SENSOR_', $ObservationId)" /></xsl:attribute>
+			<rdf:type rdf:resource="purl:Sensor" />
+			<rdfs:label><xsl:copy-of select="concat('SENSOR_',$ObservationId)" /></rdfs:label>
+			<!-- links 
+<purl:observes></purl:observes>
+			-->
+			<purl:implements>
+				<rdf:Description>
+					<xsl:attribute name="rdf:about"><xsl:value-of select="$SensingId" /></xsl:attribute>
+				</rdf:Description>
+			</purl:implements>
+		</rdf:Description>
+	 
+	 
+	 
+	 
+			<purl:observedBy>
+				<rdf:Description>
+					<xsl:attribute name="rdf:about"><xsl:value-of select="concat('my:SENSOR_', $ObservationId)" /></xsl:attribute><!-- Sensor data not available in SOS GetObservation request -->				
+				</rdf:Description>	
+			</purl:observedBy>
+	 
+	 
+	 
+			<rdf:Description>
+				<xsl:attribute name="rdf:about"><xsl:value-of select="concat('my:SENSOR_', $ObservationId)" /></xsl:attribute>
+				<purl:observes>
+					<rdf:Description>
+						<xsl:attribute name="rdf:about"><xsl:value-of select="$PropertyId" /></xsl:attribute>
+					</rdf:Description>
+				</purl:observes>
+			</rdf:Description>
+	 
