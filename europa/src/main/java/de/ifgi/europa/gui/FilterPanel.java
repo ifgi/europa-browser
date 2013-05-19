@@ -339,4 +339,9 @@ public class FilterPanel extends JPanel {
 		this.graphs = graphs;
 	}
 
+	public ArrayList<SOSFeatureOfInterest> getFOIs() {
+		return this.fois;
+		
+	}
+
 }

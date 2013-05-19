@@ -5,19 +5,30 @@ import java.awt.Component;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Hashtable;
+
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
+
+import de.ifgi.europa.core.SOSFeatureOfInterest;
+import de.ifgi.europa.core.TimeInterval;
 
 import net.sourceforge.jdatepicker.JDateComponentFactory;
 import net.sourceforge.jdatepicker.JDatePicker;
 
 public class awTip extends JPanel {
 //	Image imgPlay = null;
-    public awTip()
+	
+	private MainFrame mainFrame;
+	
+    public awTip(MainFrame mF)
     {
     	super(true);
 		this.setLayout(new BorderLayout());
+		this.setMainFrame(mF);
 		final JSlider slider = new JSlider(JSlider.HORIZONTAL, 0, 50, 0);
 		final JButton btnPlay = new JButton("Play");
 //		try {
@@ -27,12 +38,13 @@ public class awTip extends JPanel {
 //			// TODO Auto-generated catch block
 //			e1.printStackTrace();
 //		}
-		JDatePicker dpFrom;
+		
+		final JDatePicker dpFrom;
 		dpFrom = JDateComponentFactory.createJDatePicker();
 		dpFrom.setTextEditable(true);
 		dpFrom.setShowYearButtons(true);
 		
-		JDatePicker dpUntil;
+		final JDatePicker dpUntil;
 		dpUntil = JDateComponentFactory.createJDatePicker();
 		dpUntil.setTextEditable(true);
 		dpUntil.setShowYearButtons(true);
@@ -43,6 +55,14 @@ public class awTip extends JPanel {
 		slider.setMajorTickSpacing(10);
 		slider.setPaintTicks(true);
 		slider.setPaintLabels(true);
+		
+//		Hashtable<Integer, JLabel> table = new Hashtable<Integer, JLabel> ();
+//	    table.put ( 0, new JLabel ( "May 2, 2000" ) );
+//	    table.put ( 25, new JLabel ( "May 3, 2001" ) );
+//	    table.put ( 50, new JLabel ( "May 4, 2002" ) );
+//	    table.put ( 75, new JLabel ( "May 5, 2003" ) );
+//	    table.put ( 100, new JLabel ( "May 6, 2004" ) );
+//	    slider.setLabelTable ( table );
 		
 		slider.setLabelTable(slider.createStandardLabels(10));
 		
@@ -58,7 +78,6 @@ public class awTip extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				System.out.println("test");
-				
 			}
 		});
 		
@@ -89,6 +108,12 @@ public class awTip extends JPanel {
 					timerswing.stop();
 //					btnPlay.setIcon(new ImageIcon(imgPlay.getScaledInstance(16, 16, java.awt.Image.SCALE_SMOOTH)));
 				} else {
+					String startTime = "";
+					startTime = dpFrom.getModel().getYear()+"-"+dpFrom.getModel().getMonth()+"-"+dpFrom.getModel().getDay()+"T13:02:00Z";
+					String endTime = "";
+					startTime = dpUntil.getModel().getYear()+"-"+dpUntil.getModel().getMonth()+"-"+dpUntil.getModel().getDay()+"T13:04:00Z";
+					TimeInterval interval = new TimeInterval(startTime, endTime);
+					ArrayList<SOSFeatureOfInterest> selectedFOIs = ((FilterPanel) getMainFrame().getFilterPanel()).getFOIs();
 					btnPlay.setText("Pause");
 //					try {
 ////						Image imgPause = ImageIO.read(getClass().getResource("resources/pause.png"));
@@ -101,4 +126,18 @@ public class awTip extends JPanel {
 			}
 		});
     }
+
+	/**
+	 * @return the mainFrame
+	 */
+	public MainFrame getMainFrame() {
+		return mainFrame;
+	}
+
+	/**
+	 * @param mainFrame the mainFrame to set
+	 */
+	public void setMainFrame(MainFrame mainFrame) {
+		this.mainFrame = mainFrame;
+	}
 }
