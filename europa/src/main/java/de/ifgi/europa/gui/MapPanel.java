@@ -70,9 +70,9 @@ public class MapPanel extends JPanel {
         wwd.addSelectListener(new ViewControlsSelectListener(wwd, viewControlsA));
         
         this.add(wwd, java.awt.BorderLayout.CENTER);
-
 	}	
-	public void clearMarkers() {
+	
+	public void clearGlobe() {
 		layer.removeAllRenderables();
 		wwd.redrawNow();
 	}
@@ -99,7 +99,7 @@ public class MapPanel extends JPanel {
 		
 		// Create and set an attribute bundle.
         ShapeAttributes attrs = new BasicShapeAttributes();
-        attrs.setInteriorMaterial(Material.YELLOW);
+        attrs.setInteriorMaterial(Material.RED);
         attrs.setInteriorOpacity(0.7);
         attrs.setEnableLighting(true);
         attrs.setOutlineMaterial(Material.RED);
