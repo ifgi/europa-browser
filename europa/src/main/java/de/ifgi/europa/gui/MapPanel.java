@@ -1,6 +1,8 @@
 package de.ifgi.europa.gui;
 
 import java.awt.GridLayout;
+import java.util.Iterator;
+
 import gov.nasa.worldwind.BasicModel;
 import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.avlist.AVKey;
@@ -21,6 +23,7 @@ import gov.nasa.worldwind.layers.Earth.LandsatI3WMSLayer;
 import gov.nasa.worldwind.render.BasicShapeAttributes;
 import gov.nasa.worldwind.render.Cylinder;
 import gov.nasa.worldwind.render.Material;
+import gov.nasa.worldwind.render.Renderable;
 import gov.nasa.worldwind.render.ShapeAttributes;
 import gov.nasa.worldwindx.examples.util.ToolTipController;
 
@@ -31,6 +34,10 @@ import de.ifgi.europa.core.SOSValue;
 
 public class MapPanel extends JPanel {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private MainFrame mainFrame;
 	final RenderableLayer layer;
 	final WorldWindowGLCanvas wwd = new WorldWindowGLCanvas();
@@ -77,43 +84,55 @@ public class MapPanel extends JPanel {
 		wwd.redrawNow();
 	}
 	
-	public void updateGlobe(SOSObservation observation) {
-		Double defaultHeight = 1000.0;
-		Double defaultRadius = 1000.0;
-		Double val = 0.0;
-		String toolTip = "";
-		
-		String wkt = observation.getFeatureOfInterest().getDefaultGeometry().getAsWKT();
-		toolTip = "FOI: " + observation.getFeatureOfInterest().getName();
-		for (int i = 0; i < observation.getSensorOutput().size(); i++) {
-			SOSValue value = observation.getSensorOutput().get(i).getValue();
-			val = value.getHasValue();
-			toolTip = toolTip + newline + "Value: " + val;
+	public void updateGlobe(SOSObservation observation, String foi) {
+		if (observation != null) {
+			Double defaultHeight = 1000.0;
+			Double defaultRadius = 1000.0;
+			Double val = 0.0;
+			String toolTip = "";
+			
+			String wkt = observation.getFeatureOfInterest().getDefaultGeometry().getAsWKT();
+			toolTip = "FOI: " + observation.getFeatureOfInterest().getName();
+			for (int i = 0; i < observation.getSensorOutput().size(); i++) {
+				SOSValue value = observation.getSensorOutput().get(i).getValue();
+				val = value.getHasValue();
+				toolTip = toolTip + newline + "Value: " + val;
+			}
+			defaultRadius = defaultRadius*val*10;
+			String[] splitArray = wkt.split("\\s+");
+			String[] splitArrayLat = splitArray[0].split("\\(");
+			String[] splitArrayLon = splitArray[1].split("\\)");
+			Double lat = Double.parseDouble(splitArrayLat[1]);
+			Double lon = Double.parseDouble(splitArrayLon[0]);
+			
+			// Create and set an attribute bundle.
+	        ShapeAttributes attrs = new BasicShapeAttributes();
+	        attrs.setInteriorMaterial(Material.RED);
+	        attrs.setInteriorOpacity(0.7);
+	        attrs.setEnableLighting(true);
+	        attrs.setOutlineMaterial(Material.RED);
+	        attrs.setOutlineWidth(2d);
+	        attrs.setDrawInterior(true);
+	        attrs.setDrawOutline(false);
+			
+			// Cylinder with a texture, using Cylinder(position, height, radius) constructor
+	        Cylinder cylinder9 = new Cylinder(Position.fromDegrees(lat, lon, 0), defaultHeight, defaultRadius);
+	        cylinder9.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
+	        cylinder9.setAttributes(attrs);
+	        cylinder9.setVisible(true);
+	        cylinder9.setValue(AVKey.DISPLAY_NAME, toolTip);
+	        layer.addRenderable(cylinder9);
+		} else {
+			Iterable<Renderable> renderables = layer.getRenderables();
+			Iterator<Renderable> iter = renderables.iterator();
+			while (iter.hasNext()) {
+				Cylinder temp = (Cylinder) iter.next();
+				String displayName = (String) temp.getValue(AVKey.DISPLAY_NAME);
+				if (displayName.contains(foi)) {
+					layer.removeRenderable(temp);
+				}
+			}
 		}
-		defaultRadius = defaultRadius*val*10;
-		String[] splitArray = wkt.split("\\s+");
-		String[] splitArrayLat = splitArray[0].split("\\(");
-		String[] splitArrayLon = splitArray[1].split("\\)");
-		Double lat = Double.parseDouble(splitArrayLat[1]);
-		Double lon = Double.parseDouble(splitArrayLon[0]);
-		
-		// Create and set an attribute bundle.
-        ShapeAttributes attrs = new BasicShapeAttributes();
-        attrs.setInteriorMaterial(Material.RED);
-        attrs.setInteriorOpacity(0.7);
-        attrs.setEnableLighting(true);
-        attrs.setOutlineMaterial(Material.RED);
-        attrs.setOutlineWidth(2d);
-        attrs.setDrawInterior(true);
-        attrs.setDrawOutline(false);
-		
-		// Cylinder with a texture, using Cylinder(position, height, radius) constructor
-        Cylinder cylinder9 = new Cylinder(Position.fromDegrees(lat, lon, 0), defaultHeight, defaultRadius);
-        cylinder9.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
-        cylinder9.setAttributes(attrs);
-        cylinder9.setVisible(true);
-        cylinder9.setValue(AVKey.DISPLAY_NAME, toolTip);
-        layer.addRenderable(cylinder9);
 		
         wwd.redrawNow();
 	}

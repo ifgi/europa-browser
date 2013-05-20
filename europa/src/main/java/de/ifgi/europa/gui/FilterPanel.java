@@ -1,33 +1,25 @@
 package de.ifgi.europa.gui;
 
 import java.awt.BorderLayout;
-import java.awt.Checkbox;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Vector;
-
 import javax.swing.BorderFactory;
 import javax.swing.DefaultCellEditor;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
@@ -205,7 +197,6 @@ public class FilterPanel extends JPanel {
 				if (e.getStateChange() == ItemEvent.SELECTED) {
 					clearTable(propertiesTable);
 					
-					System.out.println(cbModel.getSelectedItem().toString());
 					GlobalSettings.CurrentNamedGraph = cbModel.getSelectedItem().toString();
 					
 					setProperties(getFacade().listProperties());
@@ -221,10 +212,8 @@ public class FilterPanel extends JPanel {
 			
 			@Override
 			public void tableChanged(TableModelEvent e) {
-				if (propertiesTable.getRowCount() == 0) {
-					
-				}
-				else {
+				
+				if (e.getColumn() != -1) {
 					TableModel model = (TableModel)e.getSource();
 			        String columnName = model.getColumnName(e.getColumn());
 					if (columnName == "Visible") {
@@ -257,6 +246,7 @@ public class FilterPanel extends JPanel {
 					}
 				} else if (flag == 2) {
 					if (selectedProperties.size() == 0) {
+						((MapPanel) getMainFrame().getMapPanel()).updateGlobe(null, resultsTableModel.getValueAt(0, 0).toString());
 						clearTable(resultsTable);
 					} else {
 						for (int i = 0; i < getProperties().size(); i++) {
@@ -264,12 +254,13 @@ public class FilterPanel extends JPanel {
 								ArrayList<SOSFeatureOfInterest> availableFOIs = getFacade().listFeaturesOfInterest(getProperties().get(i));
 								for (int j = 0; j < availableFOIs.size(); j++) {
 									for (int k = 0; k < fois.size(); k++) {
-										if (resultsTable.getValueAt(k, 0).toString().compareTo(fois.get(k).getUri().toString()) == 0) {
+										if (fois.get(k).getUri().toString().compareTo(availableFOIs.get(j).getUri().toString()) == 0) {
 											fois.remove(k);
 										}
 									}
 									for (int k = 0; k < resultsTable.getRowCount(); k++) {
 										if (resultsTable.getValueAt(k, 0).toString().compareTo(availableFOIs.get(j).getUri().toString()) == 0) {
+											((MapPanel) getMainFrame().getMapPanel()).updateGlobe(null, resultsTableModel.getValueAt(k, 0).toString());
 											resultsTableModel.removeRow(k);
 											resultsTableModel.fireTableDataChanged();
 										}
@@ -286,37 +277,20 @@ public class FilterPanel extends JPanel {
 			
 			@Override
 			public void tableChanged(TableModelEvent e) {
-//				
-//				((MapPanel) mainFrame.getMapPanel()).clearGlobe();
-////				System.out.println("table: "+resultsTable.getRowCount());
-////				System.out.println("model: "+resultsTableModel.getRowCount());
-//				if (resultsTable.getRowCount() == 0) {
-//					
-//				} else {
-//					TableModel model = (TableModel)e.getSource();
-////			        String columnName = model.getColumnName(e.getColumn());
-//			        for (int i = 0; i < resultsTable.getRowCount(); i++) {
-//			        	System.out.println(i);
-//			        	boolean test = (Boolean) model.getValueAt(0, 1);
-//			        	System.out.println(resultsTableModel.getValueAt(i, 0));
-//			        	System.out.println(test);
-////						if ((Boolean) resultsTableModel.getValueAt(i,1)) {
-////							System.out.println("true");
-////							SOSFeatureOfInterest foi = fois.get(i);
-////							SOSObservation observation = getFacade().getFOILastObservation(foi);
-////							((MapPanel) mainFrame.getMapPanel()).updateGlobe(observation);
-////						} else {
-////							System.out.println("false");
-////						}
-//					}
-//				}
-				
-//				for(int row : resultsTable.getSelectedRows()) {
-//					SOSFeatureOfInterest foi = fois.get(row);
-//					SOSObservation observation = getFacade().getFOILastObservation(foi);
-//					((MapPanel) mainFrame.getMapPanel()).updateGlobe(observation);
-//				}
-				
+				if (e.getColumn() != -1) {
+					if ((Boolean) resultsTableModel.getValueAt(e.getFirstRow(), 1)) {
+						for (int i = 0; i < fois.size(); i++) {
+							if (fois.get(i).getUri().toString().compareTo(resultsTableModel.getValueAt(e.getFirstRow(), 0).toString()) == 0) {
+								SOSFeatureOfInterest foi = fois.get(i);
+								SOSObservation observation = getFacade().getFOILastObservation(foi);
+								observation.getFeatureOfInterest().setName(resultsTableModel.getValueAt(e.getFirstRow(), 0).toString());
+								((MapPanel) getMainFrame().getMapPanel()).updateGlobe(observation,"");
+							}
+						}
+					} else {
+						((MapPanel) getMainFrame().getMapPanel()).updateGlobe(null, resultsTableModel.getValueAt(e.getFirstRow(), 0).toString());
+					}	
+				}
 			}
 		});
 	}
