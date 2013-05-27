@@ -329,5 +329,5 @@ public class GlobalSettings {
 	public static String PREDICATE_Detects = "http://purl.oclc.org/NET/ssnx/ssn#detects";
 	public static String PREDICATE_HasValue = "http://purl.oclc.org/NET/ssnx/ssn#hasValue";
 
-
+	
 }

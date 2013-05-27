@@ -397,7 +397,6 @@ public class LODResourceFactory {
 		return res;
 	}
 
-
 	/**
 	 * Finds the kind of object given the type
 	 * @param type
@@ -461,7 +460,7 @@ public class LODResourceFactory {
 	
 	
 	/**
-	 *  Lists all properties available
+	 *  Lists all properties available in the current named graph.
 	 *  
 	 * @author jones
 	 * @return
@@ -584,7 +583,9 @@ public class LODResourceFactory {
 		SPARQL = GlobalSettings.geFOILastObservation.replace("PARAM_FOI", featureOfInterest.getUri().toString());
 		SPARQL = SPARQL.replace("PARAM_GRAPH", GlobalSettings.CurrentNamedGraph);
 		ResultSet rs = cnn.executeSPARQLQuery(SPARQL);
-						
+					
+		System.out.println(SPARQL);
+		
 		ArrayList<SOSFeatureOfInterest> feature = new ArrayList<SOSFeatureOfInterest>();
 		ArrayList<SOSSensorOutput> sensorOutput = new ArrayList<SOSSensorOutput>();
 		
