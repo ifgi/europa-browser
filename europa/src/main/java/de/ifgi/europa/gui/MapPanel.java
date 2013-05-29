@@ -84,7 +84,8 @@ public class MapPanel extends JPanel {
 		wwd.redrawNow();
 	}
 	
-	public void updateGlobe(SOSObservation observation, String foi) {
+	public void updateGlobe(SOSObservation observation, String foi, String viz) {
+
 		if (observation != null) {
 			Double defaultHeight = 1000.0;
 			Double defaultRadius = 1000.0;
@@ -98,7 +99,7 @@ public class MapPanel extends JPanel {
 				val = value.getHasValue();
 				toolTip = toolTip + newline + "Value: " + val;
 			}
-			defaultRadius = defaultRadius*val*10;
+			
 			String[] splitArray = wkt.split("\\s+");
 			String[] splitArrayLat = splitArray[0].split("\\(");
 			String[] splitArrayLon = splitArray[1].split("\\)");
@@ -115,13 +116,25 @@ public class MapPanel extends JPanel {
 	        attrs.setDrawInterior(true);
 	        attrs.setDrawOutline(false);
 			
+	        Cylinder cylinder = null;
+	        
 			// Cylinder with a texture, using Cylinder(position, height, radius) constructor
-	        Cylinder cylinder9 = new Cylinder(Position.fromDegrees(lat, lon, 0), defaultHeight, defaultRadius);
-	        cylinder9.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
-	        cylinder9.setAttributes(attrs);
-	        cylinder9.setVisible(true);
-	        cylinder9.setValue(AVKey.DISPLAY_NAME, toolTip);
-	        layer.addRenderable(cylinder9);
+	        if (viz.compareTo("width") == 0) {
+	        	defaultRadius = defaultRadius*val*10;
+	        	cylinder = new Cylinder(Position.fromDegrees(lat, lon, 0), defaultHeight, defaultRadius);
+			} else if (viz.compareTo("height") == 0) {
+				defaultHeight = defaultHeight*val*1000;
+				cylinder = new Cylinder(Position.fromDegrees(lat, lon, 0), defaultHeight, 10000);
+			} else if (viz.compareTo("color") == 0) {
+				attrs.setInteriorMaterial(Material.RED);
+				cylinder = new Cylinder(Position.fromDegrees(lat, lon, 0), defaultHeight, defaultRadius);
+			}
+	        
+	        cylinder.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
+	        cylinder.setAttributes(attrs);
+	        cylinder.setVisible(true);
+	        cylinder.setValue(AVKey.DISPLAY_NAME, toolTip);
+	        layer.addRenderable(cylinder);
 		} else {
 			Iterable<Renderable> renderables = layer.getRenderables();
 			Iterator<Renderable> iter = renderables.iterator();
