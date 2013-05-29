@@ -32,11 +32,13 @@ import javax.swing.JPanel;
 import de.ifgi.europa.core.SOSObservation;
 import de.ifgi.europa.core.SOSValue;
 
+/**
+ * Represents the NASA Globe view.
+ * @author Matthias Pfeil
+ *
+ */
 public class MapPanel extends JPanel {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private MainFrame mainFrame;
 	final RenderableLayer layer;
@@ -46,10 +48,17 @@ public class MapPanel extends JPanel {
 	public MapPanel(MainFrame mF) {
 		super(new GridLayout(1, 1));
 		this.setMainFrame(mF);
+		
 		layer = new RenderableLayer();
 		
+		/*activate tooltip */
 		ToolTipController toolTip = new ToolTipController(wwd,AVKey.DISPLAY_NAME,null);
         
+		/**
+		 * Creates <code>{@link AnnotationWindowLayer}</code> and adds an 
+		 * <code>{@link AnnotationWindow}</code> for interactive components inside
+		 * the <code>{@link WorldWindowGLCanvas}</code>.
+		 */
         AnnotationWindowLayer awl = new AnnotationWindowLayer(wwd);
         AnnotationWindow tip = new AnnotationWindow(Position.fromDegrees(0, 0, 0), wwd);
         tip.setPanel(new awTip(getMainFrame()));
@@ -79,11 +88,20 @@ public class MapPanel extends JPanel {
         this.add(wwd, java.awt.BorderLayout.CENTER);
 	}	
 	
+	/**
+	 * Remove all renderables from wwd.
+	 */
 	public void clearGlobe() {
 		layer.removeAllRenderables();
 		wwd.redrawNow();
 	}
 	
+	/**
+	 * Adds a new observation as a renderable to the wwd.
+	 * @param observation
+	 * @param foi
+	 * @param viz
+	 */
 	public void updateGlobe(SOSObservation observation, String foi, String viz) {
 
 		if (observation != null) {
@@ -92,7 +110,7 @@ public class MapPanel extends JPanel {
 			Double val = 0.0;
 			String toolTip = "";
 			
-			String wkt = observation.getFeatureOfInterest().getDefaultGeometry().getAsWKT();
+			//Build tooltip text
 			toolTip = "FOI: " + observation.getFeatureOfInterest().getName();
 			for (int i = 0; i < observation.getSensorOutput().size(); i++) {
 				SOSValue value = observation.getSensorOutput().get(i).getValue();
@@ -100,6 +118,8 @@ public class MapPanel extends JPanel {
 				toolTip = toolTip + newline + "Value: " + val;
 			}
 			
+			//Get geometry of observation and parse latitude and longitude
+			String wkt = observation.getFeatureOfInterest().getDefaultGeometry().getAsWKT();
 			String[] splitArray = wkt.split("\\s+");
 			String[] splitArrayLat = splitArray[0].split("\\(");
 			String[] splitArrayLon = splitArray[1].split("\\)");
@@ -116,9 +136,9 @@ public class MapPanel extends JPanel {
 	        attrs.setDrawInterior(true);
 	        attrs.setDrawOutline(false);
 			
+	        //Create cylinder depending on chosen visualization and add it to the renderable layer
 	        Cylinder cylinder = null;
 	        
-			// Cylinder with a texture, using Cylinder(position, height, radius) constructor
 	        if (viz.compareTo("width") == 0) {
 	        	defaultRadius = defaultRadius*val*10;
 	        	cylinder = new Cylinder(Position.fromDegrees(lat, lon, 0), defaultHeight, defaultRadius);
@@ -149,11 +169,19 @@ public class MapPanel extends JPanel {
 		
         wwd.redrawNow();
 	}
-
+	
+	/**
+	 * Gets MainFrame
+	 * @return mainFrame
+	 */
 	public MainFrame getMainFrame() {
 		return mainFrame;
 	}
 
+	/**
+	 * Sets MainFrame
+	 * @param mainFrame
+	 */
 	public void setMainFrame(MainFrame mainFrame) {
 		this.mainFrame = mainFrame;
 	}

@@ -12,6 +12,11 @@ import javafx.scene.web.WebView;
 
 import javax.swing.JPanel;
 
+/**
+ * Adds a WebViewer to the LOD SOS Viewer.
+ * @author Matthias Pfeil
+ *
+ */
 public class WebViewerPanel extends JPanel {
 
 	private MainFrame mainFrame;

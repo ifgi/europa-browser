@@ -1,27 +1,19 @@
 package de.ifgi.europa.gui;
 
 import java.awt.BorderLayout;
-import java.awt.Button;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.GridLayout;
-import java.awt.Insets;
-import java.awt.Label;
-import java.awt.List;
-
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+
 /**
- * @author 
+ * This class puts all different parts of the program together.
+ * @author Matthias Pfeil
  *
  */
-
 public class MainFrame extends JFrame {
 
 	private JPanel panelCont = new JPanel(new BorderLayout());
-
 	private JPanel pnlWebViewer;
 	private JPanel pnlMap;
 	private JPanel pnlFilter;
@@ -34,10 +26,10 @@ public class MainFrame extends JFrame {
 
 	    pnlFilter = new FilterPanel(this);
 	    pnlMap = new MapPanel(this);
-	    pnlWebViewer = new WebViewerPanel(this);
-	    JPanel splittedPanel = new JPanel(new GridLayout(2,1));
+//	    pnlWebViewer = new WebViewerPanel(this);
+	    JPanel splittedPanel = new JPanel(new GridLayout(1,1));
 	    splittedPanel.add(pnlMap);
-	    splittedPanel.add(pnlWebViewer);
+//	    splittedPanel.add(pnlWebViewer);
 	    panelCont.add(pnlFilter,BorderLayout.WEST);
 	    panelCont.add(splittedPanel,BorderLayout.CENTER);
 

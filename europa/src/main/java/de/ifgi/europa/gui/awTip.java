@@ -6,14 +6,9 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.Hashtable;
-
 import javax.swing.JButton;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
-
-import com.hp.hpl.jena.util.iterator.Filter;
 
 import de.ifgi.europa.core.SOSFeatureOfInterest;
 import de.ifgi.europa.core.SOSObservation;
@@ -23,6 +18,12 @@ import de.ifgi.europa.facade.Facade;
 import net.sourceforge.jdatepicker.JDateComponentFactory;
 import net.sourceforge.jdatepicker.JDatePicker;
 
+/**
+ * This class represents all functionalities inside the <code>{@link AnnotationWindow}</code>
+ * for playing time series of a SOSFeatureOfInterest. 
+ * @author Matthias Pfeil
+ *
+ */
 public class awTip extends JPanel {
 //	Image imgPlay = null;
 	
@@ -105,6 +106,9 @@ public class awTip extends JPanel {
 		});
 		
 		int delay = 3000;
+		/**
+		 * taskPerformer for playing the time series with a delay of 3 seconds
+		 */
 		ActionListener taskPerformer = new ActionListener() {
 			
 			int sliderIndex = 0;
@@ -128,6 +132,9 @@ public class awTip extends JPanel {
 		
 		final javax.swing.Timer timerswing = new javax.swing.Timer(delay, taskPerformer);
 		
+		/**
+		 * ActionListener for Play button inside the AnnotationWindow.
+		 */
 		btnPlay.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
@@ -145,6 +152,10 @@ public class awTip extends JPanel {
 		});
     }
     
+    /**
+     * Gets all information and observation for playing the time series together 
+     * and sets up the slider
+     */
 	protected void buildTimeSeries() {
 		if (startTime != "" && endTime != "") {
 			TimeInterval interval = new TimeInterval(startTime, endTime);
@@ -171,6 +182,7 @@ public class awTip extends JPanel {
 	}
 
 	/**
+	 * Gets MainFrame
 	 * @return the mainFrame
 	 */
 	public MainFrame getMainFrame() {
@@ -178,6 +190,7 @@ public class awTip extends JPanel {
 	}
 
 	/**
+	 * Sets MainFrame
 	 * @param mainFrame the mainFrame to set
 	 */
 	public void setMainFrame(MainFrame mainFrame) {
