@@ -168,6 +168,9 @@ public class FilterPanel extends JPanel {
 		JScrollPane scrollPaneResultsTable = new JScrollPane(resultsTable);
 		pnlResult.add(scrollPaneResultsTable);
 		this.add(pnlResult);
+//		WebViewerPanel web = new WebViewerPanel(getMainFrame());
+//		add(web);
+//		this.add((WebViewerPanel) getMainFrame().getWebViewer());
 		
 		/**
 		 * ActionListener for Query button. On click get all Graphs for
