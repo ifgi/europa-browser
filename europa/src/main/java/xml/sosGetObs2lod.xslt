@@ -142,6 +142,36 @@ TRANSFORMATION OF A SOS GET OBSERVATION RESPONSE TO RDF TRIPLES
 						</rdf:Description>
 					</xsl:if>
 				</gr:hasUnitOfMeasurement>
+				<xsl:if test="./swe:Time" >
+					<purl:hasQuality>
+						<xsl:variable name="qualityTime" select="'http://dbpedia.org/resource/Time'" />
+						<rdf:Description>
+							<xsl:attribute name="rdf:about">
+								 <xsl:value-of select="$qualityTime" />
+							</xsl:attribute>
+						</rdf:Description>
+					</purl:hasQuality>
+				</xsl:if>
+				<xsl:if test="./swe:Text">
+					<purl:hasQuality>
+						<xsl:variable name="qualityText" select="'http://dbpedia.org/page/Plain_text'" />
+						<rdf:Description>
+							<xsl:attribute name="rdf:about">
+								<xsl:value-of select="$qualityText" />
+							</xsl:attribute>
+						</rdf:Description>
+					</purl:hasQuality>
+				</xsl:if>				
+				<xsl:if test="./swe:Quantity">
+					<purl:hasQuality>
+						<xsl:variable name="qualityQuantity" select="'http://dbpedia.org/page/Quantity'" />
+						<rdf:Description>
+							<xsl:attribute name="rdf:about">
+								<xsl:value-of select="$qualityQuantity" />
+							</xsl:attribute>
+						</rdf:Description>
+					</purl:hasQuality>
+				</xsl:if>
 				<!-- links -->
 				<purl:isPropertyOf>
 					<rdf:Description>
