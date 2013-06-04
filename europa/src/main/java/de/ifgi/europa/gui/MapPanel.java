@@ -44,6 +44,8 @@ public class MapPanel extends JPanel {
 	final RenderableLayer layer;
 	final WorldWindowGLCanvas wwd = new WorldWindowGLCanvas();
 	public static String newline = System.getProperty("line.separator");
+	AnnotationWindow tip;
+	AnnotationWindowLayer awl;
 	
 	public MapPanel(MainFrame mF) {
 		super(new GridLayout(1, 1));
@@ -59,10 +61,11 @@ public class MapPanel extends JPanel {
 		 * <code>{@link AnnotationWindow}</code> for interactive components inside
 		 * the <code>{@link WorldWindowGLCanvas}</code>.
 		 */
-        AnnotationWindowLayer awl = new AnnotationWindowLayer(wwd);
-        AnnotationWindow tip = new AnnotationWindow(Position.fromDegrees(0, 0, 0), wwd);
+        awl = new AnnotationWindowLayer(wwd);
+        tip = new AnnotationWindow(Position.fromDegrees(0, 0, 0), wwd);
         tip.setPanel(new awTip(getMainFrame()));
         awl.addWindow(tip);
+        awl.setEnabled(false);
         
 		Layer[] layers = new Layer[]
         {
@@ -79,6 +82,7 @@ public class MapPanel extends JPanel {
 		BasicModel modelForWindowA = new BasicModel();
 		modelForWindowA.setGlobe(earth);
 		modelForWindowA.setLayers(new LayerList(layers));
+		
         wwd.setPreferredSize(new java.awt.Dimension(800, 600));
         wwd.setModel(modelForWindowA);
         ViewControlsLayer viewControlsA = new ViewControlsLayer();
@@ -166,7 +170,13 @@ public class MapPanel extends JPanel {
 				}
 			}
 		}
-		
+
+		//Update AnnotationWindow
+		if (layer.getNumRenderables() == 0) {
+			removeAnnotationWindowFromGlobe();
+		} else {
+			addAnnotationWindowToGlobe();
+		}
         wwd.redrawNow();
 	}
 	
@@ -184,6 +194,16 @@ public class MapPanel extends JPanel {
 	 */
 	public void setMainFrame(MainFrame mainFrame) {
 		this.mainFrame = mainFrame;
+	}
+	
+	public void addAnnotationWindowToGlobe() {
+		awl.setEnabled(true);
+	}
+	
+	public void removeAnnotationWindowFromGlobe() {
+		awl.setEnabled(false);
+		wwd.redrawNow();
+		wwd.repaint();
 	}
 
 }

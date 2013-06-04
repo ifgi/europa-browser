@@ -1,22 +1,32 @@
 package de.ifgi.europa.gui;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
+
+import com.toedter.calendar.JDateChooser;
 
 import de.ifgi.europa.core.SOSFeatureOfInterest;
 import de.ifgi.europa.core.SOSObservation;
 import de.ifgi.europa.core.TimeInterval;
 import de.ifgi.europa.facade.Facade;
-
-import net.sourceforge.jdatepicker.JDateComponentFactory;
-import net.sourceforge.jdatepicker.JDatePicker;
 
 /**
  * This class represents all functionalities inside the <code>{@link AnnotationWindow}</code>
@@ -25,12 +35,15 @@ import net.sourceforge.jdatepicker.JDatePicker;
  *
  */
 public class awTip extends JPanel {
-//	Image imgPlay = null;
 	
 	private MainFrame mainFrame;
 	private String startTime ="";
 	private String endTime = "";
 	private ArrayList<ArrayList<SOSObservation>> ons = new ArrayList<ArrayList<SOSObservation>>();
+	private int delay = 1000;
+	private Image imgPlay = null;
+	private Image imgPause = null;
+
 	JSlider slider = null;
 	
     public awTip(MainFrame mF)
@@ -38,28 +51,51 @@ public class awTip extends JPanel {
     	super(true);
 		this.setLayout(new BorderLayout());
 		this.setMainFrame(mF);
-//		final JSlider slider = new JSlider(JSlider.HORIZONTAL, 0, 10, 0);
 		slider = new JSlider(JSlider.HORIZONTAL, 0, 10, 0);
+		final SimpleDateFormat dateFormatString = new SimpleDateFormat("yyyy-MM-dd");
 		final JButton btnPlay = new JButton("Play");
-//		try {
-//			Image imgPlay = ImageIO.read(getClass().getResource("resources/play.png"));
-//			btnPlay.setIcon(new ImageIcon(imgPlay.getScaledInstance(16, 16, java.awt.Image.SCALE_SMOOTH)));
-//		} catch (IOException e1) {
-//			// TODO Auto-generated catch block
-//			e1.printStackTrace();
-//		}
+		try {
+			imgPlay = ImageIO.read(getClass().getResource("/de/ifgi/europa/resources/play.png"));
+			imgPause = ImageIO.read(getClass().getResource("/de/ifgi/europa/resources/pause.png"));
+			btnPlay.setIcon(new ImageIcon(imgPlay.getScaledInstance(16, 16, java.awt.Image.SCALE_SMOOTH)));
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
 		
-		final JDatePicker dpFrom;
-		dpFrom = JDateComponentFactory.createJDatePicker();
-		dpFrom.setTextEditable(true);
-		dpFrom.setShowYearButtons(true);
+		final JDateChooser dcFrom = new JDateChooser();
+		final JDateChooser dcUntil = new JDateChooser();
 		
-		final JDatePicker dpUntil;
-		dpUntil = JDateComponentFactory.createJDatePicker();
-		dpUntil.setTextEditable(true);
-		dpUntil.setShowYearButtons(true);
+		MyDateListener dateChooserListener = new MyDateListener();
 		
-		JPanel pnlTime = new JPanel(new GridLayout(2, 1));
+		dcFrom.addPropertyChangeListener(new PropertyChangeListener() {
+			
+			@Override
+			public void propertyChange(PropertyChangeEvent arg0) {
+				if (dcFrom.getDate() != null) {
+					String tempDate = dateFormatString.format(dcFrom.getDate());
+					tempDate = tempDate + "T00:00:00Z";
+					System.out.println("From: "+tempDate);
+					startTime = tempDate;
+					buildTimeSeries();
+				}
+			}
+		});
+		
+		dcUntil.addPropertyChangeListener(new PropertyChangeListener() {
+			
+			@Override
+			public void propertyChange(PropertyChangeEvent arg0) {
+				if (dcFrom.getDate() != null) {
+					String tempDate = dateFormatString.format(dcUntil.getDate());
+					tempDate = tempDate + "T23:59:59Z";
+					System.out.println("Until: "+tempDate);
+					endTime = tempDate;
+					buildTimeSeries();
+				}
+			}
+		});
+		
+		JPanel pnlDateChooser = new JPanel(new GridLayout(2, 1));
 		
 		slider.setMinorTickSpacing(1);
 		slider.setMajorTickSpacing(1);
@@ -76,36 +112,41 @@ public class awTip extends JPanel {
 		
 		slider.setLabelTable(slider.createStandardLabels(10));
 		
+		final JComboBox cbDelay = new JComboBox();
+		cbDelay.addItem(1);
+		cbDelay.addItem(2);
+		cbDelay.addItem(3);
+		
+		cbDelay.addItemListener(new ItemListener() {
+			
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				if (e.getStateChange() == ItemEvent.SELECTED) {
+					setDelay((Integer) cbDelay.getSelectedItem());
+				}
+			}
+		});
+		
+		
+		JPanel blCenter = new JPanel(new BorderLayout());
+		JPanel panelDelay = new JPanel(new GridLayout(1, 2));
+		
+		JLabel labelDelay = new JLabel("Delay in sec:");
+		
+		panelDelay.add(labelDelay);
+		panelDelay.add(cbDelay);
+		
+		blCenter.add(slider,BorderLayout.PAGE_START);
+		blCenter.add(panelDelay,BorderLayout.CENTER);
 		add(btnPlay, BorderLayout.PAGE_START);
-		add(slider, BorderLayout.CENTER);
-		pnlTime.add((Component) dpFrom);
-		pnlTime.add((Component) dpUntil);
+		add(blCenter, BorderLayout.CENTER);
 		
-		add(pnlTime, BorderLayout.SOUTH);
+		pnlDateChooser.add(dcFrom);
+		pnlDateChooser.add(dcUntil);
+
+		add(pnlDateChooser,BorderLayout.SOUTH);
 		
-		dpFrom.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				int month = dpFrom.getModel().getMonth()+1;
-				startTime = dpFrom.getModel().getYear()+"-"+month+"-"+dpFrom.getModel().getDay()+"T00:00:00Z";
-				
-				buildTimeSeries();
-			}
-		});
 		
-		dpUntil.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				int month = dpUntil.getModel().getMonth()+1;
-				endTime = dpUntil.getModel().getYear()+"-"+month+"-"+dpUntil.getModel().getDay()+"T23:59:59Z";
-				
-				buildTimeSeries();
-			}
-		});
-		
-		int delay = 3000;
 		/**
 		 * taskPerformer for playing the time series with a delay of 3 seconds
 		 */
@@ -142,9 +183,11 @@ public class awTip extends JPanel {
 				if (startTime != "" && endTime != "") {
 					if (timerswing.isRunning()) {
 						btnPlay.setText("Play");
+						btnPlay.setIcon(new ImageIcon(imgPlay.getScaledInstance(16, 16, java.awt.Image.SCALE_SMOOTH)));
 						timerswing.stop();
 					} else {
 						btnPlay.setText("Pause");
+						btnPlay.setIcon(new ImageIcon(imgPause.getScaledInstance(16, 16, java.awt.Image.SCALE_SMOOTH)));
 						timerswing.start();
 					}
 				}
@@ -195,5 +238,22 @@ public class awTip extends JPanel {
 	 */
 	public void setMainFrame(MainFrame mainFrame) {
 		this.mainFrame = mainFrame;
+	}
+	
+	public int getDelay() {
+		return delay;
+	}
+
+	public void setDelay(int delay) {
+		this.delay = delay;
+	}
+
+	private class MyDateListener implements PropertyChangeListener
+	{
+		@Override
+		public void propertyChange(PropertyChangeEvent evt) {
+			System.out.println("changed");
+		}
+
 	}
 }
