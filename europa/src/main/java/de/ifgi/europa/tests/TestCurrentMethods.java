@@ -15,9 +15,12 @@ public class TestCurrentMethods {
 
 	public static void main(String[] args) {
 		
-		GlobalSettings.CurrentNamedGraph = "http://europa.ifgi.uni-muenster.de/sos/52n/";	
-		GlobalSettings.CurrentNamedGraph = "file:///C:/Parliament/test";
-		GlobalSettings.CurrentSPARQLEndpoint="http://giv-siidemo.uni-muenster.de:8081/parliament/sparql";
+		GlobalSettings.CurrentNamedGraph = "http://europa.ifgi.uni-muenster.de/browser/";	
+		
+		//GlobalSettings.CurrentNamedGraph = "file:///C:/Parliament/test";
+		
+		//GlobalSettings.CurrentSPARQLEndpoint="http://giv-siidemo.uni-muenster.de:8081/parliament/sparql";
+		GlobalSettings.CurrentSPARQLEndpoint="http://recife:8081/parliament/sparql";
 		
 		
 		ArrayList<SOSProperty> prop = new ArrayList<SOSProperty>();
@@ -31,13 +34,10 @@ public class TestCurrentMethods {
 		}
 		
 		
-		
-		
-		
 		ArrayList<SOSFeatureOfInterest> sosprop = new ArrayList<SOSFeatureOfInterest>(); 
 		SOSProperty property = new SOSProperty();
-		//property.setUri(URI.create("http://ifgi.uni-muenster.de/hydrolod#PROPERTY_5"));
-		property.setUri(URI.create("http://www.opengis.net/def/property/OGC/0/SamplingTime"));
+		property.setUri(URI.create("http://ifgi.uni-muenster.de/hydrolod#Wassertemperatur"));
+		//property.setUri(URI.create("http://www.opengis.net/def/property/OGC/0/SamplingTime"));
 		sosprop = Facade.getInstance().listFeaturesOfInterest(property);
 		
 		System.out.println("\n**** GET FOIS PER PROPERTY **** \n");
@@ -46,8 +46,6 @@ public class TestCurrentMethods {
 			System.out.println(sosprop.get(i).getUri());
 			
 		}		
-
-		
 		
 		
 		

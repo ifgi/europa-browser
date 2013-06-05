@@ -49,9 +49,11 @@ public class GlobalSettings {
 	/**
 	 * Retrieves the last observation for a given feature of interest (SOSFeatureOfInterest)
 	 * @author jones
+	 * @deprecated
 	 */
 	
-	public static String geFOILastObservation = prefixes +
+
+	public static String geFOILastObservation_old = prefixes +
 			" SELECT  ?wkt ?value ?samplingTime " + 
 			" WHERE { GRAPH <PARAM_GRAPH> { " +
 			"   ?property purl:isPropertyOf ?foi . " +
@@ -67,14 +69,40 @@ public class GlobalSettings {
 			"   ?point geo:asWKT ?wkt  . " +
 			"} } ORDER BY DESC(?end) LIMIT 1";
 	
+
+	/**
+	 * Retrieves the last observation for a given feature of interest (SOSFeatureOfInterest)
+	 * @author Alber Sanchez
+	 * 
+	 */
+
+	public static String geFOILastObservation = prefixes +
+
+			"SELECT  ?wkt ?value ?samplingTime " + 
+			"WHERE { GRAPH <PARAM_GRAPH> { " +    
+			"	<PARAM_FOI> geo:defaultGeometry ?point . " +
+			"	?point geo:asWKT ?wkt  .  " +
+			"	?propertyST purl:isPropertyOf <PARAM_FOI> . " +   
+			"	?propertyST purl:hasQuality <http://dbpedia.org/resource/Time> . " +
+			"	?obsValST purl:forProperty ?propertyST . " +
+			"	?obsValST purl:hasValue  ?samplingTime . " +
+			"	?senOut purl:hasValue ?obsValST . " +
+			"	?senOut purl:hasValue ?obsValQT . " +
+			"	?obsValQT purl:hasValue ?value . " +
+			"	?obsValQT purl:forProperty ?propertyQT . " +
+			"	?propertyQT purl:hasQuality <http://dbpedia.org/page/Quantity> . " +
+			"} } ORDER BY DESC(?samplingTime) LIMIT 1 ";
+
+
 	
 	/**
 	 * Retrieves a list of observations related to a given feature of interest (SOSFeatureOfInterest), 
 	 * constrained by a time interval (TimeInterval).
 	 * @author jones
+	 * @deprecated
 	 */
 	
-	public static String getObservationsbyTimeInterval=prefixes+
+	public static String getObservationsbyTimeInterval_old=prefixes+
 			" SELECT  ?wkt ?value ?samplingTime " +
 			"           WHERE { GRAPH <PARAM_GRAPH> { " +
 			"           ?property purl:isPropertyOf ?foi . " +
@@ -91,7 +119,31 @@ public class GlobalSettings {
 	    	"} } ORDER BY ?samplingTime ";
 	
 	
-	
+	/**
+	 * Retrieves a list of observations related to a given feature of interest (SOSFeatureOfInterest), 
+	 * constrained by a time interval (TimeInterval).
+	 * @author Alber Sanchez
+	 * 
+	 */
+	public static String getObservationsbyTimeInterval=prefixes+
+						"SELECT  ?wkt ?value ?samplingTime " + 
+						"WHERE { GRAPH <PARAM_GRAPH> { " +    
+						"	<PARAM_FOI> geo:defaultGeometry ?point . " +
+						"	?point geo:asWKT ?wkt  .  " +
+						"	?propertyST purl:isPropertyOf <PARAM_FOI> . " +   
+						"	?propertyST purl:hasQuality <http://dbpedia.org/resource/Time> . " +
+						"	?obsValST purl:forProperty ?propertyST . " +
+						"	?obsValST purl:hasValue  ?samplingTime . " +
+						"	?senOut purl:hasValue ?obsValST . " +
+						"	?senOut purl:hasValue ?obsValQT . " +
+						"	?obsValQT purl:hasValue ?value . " +
+						"	?obsValQT purl:forProperty ?propertyQT . " +
+						"	?propertyQT purl:hasQuality <http://dbpedia.org/page/Quantity> . " +
+					    "        FILTER (xsd:dateTime(?samplingTime) >= \"PARAM_DATE1\"^^xsd:dateTime && " +  
+				    	"			     xsd:dateTime(?samplingTime) <= \"PARAM_DATE2\"^^xsd:dateTime) .  " +
+				    	"} } ORDER BY ?samplingTime ";
+
+						
 	
 	/**
 	 * Returns all PROPERTIES from a given SPARQL Endpoint and Named Graph.
