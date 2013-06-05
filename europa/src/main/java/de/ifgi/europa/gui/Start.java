@@ -3,6 +3,11 @@ package de.ifgi.europa.gui;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
+/**
+ * This class represents the starting point of the SOS LOD Viewer
+ * @author Matthias Pfeil
+ *
+ */
 public class Start {
 
 	/**

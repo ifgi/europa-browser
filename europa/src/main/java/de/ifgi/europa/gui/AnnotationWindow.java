@@ -23,7 +23,6 @@ public class AnnotationWindow extends JWindow
     private JPanel panel = null;
     private WorldWindowGLCanvas wwd = null;
     private Point point = new Point(0, 0);
-//    private Position position;
     private Position position = Position.fromDegrees(0, 0, 0);
     private Color color = Color.LIGHT_GRAY;
 
@@ -92,20 +91,22 @@ public class AnnotationWindow extends JWindow
         return this.point;
     }
 
+    /**
+     * Renders the AnnotationWindow and sets it to a fixed position (upper left corner) inside the
+     * WorldWindowGLCanvas.
+     * @param dc draw context
+     */
     public void render(DrawContext dc)
     {
 
-        Dimension size = this.getSize();
-        Dimension base = wwd.getSize();
+        this.getSize();
+        wwd.getSize();
         Point loc = wwd.getLocationOnScreen();
-//        Point loc = new Point(5, 5);
-        // Get position and check if it is inside the frustum
         
         Vec4 cartpoint = dc.getGlobe().computePointFromPosition(this.position);
         this.setVisible(true);
 
-        // Translate position to screen point
-        Vec4 scrpoint = dc.getView().project(cartpoint);
+        dc.getView().project(cartpoint);
 
         this.point.x = loc.x + 5;
         this.point.y = loc.y + 5;
@@ -122,14 +123,6 @@ public class AnnotationWindow extends JWindow
         gl.glLineWidth(2);
 
         gl.glBegin(GL.GL_TRIANGLES);
-
-//        gl.glVertex2d(scrpoint.x, scrpoint.y);
-//        gl.glVertex2d(scrpoint.x + 20, scrpoint.y + 20);
-//        gl.glVertex2d(scrpoint.x, scrpoint.y + 20);
-
-//        gl.glVertex2d(5, 5);
-//        gl.glVertex2d(5 + 20, 5 + 20);
-//        gl.glVertex2d(5, 5 + 20);
         
         gl.glEnd();
     }
