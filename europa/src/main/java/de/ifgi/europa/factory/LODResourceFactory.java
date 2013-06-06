@@ -8,16 +8,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
-
-import cern.colt.matrix.impl.SparseDoubleMatrix1D;
-
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.QueryExecutionFactory;
 import com.hp.hpl.jena.query.QueryFactory;
 import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
-
 import de.ifgi.europa.comm.JenaConnector;
 import de.ifgi.europa.core.Fact;
 import de.ifgi.europa.core.FactCollection;
