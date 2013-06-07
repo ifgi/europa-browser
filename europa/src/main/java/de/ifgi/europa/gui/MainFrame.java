@@ -22,8 +22,6 @@ import javax.swing.plaf.basic.BasicSplitPaneUI;
  */
 public class MainFrame extends JFrame {
 
-//	private JPanel panelCont = new JPanel(new BorderLayout());
-	private JPanel pnlWebViewer;
 	private JPanel pnlMap;
 	private JPanel pnlFilter;
 	private JSplitPane splitPaneTop;
@@ -38,14 +36,12 @@ public class MainFrame extends JFrame {
 	    
 	    pnlFilter = new FilterPanel(this);
 	    pnlMap = new MapPanel(this);
-//	    pnlWebViewer = new WebViewerPanel(this);
 	    pnlGraph = new GraphPanel(this);
 	    
 	    splitPaneTop = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,pnlFilter,pnlMap);
 	    splitPaneTop.setOneTouchExpandable(true);
 	    splitPaneTop.setBorder(null);
 	    
-//	    splitPaneBottom = new JSplitPane(JSplitPane.VERTICAL_SPLIT, splitPaneTop, pnlWebViewer);
 	    splitPaneBottom = new JSplitPane(JSplitPane.VERTICAL_SPLIT, splitPaneTop, pnlGraph);
 	    splitPaneBottom.setOneTouchExpandable(true);
 	    
@@ -106,7 +102,7 @@ public class MainFrame extends JFrame {
 		return pnlFilter;
 	}
 	
-	public JPanel getWebViewer() {
-		return pnlWebViewer;
+	public JPanel getGraphPanel() {
+		return pnlGraph;
 	}
 }
