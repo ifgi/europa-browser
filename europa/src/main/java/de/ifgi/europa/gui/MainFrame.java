@@ -28,28 +28,31 @@ public class MainFrame extends JFrame {
 	private JPanel pnlFilter;
 	private JSplitPane splitPaneTop;
 	private JSplitPane splitPaneBottom;
+	private JPanel pnlGraph;
 
 	public MainFrame() {
-		super("LOD SOS Viewer");
+		super("Europa Linked Observation Browser");
 	    setSize(800,600);
 	    setLocation(0,0);
 	    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	    
 	    pnlFilter = new FilterPanel(this);
 	    pnlMap = new MapPanel(this);
-	    pnlWebViewer = new WebViewerPanel(this);
+//	    pnlWebViewer = new WebViewerPanel(this);
+	    pnlGraph = new GraphPanel(this);
 	    
 	    splitPaneTop = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,pnlFilter,pnlMap);
 	    splitPaneTop.setOneTouchExpandable(true);
 	    splitPaneTop.setBorder(null);
 	    
-	    splitPaneBottom = new JSplitPane(JSplitPane.VERTICAL_SPLIT, splitPaneTop, pnlWebViewer);
+//	    splitPaneBottom = new JSplitPane(JSplitPane.VERTICAL_SPLIT, splitPaneTop, pnlWebViewer);
+	    splitPaneBottom = new JSplitPane(JSplitPane.VERTICAL_SPLIT, splitPaneTop, pnlGraph);
 	    splitPaneBottom.setOneTouchExpandable(true);
-
+	    
 	    add(splitPaneBottom);
 
 	    pack();
-	    setVisible(true);
+	    setVisible(true); 
 	    
 	    KeyboardFocusManager manager = KeyboardFocusManager.getCurrentKeyboardFocusManager();
 	    manager.addKeyEventDispatcher(new MyDispatcher());

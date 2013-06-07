@@ -54,13 +54,13 @@ public class awTip extends JPanel {
 		slider = new JSlider(JSlider.HORIZONTAL, 0, 10, 0);
 		final SimpleDateFormat dateFormatString = new SimpleDateFormat("yyyy-MM-dd");
 		final JButton btnPlay = new JButton("Play");
-		try {
-			imgPlay = ImageIO.read(getClass().getResource("/de/ifgi/europa/resources/play.png"));
-			imgPause = ImageIO.read(getClass().getResource("/de/ifgi/europa/resources/pause.png"));
-			btnPlay.setIcon(new ImageIcon(imgPlay.getScaledInstance(16, 16, java.awt.Image.SCALE_SMOOTH)));
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
+//		try {
+//			imgPlay = ImageIO.read(getClass().getResource("/src/main/resources/play.png"));
+////			imgPause = ImageIO.read(getClass().getResource("/de/ifgi/europa/resources/pause.png"));
+//			btnPlay.setIcon(new ImageIcon(imgPlay.getScaledInstance(16, 16, java.awt.Image.SCALE_SMOOTH)));
+//		} catch (IOException e1) {
+//			e1.printStackTrace();
+//		}
 		
 		final JDateChooser dcFrom = new JDateChooser();
 		final JDateChooser dcUntil = new JDateChooser();
@@ -183,11 +183,11 @@ public class awTip extends JPanel {
 				if (startTime != "" && endTime != "") {
 					if (timerswing.isRunning()) {
 						btnPlay.setText("Play");
-						btnPlay.setIcon(new ImageIcon(imgPlay.getScaledInstance(16, 16, java.awt.Image.SCALE_SMOOTH)));
+//						btnPlay.setIcon(new ImageIcon(imgPlay.getScaledInstance(16, 16, java.awt.Image.SCALE_SMOOTH)));
 						timerswing.stop();
 					} else {
 						btnPlay.setText("Pause");
-						btnPlay.setIcon(new ImageIcon(imgPause.getScaledInstance(16, 16, java.awt.Image.SCALE_SMOOTH)));
+//						btnPlay.setIcon(new ImageIcon(imgPause.getScaledInstance(16, 16, java.awt.Image.SCALE_SMOOTH)));
 						timerswing.start();
 					}
 				}

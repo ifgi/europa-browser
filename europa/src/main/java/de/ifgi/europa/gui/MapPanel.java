@@ -1,13 +1,18 @@
 package de.ifgi.europa.gui;
 
 import java.awt.GridLayout;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.Iterator;
 
 import gov.nasa.worldwind.BasicModel;
 import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.awt.WorldWindowGLCanvas;
+import gov.nasa.worldwind.event.PositionEvent;
+import gov.nasa.worldwind.event.PositionListener;
 import gov.nasa.worldwind.geom.Position;
+import gov.nasa.worldwind.geom.Vec4;
 import gov.nasa.worldwind.globes.Earth;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.layers.CompassLayer;
@@ -42,6 +47,7 @@ public class MapPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 	private MainFrame mainFrame;
 	final RenderableLayer layer;
+	Globe earth;
 	final WorldWindowGLCanvas wwd = new WorldWindowGLCanvas();
 	public static String newline = System.getProperty("line.separator");
 	AnnotationWindow tip;
@@ -78,7 +84,7 @@ public class MapPanel extends JPanel {
             new ScalebarLayer(),  
         };
 		
-		Globe earth = new Earth();
+		earth = new Earth();
 		BasicModel modelForWindowA = new BasicModel();
 		modelForWindowA.setGlobe(earth);
 		modelForWindowA.setLayers(new LayerList(layers));
@@ -90,6 +96,40 @@ public class MapPanel extends JPanel {
         wwd.addSelectListener(new ViewControlsSelectListener(wwd, viewControlsA));
         
         this.add(wwd, java.awt.BorderLayout.CENTER);
+        
+//        wwd.addMouseListener(new MouseListener() {
+//			
+//			@Override
+//			public void mouseReleased(MouseEvent arg0) {
+//				// TODO Auto-generated method stub
+//				
+//			}
+//			
+//			@Override
+//			public void mousePressed(MouseEvent arg0) {
+//				// TODO Auto-generated method stub
+//				
+//			}
+//			
+//			@Override
+//			public void mouseExited(MouseEvent arg0) {
+//				// TODO Auto-generated method stub
+//				
+//			}
+//			
+//			@Override
+//			public void mouseEntered(MouseEvent arg0) {
+//				// TODO Auto-generated method stub
+//				
+//			}
+//			
+//			@Override
+//			public void mouseClicked(MouseEvent arg0) {
+//				System.out.println(wwd.getCurrentPosition());
+//				((WebViewerPanel) getMainFrame().getWebViewer()).runJavaScript();
+//			}
+//		});
+        
 	}	
 	
 	/**
@@ -109,8 +149,8 @@ public class MapPanel extends JPanel {
 	public void updateGlobe(SOSObservation observation, String foi, String viz) {
 
 		if (observation != null) {
-			Double defaultHeight = 1000.0;
-			Double defaultRadius = 1000.0;
+			Double defaultHeight = 10.0;
+			Double defaultRadius = 10.0;
 			Double val = 0.0;
 			String toolTip = "";
 			
@@ -125,8 +165,8 @@ public class MapPanel extends JPanel {
 			//Get geometry of observation and parse latitude and longitude
 			String wkt = observation.getFeatureOfInterest().getDefaultGeometry().getAsWKT();
 			String[] splitArray = wkt.split("\\s+");
-			String[] splitArrayLat = splitArray[0].split("\\(");
-			String[] splitArrayLon = splitArray[1].split("\\)");
+			String[] splitArrayLat = splitArray[1].split("\\(");
+			String[] splitArrayLon = splitArray[2].split("\\)");
 			Double lat = Double.parseDouble(splitArrayLat[1]);
 			Double lon = Double.parseDouble(splitArrayLon[0]);
 			

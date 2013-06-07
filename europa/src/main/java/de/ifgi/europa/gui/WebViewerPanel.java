@@ -1,19 +1,19 @@
 package de.ifgi.europa.gui;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.GridLayout;
-import java.awt.Point;
+import java.awt.Desktop;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 import javafx.application.Platform;
-import javafx.collections.ObservableList;
 import javafx.embed.swing.JFXPanel;
-import javafx.scene.Group;
-import javafx.scene.Node;
+import javafx.geometry.HPos;
+import javafx.geometry.VPos;
 import javafx.scene.Scene;
-import javafx.scene.paint.Paint;
+import javafx.scene.layout.Region;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
@@ -31,14 +31,12 @@ import com.sun.javafx.application.PlatformImpl;
 public class WebViewerPanel extends JPanel {
 
 	private Stage stage;  
-    private WebView browser;  
     private JFXPanel jfxPanel;  
-    private JButton swingButton;  
-    private WebEngine webEngine;
+    private JButton btnReload;  
     private MainFrame mainFrame;
+    private Browser browser;
 	
 	public WebViewerPanel(MainFrame mF) {
-//		super(new GridLayout(1, 1));
 		super(new BorderLayout());
 		this.setMainFrame(mF);
 
@@ -48,8 +46,8 @@ public class WebViewerPanel extends JPanel {
         setLayout(new BorderLayout());  
         add(jfxPanel, BorderLayout.CENTER);  
          
-        swingButton = new JButton();  
-        swingButton.addActionListener(new ActionListener() {
+        btnReload = new JButton();  
+        btnReload.addActionListener(new ActionListener() {
  
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -57,14 +55,14 @@ public class WebViewerPanel extends JPanel {
  
                     @Override
                     public void run() {
-                        webEngine.reload();
+                       browser.webEngine.reload();
                     }
                 });
             }
         });  
-        swingButton.setText("Reload");  
+        btnReload.setText("Reload");  
          
-        add(swingButton, BorderLayout.SOUTH);
+        add(btnReload, BorderLayout.PAGE_START);
 	}
 	
 	/** 
@@ -79,22 +77,11 @@ public class WebViewerPanel extends JPanel {
             @Override
             public void run() {  
                  
-                stage = new Stage();  
-                 
-//                stage.setTitle("Hello Java FX");  
-//                stage.setResizable(true);  
-   
-                Group root = new Group();  
-                Scene scene = new Scene(root,80,20);  
-                stage.setScene(scene);  
-                 
-                // Set up the embedded browser:
-                browser = new WebView();
-                webEngine = browser.getEngine();
-                webEngine.load("http://www.google.com");
-                
-                ObservableList<Node> children = root.getChildren();
-                children.add(browser);                     
+                stage = new Stage();    
+
+                browser = new Browser();
+                Scene scene = new Scene(browser,500,500);  
+                stage.setScene(scene);                
                  
                 jfxPanel.setScene(scene);  
             }  
@@ -108,5 +95,46 @@ public class WebViewerPanel extends JPanel {
 	public void setMainFrame(MainFrame mainFrame) {
 		this.mainFrame = mainFrame;
 	}
+	
+	public void runJavaScript() {
+		Platform.runLater(new Runnable() {
+			 
+            @Override
+            public void run() {
+            	
+            	browser.webEngine.executeScript("showGoogle()");
+            }
+        });
+		
+	}
+}
 
+class Browser extends Region {
+	
+	final WebView browser = new WebView();
+    final WebEngine webEngine = browser.getEngine();
+	
+	public Browser() {
+        //apply the styles
+        getStyleClass().add("browser");
+        // load the web page
+        webEngine.load("http://ifgibox.de/m_pfei05/nasasigma/index_old.html");
+        //add the web view to the scene
+        getChildren().add(browser);
+ 
+    }
+	
+	@Override protected void layoutChildren() {
+        double w = getWidth();
+        double h = getHeight();
+        layoutInArea(browser,0,0,w,h,0, HPos.CENTER, VPos.CENTER);
+    }
+ 
+    @Override protected double computePrefWidth(double height) {
+        return 750;
+    }
+ 
+    @Override protected double computePrefHeight(double width) {
+        return 500;
+    }
 }
