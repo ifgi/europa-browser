@@ -8,16 +8,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
-
-import cern.colt.matrix.impl.SparseDoubleMatrix1D;
-
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.QueryExecutionFactory;
 import com.hp.hpl.jena.query.QueryFactory;
 import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
-
 import de.ifgi.europa.comm.JenaConnector;
 import de.ifgi.europa.core.Fact;
 import de.ifgi.europa.core.FactCollection;
@@ -397,7 +393,6 @@ public class LODResourceFactory {
 		return res;
 	}
 
-
 	/**
 	 * Finds the kind of object given the type
 	 * @param type
@@ -461,7 +456,7 @@ public class LODResourceFactory {
 	
 	
 	/**
-	 *  Lists all properties available
+	 *  Lists all properties available in the current named graph.
 	 *  
 	 * @author jones
 	 * @return
@@ -584,7 +579,9 @@ public class LODResourceFactory {
 		SPARQL = GlobalSettings.geFOILastObservation.replace("PARAM_FOI", featureOfInterest.getUri().toString());
 		SPARQL = SPARQL.replace("PARAM_GRAPH", GlobalSettings.CurrentNamedGraph);
 		ResultSet rs = cnn.executeSPARQLQuery(SPARQL);
-						
+					
+		System.out.println(SPARQL);
+		
 		ArrayList<SOSFeatureOfInterest> feature = new ArrayList<SOSFeatureOfInterest>();
 		ArrayList<SOSSensorOutput> sensorOutput = new ArrayList<SOSSensorOutput>();
 		
