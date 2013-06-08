@@ -60,7 +60,10 @@ public class JenaConnector {
 		
 	}
 	
-	
+	/**
+	 * Constructor
+	 * @param url An SPARQL endpoint's url
+	 */
 	public JenaConnector(String url) {
 		super();
 		endpointURL = url;
@@ -178,7 +181,7 @@ public class JenaConnector {
 	}
 
 	/**
-	 *This represents a RDF triple.
+	 *This class represents RDF triples composed of a single subject with many predicate-object pairs.
 	 * 
 	 * @author Alber Sánchez
 	 * 
@@ -189,23 +192,38 @@ public class JenaConnector {
 		private ArrayList<String> object = new ArrayList<String>();
 		private ArrayList<String> datatype = new ArrayList<String>();
 
+		/**
+		 * Returns the subject of the triple
+		 * @return An URI
+		 */
 		public URI getSubject() {
 			return subject;
 		}
 
+		/**
+		 * Sets a subject for the triple. 
+		 * @param subject
+		 */
 		public void setSubject(URI subject) {
 			this.subject = subject;
 		}
 
+		/**
+		 * Constructor
+		 */
 		Triple(){}
 
+		/**
+		 * Constructor
+		 * @param subject Subject common for all the properties and objects in this triple. 
+		 */
 		Triple(URI subject){
 			this.subject = subject;
 		}
 
 		
 		/**
-		 * This adds a predicate to the triple
+		 * Adds a single predicate-object pair to the triple.
 		 * 
 		 * @author Alber Sánchez
 		 * @param predicate
@@ -236,7 +254,7 @@ public class JenaConnector {
 		}
 
 		/**
-		 * This adds a predicate to the triple
+		 * Adds a single predicate-object pair to the triple.
 		 * 
 		 * @author Alber Sánchez
 		 * @param predicate
@@ -249,7 +267,7 @@ public class JenaConnector {
 		}
 
 		/**
-		 * This export the triple as a Fact
+		 * Export the triple as a Fact
 		 *
 		 * @deprecated
 		 * @author Alber Sánchez
