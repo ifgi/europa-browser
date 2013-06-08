@@ -1,3 +1,19 @@
+/**
+   Copyright 2013 Jim Jones, Matthias Pfeil and Alber Sanchez
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+ */
+
 package de.ifgi.europa.comm;
 
 import java.net.URI;
@@ -44,21 +60,19 @@ public class JenaConnector {
 		
 	}
 	
-	
+	/**
+	 * Constructor
+	 * @param url An SPARQL endpoint's url
+	 */
 	public JenaConnector(String url) {
 		super();
 		endpointURL = url;
 	}
-
-	
-	
-	
-	
-	
-	
 	
 	/**
-	 * This is generic
+	 * This a set of facts.
+	 * 
+	 * @deprecated 
 	 * @return 
 	 * @throws URISyntaxException
 	 * @author Alber Sanchez 
@@ -95,6 +109,13 @@ public class JenaConnector {
 		return fc;
 	}
 
+	
+	/**
+	 * This queries the properties in a graph in a sparql endpoint. See http://www.w3.org/2005/Incubator/ssn/ssnx/ssn#Property
+	 * 
+	 * @return The properties found in a sparql endpoint
+	 * @throws URISyntaxException
+	 */
 	public ArrayList<SOSProperty> getListOfProperties() throws URISyntaxException{
 
 		Query query = QueryFactory.create(GlobalSettings.SPARQL_getListOfProperties);
@@ -114,9 +135,12 @@ public class JenaConnector {
 		return result;
 
 	}
-
+	
+	
 	/**
-	 * This ask for all the triples with the same subject
+	 * This builds facts form the RDF triples about the given subject returned by the sparql endpoint
+	 *
+	 * @deprecated  
 	 * @param subject It's the RDF triple subject
 	 * @return A fact
 	 * @author Alber Sanchez
@@ -157,6 +181,8 @@ public class JenaConnector {
 	}
 
 	/**
+	 *This class represents RDF triples composed of a single subject with many predicate-object pairs.
+	 * 
 	 * @author Alber Sánchez
 	 * 
 	 */
@@ -166,21 +192,39 @@ public class JenaConnector {
 		private ArrayList<String> object = new ArrayList<String>();
 		private ArrayList<String> datatype = new ArrayList<String>();
 
+		/**
+		 * Returns the subject of the triple
+		 * @return An URI
+		 */
 		public URI getSubject() {
 			return subject;
 		}
 
+		/**
+		 * Sets a subject for the triple. 
+		 * @param subject
+		 */
 		public void setSubject(URI subject) {
 			this.subject = subject;
 		}
 
+		/**
+		 * Constructor
+		 */
 		Triple(){}
 
+		/**
+		 * Constructor
+		 * @param subject Subject common for all the properties and objects in this triple. 
+		 */
 		Triple(URI subject){
 			this.subject = subject;
 		}
 
+		
 		/**
+		 * Adds a single predicate-object pair to the triple.
+		 * 
 		 * @author Alber Sánchez
 		 * @param predicate
 		 * @param object
@@ -210,6 +254,8 @@ public class JenaConnector {
 		}
 
 		/**
+		 * Adds a single predicate-object pair to the triple.
+		 * 
 		 * @author Alber Sánchez
 		 * @param predicate
 		 * @param object
@@ -221,6 +267,9 @@ public class JenaConnector {
 		}
 
 		/**
+		 * Export the triple as a Fact
+		 *
+		 * @deprecated
 		 * @author Alber Sánchez
 		 * @return
 		 */

@@ -1,4 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+   Copyright 2013 Jim Jones, Matthias Pfeil and Alber Sanchez
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License. 
+ -->
+
 
 <!-- 
 TRANSFORMATION OF A SOS GET OBSERVATION RESPONSE TO RDF TRIPLES 
@@ -248,7 +264,18 @@ TRANSFORMATION OF A SOS GET OBSERVATION RESPONSE TO RDF TRIPLES
 	<!-- **************************************************************** -->
 	<xsl:template match="/om:ObservationCollection/om:member/om:Observation/om:featureOfInterest/gml:FeatureCollection/gml:featureMember/sa:SamplingPoint/sa:position/gml:Point | 
 						 /om:ObservationCollection/om:member/om:Observation/om:featureOfInterest/gml:FeatureCollection/gml:location/gml:MultiPoint/gml:pointMembers/gml:Point">
-		<xsl:variable name="PointId" select="generate-id()" />
+		<xsl:variable name="SrsId" select="./gml:pos/@srsName | ../../@srsName" />
+		<xsl:variable name="Coords" select="./gml:pos/text()" />
+
+
+
+		<xsl:variable name="PointId" select="translate(concat($SrsId, '_', $Coords), ' ', '_')" />
+<!-- 				
+<xsl:variable name="PointId" select="generate-id()" />
+-->
+
+
+
 		<!-- Incoming relations -->
 		<rdf:Description>
 			<xsl:variable name="FoiIdTest" select="../../@gml:id | 
@@ -272,13 +299,10 @@ TRANSFORMATION OF A SOS GET OBSERVATION RESPONSE TO RDF TRIPLES
 		</rdf:Description>
 		<!-- Point -->
 		<rdf:Description>
-			<xsl:variable name="SrsId" select="./gml:pos/@srsName |
-											   ../../@srsName" />
 			<xsl:attribute name="rdf:about"><xsl:value-of select="concat('http://ifgi.uni-muenster.de/hydrolod#', 'POINT_', $PointId)" /></xsl:attribute>
 			<rdf:type rdf:resource="geo:Point" />
 			<rdfs:label><xsl:copy-of select="concat('POINT_', $PointId)" /></rdfs:label>
 			<geo:asWKT rdf:datatype="http://www.opengis.net/def/geosparql/wktLiteral">
-				<xsl:variable name="Coords" select="./gml:pos/text()" />
 				<xsl:variable name="Wkt" select="concat('&lt;', $SrsId, '&gt;', ' POINT(', $Coords, ')')" />
 				<xsl:value-of select="$Wkt" disable-output-escaping="no" />
 			</geo:asWKT>
