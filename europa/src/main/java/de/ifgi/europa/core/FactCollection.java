@@ -20,27 +20,52 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 
+
+/**
+ * Class for handlig sets of facts.
+ * @deprecated
+ * @author alber
+ *
+ */
 public class FactCollection implements Iterable<FactCollection.FactCollectionIterator<Fact>> {
 
 	private ArrayList<Fact> factCollection = new ArrayList<Fact>();
 
-
+	
+	/**
+	 * Return a fact collection
+	 * @deprecated
+	 * @return
+	 */
 	public ArrayList<Fact> getFactCollection() {
 		return factCollection;
 	}
+	
+	/**
+	 * Sets the fact collection
+	 * @deprecated
+	 * @param factCollection
+	 */
 	public void setFactCollection(ArrayList<Fact> factCollection) {
 		this.factCollection = factCollection;
 	}
 
-
+	
+	/**
+	 * Constructor
+	 * @deprecated
+	 */
 	public FactCollection() {
 
 	}
+	
+	
 	/**
+	 * Constructor
+	 * @deprecated
 	 * @author Alber Sánchez
 	 * @param factList
 	 */
-	
 	public FactCollection(ArrayList<Fact> factList) {
 		super();
 
@@ -65,7 +90,10 @@ public class FactCollection implements Iterable<FactCollection.FactCollectionIte
 		}
 	}
 	
+	
 	/**
+	 * Constructor 
+	 * @deprecated
 	 * @author Alber Sánchez
 	 * @param subject
 	 * @param predicate
@@ -73,7 +101,6 @@ public class FactCollection implements Iterable<FactCollection.FactCollectionIte
 	 * @param datatype
 	 * @throws Exception
 	 */
-	
 	public FactCollection(ArrayList<String> subject,ArrayList<String> predicate, ArrayList<String> object,ArrayList<String> datatype) throws Exception {
 		super();
 		if(subject.size() == predicate.size() && predicate.size() == object.size() && object.size() == datatype.size()){
@@ -85,8 +112,10 @@ public class FactCollection implements Iterable<FactCollection.FactCollectionIte
 
 	}
 
+	
 	/**
 	 * Collapses the duplicated facts into one
+	 * @deprecated
 	 * @author Alber Sánchez
 	 * @param subjectClone
 	 * @param predicateFactCollection
@@ -120,21 +149,43 @@ public class FactCollection implements Iterable<FactCollection.FactCollectionIte
 		return res;
 	}
 
+	
+	/**
+	 * Adds a fact to the collection
+	 * @deprecated
+	 * @param f
+	 */
 	public void add(Fact f) {
 		this.factCollection.add(f);
 	}
 
+	/**
+	 * Removes a fact form the collection.
+	 * @deprecated 
+	 * @param index
+	 */
 	public void remove(int index){
 		if(index >= 0 && index < this.Size()){
 			this.factCollection.remove(index);
 		}
 	}
 
+	/**
+	 * Returns the number of facts in the collection
+	 * @deprecated
+	 * @return
+	 */
 	public int Size(){
 		int res = this.factCollection.size();
 		return res;
 	}
-
+	
+	/**
+	 * Returns a fact from the collection.
+	 * @deprecated 
+	 * @param index
+	 * @return
+	 */
 	public Fact get(int index){
 		Fact res = null;
 		if(index >= 0 && index < this.Size()){
@@ -143,22 +194,42 @@ public class FactCollection implements Iterable<FactCollection.FactCollectionIte
 		return res;
 	}
 
+	/**
+	 * Iteratior over the fact collection
+	 * @deprecated
+	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public Iterator<FactCollection.FactCollectionIterator<Fact>> iterator() {
 		return new FactCollectionIterator(this);
 	}
 
 
+	/**
+	 * Iterator over the fact collection
+	 * @deprecated
+	 * @author alber
+	 *
+	 * @param <Fact>
+	 */
 	@SuppressWarnings("hiding")
 	public class FactCollectionIterator<Fact> implements Iterator<Object> {
 
 		private ArrayList<?> factCollection;
 		private int position;
 
+		/**
+		 * Constructor
+		 * @deprecated
+		 * @param fc
+		 */
 		public FactCollectionIterator(FactCollection fc) {
 			this.factCollection = fc.getFactCollection();
 		}
 
+		/**
+		 * True of there is a next element 
+		 * @deprecated
+		 */
 		public boolean hasNext() {
 			if (position < factCollection.size()){
 				return true;
@@ -167,12 +238,20 @@ public class FactCollection implements Iterable<FactCollection.FactCollectionIte
 			}
 		}
 
+		/**
+		 * Returns the next fact in the collection
+		 * @deprecated
+		 */
 		public Object next() {
 			Object obj = factCollection.get(position);
 			position++;
 			return obj;	
 		}
 
+		/**
+		 * Removes a fact from the collection
+		 * @deprecated
+		 */
 		public void remove() {
 			factCollection.remove(position);
 		}

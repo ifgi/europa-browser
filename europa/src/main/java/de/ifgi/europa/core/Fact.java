@@ -18,6 +18,12 @@ package de.ifgi.europa.core;
 
 import java.util.ArrayList;
 
+/**
+ * Abstraction used for decoupling Jena from other packages.
+ * @deprecated
+ * @author alber
+ *
+ */
 public class Fact {
 
 	private String subject;
@@ -25,29 +31,76 @@ public class Fact {
 	private ArrayList<String> object = new ArrayList<String>();
 	private ArrayList<String> datatype = new ArrayList<String>();
 
+	/**
+	 * Returns the number of predicates in this fact.
+	 * @deprecated
+	 * @return
+	 */
 	public int getLength() {
 		return predicate.size();
 	}
+	
+	/**
+	 * Returns the subject of this fact.
+	 * @deprecated
+	 * @return
+	 */
 	public String getSubject() {
 		return subject;
 	}
+	
+	/**
+	 * Returns the predicates of this fact.
+	 * @deprecated
+	 * @return
+	 */
 	public ArrayList<String> getPredicate() {
 		return predicate;
 	}
+	
+	/**
+	 * Returns the objects of this fact.
+	 * @deprecated
+	 * @return
+	 */
 	public ArrayList<String> getObject() {
 		return object;
 	}
+	
+	/**
+	 * Return the data types of the objects in this fact.
+	 * @deprecated
+	 * @return
+	 */
 	public ArrayList<String> getDatatype() {
 		return datatype;
 	}
 
 
-	public Fact() {
-
-	}
+	/**
+	 * Constructor
+	 * @deprecated
+	 */
+	public Fact() {}
+	
+	/**
+	 * Constructor 
+	 * @deprecated
+	 * @param subject Subject of the fact
+	 */
 	public Fact(String subject) {
 		this.subject = subject;
 	}
+	
+	/**
+	 * Constructor
+	 * @deprecated
+	 * @param subject Fact' subject.
+	 * @param predicate Fact's predicates.
+	 * @param object Fact's objects.
+	 * @param datatype Object's datatypes
+	 * @throws Exception
+	 */
 	public Fact(String subject, ArrayList<String> predicate,
 			ArrayList<String> object, ArrayList<String> datatype) throws Exception {
 		super();
@@ -62,12 +115,24 @@ public class Fact {
 		}
 	}
 
+	/**
+	 * Adds a single predicate-object pair to the fact.
+	 * @deprecated
+	 * @param predicate
+	 * @param object
+	 * @param datatype
+	 */
 	public void add(String predicate, String object, String datatype){
 		this.predicate.add(predicate);
 		this.object.add(object);
 		this.datatype.add(datatype);
 	}
 
+	/**
+	 * Removes a predicate-object pair.
+	 * @deprecated
+	 * @param index
+	 */
 	public void remove(int index){
 		if(index >= 0 && index < this.getLength()){
 			this.predicate.remove(index);
@@ -76,6 +141,12 @@ public class Fact {
 		}
 	}
 
+	/**
+	 * Returns a predicate given it's index.
+	 * @deprecated
+	 * @param index
+	 * @return
+	 */
 	public String getPredicate(int index) {
 		String res = null;
 		if(index >= 0 && index < this.getLength()){
@@ -83,6 +154,13 @@ public class Fact {
 		}
 		return res;
 	}
+	
+	/**
+	 * Returns an object given it's index.
+	 * @deprecated
+	 * @param index
+	 * @return
+	 */
 	public String getObject(int index) {
 		String res = null;
 		if(index >= 0 && index < this.getLength()){
@@ -90,6 +168,13 @@ public class Fact {
 		}
 		return res;
 	}
+	
+	/**
+	 * Returns an object's datatype given it's index.
+	 * @deprecated
+	 * @param index
+	 * @return
+	 */
 	public String getDatatype(int index) {
 		String res = null;
 		if(index >= 0 && index < this.getLength()){
@@ -97,6 +182,12 @@ public class Fact {
 		}
 		return res;
 	}
+	
+	/**
+	 * Returns the number of predicate-object pairs.
+	 * @deprecated
+	 * @return
+	 */
 	public int getSize(){
 		return this.predicate.size();
 	}
