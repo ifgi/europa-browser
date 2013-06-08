@@ -18,16 +18,29 @@ package de.ifgi.europa.core;
 
 import java.net.URI;
 
+/**
+ * This class represents a RDF resource.
+ * @author alber
+ *
+ */
 public abstract class LODResource {
 
 	private URI uri;
 
+	/**
+	 * Returns the resource's URI
+	 * @return
+	 */
 	public URI getUri() {
 		return uri;
 	}
+	
+	/**
+	 * Sets the resource's URI
+	 * @param uri
+	 */
 	public void setUri(URI uri) {
 		this.uri = uri;
 	}
 
 }
-
