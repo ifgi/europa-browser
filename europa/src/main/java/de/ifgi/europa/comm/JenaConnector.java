@@ -49,16 +49,11 @@ public class JenaConnector {
 		super();
 		endpointURL = url;
 	}
-
-	
-	
-	
-	
-	
-	
 	
 	/**
-	 * This is generic
+	 * This a set of facts.
+	 * 
+	 * @deprecated 
 	 * @return 
 	 * @throws URISyntaxException
 	 * @author Alber Sanchez 
@@ -95,6 +90,13 @@ public class JenaConnector {
 		return fc;
 	}
 
+	
+	/**
+	 * This queries the properties in a graph in a sparql endpoint. See http://www.w3.org/2005/Incubator/ssn/ssnx/ssn#Property
+	 * 
+	 * @return The properties found in a sparql endpoint
+	 * @throws URISyntaxException
+	 */
 	public ArrayList<SOSProperty> getListOfProperties() throws URISyntaxException{
 
 		Query query = QueryFactory.create(GlobalSettings.SPARQL_getListOfProperties);
@@ -114,9 +116,12 @@ public class JenaConnector {
 		return result;
 
 	}
-
+	
+	
 	/**
-	 * This ask for all the triples with the same subject
+	 * This builds facts form the RDF triples about the given subject returned by the sparql endpoint
+	 *
+	 * @deprecated  
 	 * @param subject It's the RDF triple subject
 	 * @return A fact
 	 * @author Alber Sanchez
@@ -157,6 +162,8 @@ public class JenaConnector {
 	}
 
 	/**
+	 *This represents a RDF triple.
+	 * 
 	 * @author Alber Sánchez
 	 * 
 	 */
@@ -180,7 +187,10 @@ public class JenaConnector {
 			this.subject = subject;
 		}
 
+		
 		/**
+		 * This adds a predicate to the triple
+		 * 
 		 * @author Alber Sánchez
 		 * @param predicate
 		 * @param object
@@ -210,6 +220,8 @@ public class JenaConnector {
 		}
 
 		/**
+		 * This adds a predicate to the triple
+		 * 
 		 * @author Alber Sánchez
 		 * @param predicate
 		 * @param object
@@ -221,6 +233,9 @@ public class JenaConnector {
 		}
 
 		/**
+		 * This export the triple as a Fact
+		 *
+		 * @deprecated
 		 * @author Alber Sánchez
 		 * @return
 		 */
