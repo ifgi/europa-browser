@@ -5,6 +5,8 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
+import java.awt.Image;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -12,9 +14,11 @@ import java.awt.event.ItemListener;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+
 import javax.swing.BorderFactory;
 import javax.swing.DefaultCellEditor;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JColorChooser;
 import javax.swing.JComboBox;
@@ -23,6 +27,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -46,22 +52,28 @@ public class FilterPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 	private MainFrame mainFrame;
 	private JButton btnQuery;
-	private JTextField textQuery;
+	private JTextField txtSPARQLEndpoint;
 	private Facade facade;
 	private ArrayList<SOSProperty> properties;
 	private ArrayList<SOSFeatureOfInterest> fois = new ArrayList<SOSFeatureOfInterest>();
 	private ArrayList<URI> graphs;
 	private ArrayList<String> selectedProperties = new ArrayList<String>();
+	ImageIcon iconSpin, iconConnect;
 	
 	public FilterPanel(MainFrame mF) {
 		super(new GridLayout(2,1));
 		this.setMainFrame(mF);
 		this.setFacade(new Facade());
 		
+		Image imgSpinner = Toolkit.getDefaultToolkit().createImage("spinner.gif");
+		Image imgConnect = Toolkit.getDefaultToolkit().createImage("connect2.png");
+        iconSpin = new ImageIcon(imgSpinner);
+        iconConnect = new ImageIcon(imgConnect.getScaledInstance(16, 16, java.awt.Image.SCALE_SMOOTH));
+        
 		/**
 		 * Filter panel
 		 */
-	    this.setBorder(BorderFactory.createTitledBorder("SOS"));
+	    this.setBorder(BorderFactory.createTitledBorder("Triple Store"));
 	    
 	    Object[][] data = {};
 	    
@@ -111,20 +123,29 @@ public class FilterPanel extends JPanel {
 		final DefaultComboBoxModel cbModel = new DefaultComboBoxModel();
 		final JComboBox cbURI = new JComboBox(cbModel);
 		
-	    btnQuery = new JButton("GO!");
-	    textQuery = new JTextField("");
-	    textQuery.setColumns(25);
+		btnQuery = new JButton();
+		btnQuery.setEnabled(false);
+		
+		btnQuery.setIcon(iconConnect);
+	    
+		txtSPARQLEndpoint = new JTextField("");
+		txtSPARQLEndpoint.setColumns(20);
+	    
 	    JPanel pnlFilter = new JPanel(new BorderLayout());
 	    JPanel pnlQuery = new JPanel(new FlowLayout());
+	    JPanel pnlGraphs = new JPanel(new FlowLayout());
 	    JPanel pnlTables = new JPanel(new BorderLayout());
-		pnlQuery.add(new JLabel("URL:"));
-		pnlQuery.add(textQuery);
-		pnlQuery.add(btnQuery);
+	    cbURI.setPrototypeDisplayValue("                                                                             ");
+		pnlQuery.add(new JLabel("SPARQL Endpoint:"),BorderLayout.PAGE_START);
+		pnlQuery.add(txtSPARQLEndpoint,BorderLayout.CENTER);
+		pnlQuery.add(btnQuery,BorderLayout.PAGE_END);
+		pnlGraphs.add(new JLabel("Graphs:"),BorderLayout.PAGE_START);
+		pnlGraphs.add(cbURI,BorderLayout.CENTER);
 		pnlFilter.add(pnlQuery,BorderLayout.PAGE_START);
 		pnlFilter.setBorder(BorderFactory.createTitledBorder("Query"));
         propertiesTable.setFillsViewportHeight(true);
         
-        pnlTables.add(cbURI, BorderLayout.PAGE_START);
+        pnlTables.add(pnlGraphs, BorderLayout.PAGE_START);
         
         //Create the scroll pane and add the table to it.        
         JScrollPane scrollPanePropertiesTable = new JScrollPane(propertiesTable);
@@ -132,6 +153,32 @@ public class FilterPanel extends JPanel {
         
 		pnlFilter.add(pnlTables,BorderLayout.CENTER);
 		this.add(pnlFilter);
+		
+		txtSPARQLEndpoint.getDocument().addDocumentListener(new DocumentListener() {
+			
+			@Override
+			public void removeUpdate(DocumentEvent arg0) {
+				if (txtSPARQLEndpoint.getText().length() > 0) {
+					btnQuery.setEnabled(true);
+				} else {
+					btnQuery.setEnabled(false);
+				}
+			}
+			
+			@Override
+			public void insertUpdate(DocumentEvent arg0) {
+				if (txtSPARQLEndpoint.getText().length() > 0) {
+					btnQuery.setEnabled(true);
+				} else {
+					btnQuery.setEnabled(false);
+				}
+			}
+			
+			@Override
+			public void changedUpdate(DocumentEvent arg0) {
+				System.out.println("changed");
+			}
+		});
 		
 		/**
 		 * Result panel
@@ -168,9 +215,6 @@ public class FilterPanel extends JPanel {
 		JScrollPane scrollPaneResultsTable = new JScrollPane(resultsTable);
 		pnlResult.add(scrollPaneResultsTable);
 		this.add(pnlResult);
-//		WebViewerPanel web = new WebViewerPanel(getMainFrame());
-//		add(web);
-//		this.add((WebViewerPanel) getMainFrame().getWebViewer());
 		
 		/**
 		 * ActionListener for Query button. On click get all Graphs for
@@ -183,6 +227,7 @@ public class FilterPanel extends JPanel {
 				/**
 				 * Clear table after querying new endpoint
 				 */
+				btnQuery.setIcon(iconSpin);
 				clearTable(propertiesTable);
 				clearTable(resultsTable);
 				
@@ -191,16 +236,18 @@ public class FilterPanel extends JPanel {
 				URI uri = null;
 				
 				try {
-					uri = new URI(textQuery.getText());
-					GlobalSettings.CurrentSPARQLEndpoint = textQuery.getText(); 
+					uri = new URI(txtSPARQLEndpoint.getText());
+					GlobalSettings.CurrentSPARQLEndpoint = txtSPARQLEndpoint.getText(); 
 					setGraphs(getFacade().getListGraphs(URI.create(GlobalSettings.CurrentSPARQLEndpoint)));
 					
 					for (int i = 0; i < getGraphs().size(); i++) {
 						cbModel.addElement(getGraphs().get(i).toString());
-					}	
+					}
 				} catch (URISyntaxException e1) {
 					System.out.println(e1.toString());
 				}
+				
+				btnQuery.setIcon(iconConnect);
 			}
 		});
 		
