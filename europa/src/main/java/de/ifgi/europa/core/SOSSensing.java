@@ -19,6 +19,11 @@ package de.ifgi.europa.core;
 import java.net.URI;
 import java.util.ArrayList;
 
+/**
+ * This class represents a sensing http://www.w3.org/2005/Incubator/ssn/ssnx/ssn#Sensing
+ * @author alber
+ *
+ */
 public class SOSSensing  extends LODResource {
 
 	 URI uri;
@@ -26,22 +31,50 @@ public class SOSSensing  extends LODResource {
 	 String label;
 	boolean isFilled = false;
 	
+	/**
+	 * Establish if the sensing has all of its attributes.
+	 * @return True if all the attributes were filled, false otherwise. 
+	 */
+	public boolean isFilled() {
+		return isFilled;
+	}
+	
+	/**
+	 * Returns the sensing's URI.
+	 */
 	public URI getUri() {
 		return uri;
 	}
 
+	/**
+	 * Sets the sensing's URI.
+	 */
 	public void setUri(URI uri) {
 		this.uri = uri;
 	}
 
-
+	/**
+	 * Constructor.
+	 */
 	public SOSSensing() {
 		super();
 	}
+	
+	/**
+	 * Constructor.
+	 * @param uri
+	 */
 	public SOSSensing(URI uri) {
 		super();
 		this.uri = uri;
 	}
+	
+	/**
+	 * Constructor.
+	 * @param uri Sensing's URI.
+	 * @param description Sensing's description.
+	 * @param label Sensing's label.
+	 */
 	public SOSSensing(URI uri, ArrayList<String> description, String label) {
 		super();
 		this.uri = uri;
@@ -50,23 +83,36 @@ public class SOSSensing  extends LODResource {
 		this.isFilled = true;
 	}
 
+	/**
+	 * Returns the sensing's description.
+	 * @return
+	 */
 	public ArrayList<String> getDescription() {
 		return description;
 	}
 
+	/**
+	 * Sets the sensing's description.
+	 * @param description
+	 */
 	public void setDescription(ArrayList<String> description) {
 		this.description = description;
 	}
 
+	/**
+	 * Returns the sensing's label.
+	 * @return
+	 */
 	public String getLabel() {
 		return label;
 	}
 
+	/**
+	 * Sets the sensng's label.
+	 * @param label
+	 */
 	public void setLabel(String label) {
 		this.label = label;
 	}
-
-
-
 	
 }
