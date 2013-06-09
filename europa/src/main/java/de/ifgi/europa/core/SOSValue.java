@@ -26,14 +26,36 @@ public class SOSValue  extends LODResource {
 	SOSProperty property;
 	boolean isFilled = false;
 	
-
+	/**
+	 * Establish if the value has all of its attributes.
+	 * @return True if all the attributes were filled, false otherwise. 
+	 */
+	public boolean isFilled() {
+		return isFilled;
+	}
+	
+	/**
+	 * Constructor.
+	 */
 	public SOSValue() {
 		super();
 	}
+	
+	/**
+	 * Constructor.
+	 * @param uri
+	 */
 	public SOSValue(URI uri) {
 		super();
 		this.uri = uri;
 	}
+	
+	/**
+	 * Constructor.
+	 * @param id Value's id.
+	 * @param value Value's value.
+	 * @param property Measured property represented by the value.
+	 */
 	public SOSValue(long id, double value, SOSProperty property) {
 		super();
 		this.id = id;
@@ -42,32 +64,55 @@ public class SOSValue  extends LODResource {
 		this.isFilled = true;
 	}
 
-
-	
-	
-	
-	
+	/**
+	 * Returns the value's id.
+	 * @return
+	 */
 	public long getId() {
 		return id;
 	}
 
+	/**
+	 * Sets the value's id.
+	 * @param id
+	 */
 	public void setId(long id) {
 		this.id = id;
 	}
 
+	/**
+	 * Returns the value.
+	 * @return
+	 */
 	public double getHasValue() {
+		//TODO: Check method's name
 		return value;
 	}
 
+	/**
+	 * Sets the value.
+	 * @param hasValue
+	 */
 	public void setHasValue(double hasValue) {
+		//TODO: Check method's name
 		this.value = hasValue;
 	}
 
+	/**
+	 * Returns the property associated to the value.
+	 * @return
+	 */
 	public SOSProperty getForProperty() {
+		//TODO: Check method's name
 		return property;
 	}
 
+	/**
+	 * Sets the property associated to the value.
+	 * @param forProperty
+	 */
 	public void setForProperty(SOSProperty forProperty) {
+		//TODO: Check method's name
 		this.property = forProperty;
 	}
 

@@ -16,27 +16,57 @@
 
 package de.ifgi.europa.core;
 
+/**
+ * This class represents a time interval.
+ * @author alber
+ *
+ */
 public class TimeInterval {
 
+	/**
+	 * Returns the interval's initial date.
+	 * @return
+	 */
 	public String getStartDate() {
 		return minDate;
 	}
+	
+	/**
+	 * Sets the interval's initial date.
+	 * @param startDate
+	 */
 	public void setStartDate(String startDate) {
 		this.minDate = startDate;
 	}
+	
+	/**
+	 * Returns the interval's final date.
+	 * @return
+	 */
 	public String getEndDate() {
 		return maxDate;
 	}
+	
+	/**
+	 * Sets the interval's final date.
+	 * @param endDate
+	 */
 	public void setEndDate(String endDate) {
 		this.maxDate = endDate;
 	}
 	
+	/**
+	 * Constructor.
+	 * @param startDate
+	 * @param endDate
+	 */
 	public TimeInterval(String startDate, String endDate) {
 		super();
 		this.minDate = startDate;
 		this.maxDate = endDate;
 	}
 
+	//TODO: Change these to private.
 	public String minDate;
 	public String maxDate;
 	

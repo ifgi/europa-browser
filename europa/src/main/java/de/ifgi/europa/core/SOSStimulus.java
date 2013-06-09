@@ -25,41 +25,101 @@ public class SOSStimulus  extends LODResource {
 	ArrayList<SOSProperty> property;
 	String description;
 	String label;
-
 	boolean isFilled = false;
 	
+	/**
+	 * Establish if the stimulus has all of its attributes.
+	 * @return True if all the attributes were filled, false otherwise. 
+	 */
+	public boolean isFilled() {
+		return isFilled;
+	}
+	
+	/**
+	 * Returns the stimulus' URI.
+	 */
 	public URI getUri() {
 		return uri;
 	}
+	
+	/**
+	 * Sets the stimulus' URI.
+	 */
 	public void setUri(URI uri) {
 		this.uri = uri;
 	}
+	
+	/**
+	 * Returns the properties associated with the stimulus.
+	 * @return
+	 */
 	public ArrayList<SOSProperty> getProperty() {
 		return property;
 	}
+	
+	/**
+	 * Sets the properties associated with the stimulus.
+	 * @param property
+	 */
 	public void setProperty(ArrayList<SOSProperty> property) {
 		this.property = property;
 	}
+	
+	/**
+	 * Returns the stimulus' description.
+	 * @return
+	 */
 	public String getDescription() {
 		return description;
 	}
+	
+	/**
+	 * Sets the stimulus' description.
+	 * @param description
+	 */
 	public void setDescription(String description) {
 		this.description = description;
 	}
+	
+	/**
+	 * Returns the stimulus' label.
+	 * @return
+	 */
 	public String getLabel() {
 		return label;
 	}
+	
+	/**
+	 * Sets the stimulus' label.
+	 * @param label
+	 */
 	public void setLabel(String label) {
 		this.label = label;
 	}
 	
+	/**
+	 * Constructor.
+	 */
 	public SOSStimulus() {
 		super();
 	}
+	
+	/**
+	 * Constructor.
+	 * @param uri
+	 */
 	public SOSStimulus(URI uri) {
 		super();
 		this.uri = uri;
 	}
+	
+	/**
+	 * Constructor.
+	 * @param uri Stimulus' URI.
+	 * @param property Stimulus' set of properties.
+	 * @param description Stimulus' description.
+	 * @param label Stimulus' label.
+	 */
 	public SOSStimulus(URI uri, ArrayList<SOSProperty> property, String description, String label) {
 		super();
 		this.uri = uri;
