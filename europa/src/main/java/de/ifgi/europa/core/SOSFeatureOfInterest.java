@@ -19,7 +19,7 @@ package de.ifgi.europa.core;
 import java.net.URI;
 
 /**
- * This class represents a feature of interest
+ * This class represents a feature of interest - http://www.w3.org/2005/Incubator/ssn/ssnx/ssn#FeatureOfInterest
  * @author alber
  *
  */
@@ -34,7 +34,7 @@ public class SOSFeatureOfInterest  extends LODResource {
 	boolean isFilled = false;
 	
 	/**
-	 * Establish if the FOI was created by given all its attributes or just an URI.
+	 * Establish if the FOI has all of its attributes.
 	 * @return True if all the attributes were filled, false otherwise. 
 	 */
 	public boolean isFilled() {
