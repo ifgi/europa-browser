@@ -38,6 +38,8 @@ TRANSFORMATION OF A SOS GET OBSERVATION RESPONSE TO RDF TRIPLES
 	xmlns:gr="http://purl.org/goodrelations/v1#" 
 	xmlns:my="http://ifgi.uni-muenster.de/hydrolod#">
 	
+	<xsl:output method="xml" version="1.0" indent="yes"/>
+	
 	<xsl:template match="/">
 		<rdf:RDF>
 			<xsl:apply-templates/>
