@@ -21,7 +21,6 @@ import java.awt.KeyboardFocusManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
-import java.io.IOException;
 import java.lang.reflect.Field;
 
 import javax.swing.JButton;
