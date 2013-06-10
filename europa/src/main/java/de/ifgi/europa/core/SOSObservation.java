@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 /**
- * Represents an observation.
+ * This class represents an observation http://www.w3.org/2005/Incubator/ssn/ssnx/ssn#Observation
  * @author alber
  *
  */

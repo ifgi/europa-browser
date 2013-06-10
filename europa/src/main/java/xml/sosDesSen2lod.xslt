@@ -27,6 +27,7 @@ TRANSFORMATION OF A SOS DESCRIBE SENSOR RESPONSE TO RDF TRIPLES
 	xmlns:purl="http://purl.oclc.org/NET/ssnx/ssn#"
 	xmlns:sml="http://www.opengis.net/sensorML/1.0.1">
 
+	<xsl:output method="xml" version="1.0" encoding="UTF-8" indent="yes"/>
 
 	<xsl:template match="/">
 		<rdf:RDF>

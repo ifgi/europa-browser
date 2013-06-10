@@ -19,56 +19,132 @@ package de.ifgi.europa.core;
 import java.net.URI;
 import java.util.Date;
 
+/**
+ * This class represents a sensor output 
+ * @author alber
+ *
+ */
 public class SOSSensorOutput  extends LODResource {
 
 	private URI uri;		
 
 
-	 SOSSensor sensor;
-	 String label;
-	 SOSValue value;
-	 String samplingTime;
+	SOSSensor sensor;
+	String label;
+	SOSValue value;
+	String samplingTime;
 	boolean isFilled = false;
-	
-	
+
+	/**
+	 * Establish if the sensor output has all of its attributes.
+	 * @return True if all the attributes were filled, false otherwise. 
+	 */
+	public boolean isFilled() {
+		return isFilled;
+	}
+
+	/**
+	 * Returns the sensor output's URI.
+	 */
 	public URI getUri() {
 		return uri;
 	}
+
+	/**
+	 * Sets the sensor output's URI.
+	 */
 	public void setUri(URI uri) {
 		this.uri = uri;
 	}
+	
+	/**
+	 * Returns the sensor associated with the sensor output.
+	 * @return
+	 */
 	public SOSSensor getSensor() {
 		return sensor;
 	}
+	
+	/**
+	 * Sets the sensor associated with the sensor output.
+	 * @return
+	 */
 	public void setSensor(SOSSensor sensor) {
 		this.sensor = sensor;
 	}
+	
+	/**
+	 * Returns the sensor output's label
+	 * @return
+	 */
 	public String getLabel() {
 		return label;
 	}
+	
+	/**
+	 * Sets the sensor output's label
+	 * @return
+	 */
 	public void setLabel(String label) {
 		this.label = label;
 	}
+	
+	/**
+	 * Returns the sensor output's value.
+	 * @return
+	 */
 	public SOSValue getValue() {
 		return value;
 	}
+	
+	/**
+	 * Sets the sensor output's value.
+	 * @return
+	 */
 	public void setValue(SOSValue value) {
 		this.value = value;
 	}
+	
+	/**
+	 * Returns the sensor output's sampling time.
+	 * @return
+	 */
 	public String getSamplingTime() {
 		return samplingTime;
 	}
+	
+	/**
+	 * Sets the sensor output's sampling time.
+	 * @param samplingTime
+	 */
 	public void setSamplingTime(String samplingTime) {
 		this.samplingTime = samplingTime;
 	}
-	
+
+	/**
+	 * Constructor.
+	 */
 	public SOSSensorOutput() {
 		super();
 	}
+	
+	/**
+	 * Constructor.
+	 * @param uri
+	 */
 	public SOSSensorOutput(URI uri) {
 		super();
 		this.uri = uri;
 	}
+	
+	/**
+	 * Constructor.
+	 * @param uri Sensor output's URI.
+	 * @param sensor Sensor associated to the sensor output.
+	 * @param label Sensor output's label.
+	 * @param value Sensor output's value.
+	 * @param samplingTime Sensor output's sampling time.
+	 */
 	public SOSSensorOutput(URI uri, SOSSensor sensor, String label,
 			SOSValue value, String samplingTime) {
 		super();
@@ -81,5 +157,5 @@ public class SOSSensorOutput  extends LODResource {
 	}
 
 
-	
+
 }
