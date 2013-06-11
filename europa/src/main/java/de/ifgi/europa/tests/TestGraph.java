@@ -21,6 +21,8 @@ import gov.nasa.worldwindx.examples.view.AddAnimator;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.implementations.MultiGraph;
 import org.graphstream.graph.implementations.SingleGraph;
+import org.graphstream.ui.spriteManager.Sprite;
+import org.graphstream.ui.spriteManager.SpriteManager;
 import org.graphstream.ui.swingViewer.View;
 import org.graphstream.ui.swingViewer.Viewer;
 
@@ -31,7 +33,7 @@ public class TestGraph {
 	 */
 	public static void main(String[] args) {
 
-		Graph graph = new SingleGraph("Tutorial 1");
+		Graph graph = new MultiGraph("Tutorial 1");
 		
 		graph.addNode("A" );
 		graph.addNode("B" );
@@ -40,29 +42,31 @@ public class TestGraph {
 		graph.addEdge("BC", "B", "C");
 		graph.addEdge("CA", "C", "A");
 		
+		graph.addAttribute("ui.quality");
+		
+		
+	
+		
+		
+		SpriteManager sman = new SpriteManager(graph);
+		
+		Sprite s = sman.addSprite("S1");
+		s.setPosition(2, 1, 0);
+		
+		s.attachToNode("A");
+		
+		
+		s.attachToEdge("AB");
+		
+		s.setPosition(0.5);
+		
+		graph.addAttribute("ui.stylesheet", "graph { fill-color: red; }");
+		graph.addAttribute("ui.stylehseet", "url('http://www.deep.in/the/site/mystylesheet')");
+		graph.addAttribute("ui.stylesheet", "url(file:///somewhere/over/the/rainbow/stylesheet')");
+		
+		
 		graph.display();
-		
-		//***************************************
-		
-//		Graph graph2 = new MultiGraph("Bazinga!");
-//		// Populate the graph.
-//
-//		graph2.addNode("A" );
-//		graph2.addNode("B" );
-//		graph2.addNode("C" );
-//		graph2.addEdge("AB", "A", "B");
-//		graph2.addEdge("BC", "B", "C");
-//		graph2.addEdge("CA", "C", "A");
-//		
-//		Viewer viewer = graph2.display();
-//		// Let the layout work ...
-//		//viewer.disableAutoLayout();
-//		// Do some work ...
-//		
-//		
-//		viewer.enableAutoLayout();
-//	
-//		graph2.display();
+
 	}
 	
 

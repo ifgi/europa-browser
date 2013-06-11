@@ -22,6 +22,8 @@ import java.util.Map;
 
 public class GlobalSettings {
 
+	
+	
 	/**
 	 * Address to sample SPARQL Endpoints 
 	 */
@@ -29,12 +31,13 @@ public class GlobalSettings {
 	public static String CurrentNamedGraph = "";
 	//public static String LinkedScience_Endpoint = "http://spatial.linkedscience.org/sparql";
 
+	
 	/**
 	 * Lists all graphs available in the triple store.
 	 * @author jones
 	 */
 	
-	public static String SPARQL_ListAvailableGraphs = "SELECT DISTINCT ?graph WHERE { GRAPH ?graph { ?s ?p ?o } }";
+	public static String SPARQL_ListAvailableGraphs = "SELECT DISTINCT ?graph WHERE { GRAPH ?graph {} }";
 	
 	/**
 	 * Standard prefixes used by all SPARQL Queries used in the project
@@ -51,7 +54,7 @@ public class GlobalSettings {
 			" PREFIX hyd:  <http://ifgi.uni-muenster.de/hydrolodVocabulary#>" +  
 			" PREFIX my:   <http://ifgi.uni-muenster.de/hydrolod#> "; 
 
-
+	
 	/**
 	 * Lists all features of interest for a given SOSParameter
 	 * @author jones 
