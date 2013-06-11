@@ -565,13 +565,20 @@ public class LODResourceFactory {
 		SPARQL = GlobalSettings.listFeaturesOfInterest.replace("PARAM_PROPERTY", property.getUri().toString());
 		SPARQL = SPARQL.replace("PARAM_GRAPH", GlobalSettings.CurrentNamedGraph);
 				
+		//System.out.println(SPARQL);
+		
 		ResultSet rs = cnn.executeSPARQLQuery(SPARQL);
 		ArrayList<SOSFeatureOfInterest> result = new ArrayList<SOSFeatureOfInterest>();
-		SOSFeatureOfInterest foi = new SOSFeatureOfInterest();
+		
 
 		while (rs.hasNext()) {
+			SOSFeatureOfInterest foi = new SOSFeatureOfInterest();
+			
 			QuerySolution soln = rs.nextSolution();
-			foi.setUri(URI.create(soln.get("?foi").toString()));			
+			foi.setUri(URI.create(soln.get("?foi").toString()));
+			
+			System.out.println(URI.create(soln.get("?foi").toString()));
+			
 			result.add(foi);
 		}
 
