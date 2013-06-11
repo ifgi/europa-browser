@@ -53,7 +53,7 @@ public class GlobalSettings {
 			" PREFIX hyd:  <http://ifgi.uni-muenster.de/hydrolodVocabulary#>" +  
 			" PREFIX my:   <http://ifgi.uni-muenster.de/hydrolod#> "; 
 
-
+	
 	/**
 	 * Lists all features of interest for a given SOSParameter
 	 * @author jones 
