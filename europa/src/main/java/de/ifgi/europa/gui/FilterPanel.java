@@ -39,6 +39,7 @@ import javax.swing.JButton;
 import javax.swing.JColorChooser;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -163,9 +164,21 @@ public class FilterPanel extends JPanel {
         
         pnlTables.add(pnlGraphs, BorderLayout.PAGE_START);
         
-        //Create the scroll pane and add the table to it.        
+        //Create the scroll pane and add the table to it.
+//        JLayeredPane layeredPane = new JLayeredPane();
+//        pnlTables.add(layeredPane,BorderLayout.CENTER);
+//        JPanel pnlLayeredPaneTable = new JPanel(new BorderLayout());
+//        JScrollPane scrollPanePropertiesTable = new JScrollPane(propertiesTable);
+//        pnlLayeredPaneTable.add(scrollPanePropertiesTable, BorderLayout.CENTER);
+//        pnlLayeredPaneTable.setBounds(50, 50, 200, 200);
+//        pnlLayeredPaneTable.setOpaque(true);
+//        
+//        layeredPane.add(pnlLayeredPaneTable, new Integer(0), 0);
+        
+        
         JScrollPane scrollPanePropertiesTable = new JScrollPane(propertiesTable);
         pnlTables.add(scrollPanePropertiesTable,BorderLayout.CENTER);
+        
         
 		pnlFilter.add(pnlTables,BorderLayout.CENTER);
 		this.add(pnlFilter);
