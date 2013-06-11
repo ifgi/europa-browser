@@ -30,6 +30,7 @@ public class GlobalSettings {
 	public static String CurrentNamedGraph = "";
 	//public static String LinkedScience_Endpoint = "http://spatial.linkedscience.org/sparql";
 
+	
 	/**
 	 * Lists all graphs available in the triple store.
 	 * @author jones
