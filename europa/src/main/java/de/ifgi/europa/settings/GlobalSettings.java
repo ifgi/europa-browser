@@ -23,6 +23,7 @@ import java.util.Map;
 public class GlobalSettings {
 
 	
+	
 	/**
 	 * Address to sample SPARQL Endpoints 
 	 */
