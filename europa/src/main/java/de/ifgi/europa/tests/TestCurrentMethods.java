@@ -35,8 +35,8 @@ public class TestCurrentMethods {
 		
 		//GlobalSettings.CurrentNamedGraph = "file:///C:/Parliament/test";
 		
-//		GlobalSettings.CurrentSPARQLEndpoint="http://giv-siidemo.uni-muenster.de:8081/parliament/sparql";
-		GlobalSettings.CurrentSPARQLEndpoint="http://recife:8081/parliament/sparql";
+		GlobalSettings.CurrentSPARQLEndpoint="http://giv-siidemo.uni-muenster.de:8081/parliament/sparql";
+		//GlobalSettings.CurrentSPARQLEndpoint="http://recife:8081/parliament/sparql";
 		
 		
 		ArrayList<SOSProperty> prop = new ArrayList<SOSProperty>();
