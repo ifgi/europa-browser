@@ -19,6 +19,8 @@ package de.ifgi.europa.facade;
 import java.net.URI;
 import java.util.ArrayList;
 
+import com.hp.hpl.jena.query.ResultSet;
+
 import de.ifgi.europa.core.LODResource;
 import de.ifgi.europa.core.SOSFeatureOfInterest;
 import de.ifgi.europa.core.SOSObservation;
@@ -46,23 +48,22 @@ public class Facade {
 	}
 
 
-//	public LODResource getResourceAttributes(URI uri){
-//
-//		return factory.create(uri);
-//		
-//	}
-
-	
-	
-	
 	
 	
 	
 	
 	
 
+	public ResultSet getExternalData(double latitude, double longitude){
+		
+		return factory.getExternalData(latitude, longitude);
+		
+	}
+	
 	
 	/**
+	 * List all properties available of a given named graph
+	 * 
 	 * @author jones
 	 * @return
 	 */

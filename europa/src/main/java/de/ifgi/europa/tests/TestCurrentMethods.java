@@ -31,6 +31,7 @@ public class TestCurrentMethods {
 
 	public static void main(String[] args) {
 		
+				
 		GlobalSettings.CurrentNamedGraph = "http://europa.ifgi.uni-muenster.de/browser/";	
 		
 		//GlobalSettings.CurrentNamedGraph = "file:///C:/Parliament/test";
