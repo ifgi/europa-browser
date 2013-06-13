@@ -610,6 +610,7 @@ public class LODResourceFactory {
 		return result;
 	}
 	
+	
 
 	/**
 	 * Retrieves the last observation for a given feature of interest (SOSFeatureOfInterest)
