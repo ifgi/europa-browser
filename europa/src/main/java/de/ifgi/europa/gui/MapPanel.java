@@ -17,12 +17,16 @@
 package de.ifgi.europa.gui;
 
 import java.awt.GridLayout;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.Iterator;
 
 import gov.nasa.worldwind.BasicModel;
 import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.awt.WorldWindowGLCanvas;
+import gov.nasa.worldwind.event.SelectEvent;
+import gov.nasa.worldwind.event.SelectListener;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.globes.Earth;
 import gov.nasa.worldwind.globes.Globe;
@@ -38,12 +42,16 @@ import gov.nasa.worldwind.layers.Earth.BMNGWMSLayer;
 import gov.nasa.worldwind.layers.Earth.LandsatI3WMSLayer;
 import gov.nasa.worldwind.render.BasicShapeAttributes;
 import gov.nasa.worldwind.render.Cylinder;
+import gov.nasa.worldwind.render.GlobeAnnotation;
 import gov.nasa.worldwind.render.Material;
 import gov.nasa.worldwind.render.Renderable;
 import gov.nasa.worldwind.render.ShapeAttributes;
 import gov.nasa.worldwindx.examples.util.ToolTipController;
 
 import javax.swing.JPanel;
+
+import com.hp.hpl.jena.query.QuerySolution;
+import com.hp.hpl.jena.query.ResultSet;
 
 import de.ifgi.europa.core.SOSObservation;
 import de.ifgi.europa.core.SOSValue;
@@ -57,6 +65,7 @@ public class MapPanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 	private MainFrame mainFrame;
+	private GlobeAnnotation tooltipAnnotation;
 	final RenderableLayer layer;
 	Globe earth;
 	final WorldWindowGLCanvas wwd;
@@ -69,7 +78,7 @@ public class MapPanel extends JPanel {
 		this.setMainFrame(mF);
 		wwd = new WorldWindowGLCanvas();
 		layer = new RenderableLayer();
-		
+        
 		/*activate tooltip */
 		ToolTipController toolTip = new ToolTipController(wwd,AVKey.DISPLAY_NAME,null);
         
@@ -95,6 +104,8 @@ public class MapPanel extends JPanel {
             new ScalebarLayer(),  
         };
 		
+		
+		
 		earth = new Earth();
 		BasicModel modelForWindowA = new BasicModel();
 		modelForWindowA.setGlobe(earth);
@@ -107,39 +118,53 @@ public class MapPanel extends JPanel {
         wwd.addSelectListener(new ViewControlsSelectListener(wwd, viewControlsA));
         
         this.add(wwd, java.awt.BorderLayout.CENTER);
+        wwd.addSelectListener(new SelectListener() {
+			
+			@Override
+			public void selected(SelectEvent sE) {
+				
+				if (sE.getEventAction().equals(SelectEvent.LEFT_PRESS)) {
+					System.out.println("left click");
+				}
+			}
+		});
         
-//        wwd.addMouseListener(new MouseListener() {
-//			
-//			@Override
-//			public void mouseReleased(MouseEvent arg0) {
-//				// TODO Auto-generated method stub
-//				
-//			}
-//			
-//			@Override
-//			public void mousePressed(MouseEvent arg0) {
-//				// TODO Auto-generated method stub
-//				
-//			}
-//			
-//			@Override
-//			public void mouseExited(MouseEvent arg0) {
-//				// TODO Auto-generated method stub
-//				
-//			}
-//			
-//			@Override
-//			public void mouseEntered(MouseEvent arg0) {
-//				// TODO Auto-generated method stub
-//				
-//			}
-//			
-//			@Override
-//			public void mouseClicked(MouseEvent arg0) {
-//				System.out.println(wwd.getCurrentPosition());
-//				((WebViewerPanel) getMainFrame().getWebViewer()).runJavaScript();
-//			}
-//		});
+        wwd.addMouseListener(new MouseListener() {
+			
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void mousePressed(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void mouseExited(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				Position currentPosition = wwd.getCurrentPosition();
+				ResultSet rs = ((FilterPanel) getMainFrame().getFilterPanel()).getFacade().getExternalData(currentPosition.getLatitude().getDegrees(), currentPosition.getLongitude().getDegrees());
+				while (rs.hasNext()) {
+					QuerySolution soln = rs.nextSolution();
+					System.out.println(soln.get("?label") + " - Lat: " + soln.getLiteral("?lat").getValue().toString() + " - Long: " + soln.getLiteral("?long").getValue().toString() );                                                
+				}
+			}
+		});
         
 	}	
 	
