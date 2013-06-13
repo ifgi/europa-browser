@@ -268,16 +268,7 @@ TRANSFORMATION OF A SOS GET OBSERVATION RESPONSE TO RDF TRIPLES
 						 /om:ObservationCollection/om:member/om:Observation/om:featureOfInterest/gml:FeatureCollection/gml:location/gml:MultiPoint/gml:pointMembers/gml:Point">
 		<xsl:variable name="SrsId" select="./gml:pos/@srsName | ../../@srsName" />
 		<xsl:variable name="Coords" select="./gml:pos/text()" />
-
-
-
 		<xsl:variable name="PointId" select="translate(concat($SrsId, '_', $Coords), ' ', '_')" />
-<!-- 				
-<xsl:variable name="PointId" select="generate-id()" />
--->
-
-
-
 		<!-- Incoming relations -->
 		<rdf:Description>
 			<xsl:variable name="FoiIdTest" select="../../@gml:id | 
@@ -335,7 +326,9 @@ TRANSFORMATION OF A SOS GET OBSERVATION RESPONSE TO RDF TRIPLES
 		</xsl:call-template>
 	</xsl:template>
 	
+	<!-- **************************************************************** -->
 	<!-- PARSING DATA ARRAY -->
+	<!-- **************************************************************** -->
 	<xsl:template name="processDataArray">
 		<xsl:param name="dataArray" /><!-- text to process -->
 		<xsl:param name="rowSep" /><!-- Row separator -->
@@ -344,10 +337,8 @@ TRANSFORMATION OF A SOS GET OBSERVATION RESPONSE TO RDF TRIPLES
 		<xsl:param name="daCount" />
 
 		<xsl:param name="normDataArray" select="normalize-space(string($dataArray))" />
-<!-- All rows except the 1st -->
-<!-- EL PROBLEMA SE DA AL USAR ENTER COMO SEPARADOR DE ROWS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
-<xsl:param name="remainingDataArray" select="substring-after($normDataArray, $rowSep)" />
-
+		<!-- Process all rows except the 1st --><!-- TODO: Issue regarding the use of "new line" as row separator -->
+		<xsl:param name="remainingDataArray" select="substring-after($normDataArray, $rowSep)" />
 		<xsl:param name="row"><!-- Current row -->
 			<xsl:choose>
 				<xsl:when test="contains($normDataArray, $rowSep)">
@@ -362,9 +353,7 @@ TRANSFORMATION OF A SOS GET OBSERVATION RESPONSE TO RDF TRIPLES
 		<xsl:choose>
 			<xsl:when test="string-length(string($normDataArray)) &gt; 0"><!-- Termination condition -->
 				<!-- Operation code -->
-<!-- ****************************************************************************************************** -->
-<xsl:variable name="SensorOutputId" select="$daCount" /><!-- XSLT RANDOM NUMBERS??????????????????????????????????????????????? -->
-<!-- ****************************************************************************************************** -->
+				<xsl:variable name="SensorOutputId" select="$daCount" />
 				<rdf:Description>
  					<xsl:attribute name="rdf:about"><xsl:value-of select="concat('http://ifgi.uni-muenster.de/hydrolod#', 'OBSERVATION_', $ObservationId)" /></xsl:attribute>
 					<purl:observationResult>
@@ -397,8 +386,9 @@ TRANSFORMATION OF A SOS GET OBSERVATION RESPONSE TO RDF TRIPLES
 		</xsl:choose>
 	</xsl:template>
 	
-	
+	<!-- **************************************************************** -->
 	<!-- PARSING ROW -->
+	<!-- **************************************************************** -->
 	<xsl:template name="processDataRow">
 		<xsl:param name="dataRow" /><!-- text to process -->
 		<xsl:param name="tokenSep" /><!-- Token separator -->
@@ -418,13 +408,10 @@ TRANSFORMATION OF A SOS GET OBSERVATION RESPONSE TO RDF TRIPLES
 			</xsl:choose>
 		</xsl:param>
 		
-		
 		<xsl:choose>
 			<xsl:when test="string-length(string($normDataRow)) &gt; 0"><!-- Termination condition -->
 				<!-- Operation code -->
-<!-- ****************************************************************************************************** -->			
-<xsl:variable name="ObservedValueId" select="$drCount" /><!-- XSLT RANDOM NUMBERS??????????????????????????????????????????????? -->
-<!-- ****************************************************************************************************** -->
+				<xsl:variable name="ObservedValueId" select="$drCount" />
 				<rdf:Description>
 					<xsl:attribute name="rdf:about"><xsl:value-of select="concat('http://ifgi.uni-muenster.de/hydrolod#' , 'SENSOR_OUTPUT_', $ObservationId, '_', $SensorOutputId)" /></xsl:attribute>
 					<purl:hasValue>
@@ -433,6 +420,18 @@ TRANSFORMATION OF A SOS GET OBSERVATION RESPONSE TO RDF TRIPLES
 						</rdf:Description>
 					</purl:hasValue>
 				</rdf:Description>
+<!-- *************************************************************************************** -->
+<!-- HACK: This assumes the sampling time is ALWAYS the first property, this is true for 52N SOS but... -->
+<!-- Adds the sampling time as a property for the SENSOR_OUTPUT. This is duplicated since ST is also a OBS_VALUE -->
+				<xsl:if test="$ObservedValueId  = '1'">
+					<rdf:Description>
+						<xsl:attribute name="rdf:about"><xsl:value-of select="concat('http://ifgi.uni-muenster.de/hydrolod#' , 'SENSOR_OUTPUT_', $ObservationId, '_', $SensorOutputId)" /></xsl:attribute>
+						<purl:observationSamplingTime>
+				<xsl:value-of select="$token" />
+						</purl:observationSamplingTime>
+					</rdf:Description>
+				</xsl:if> 
+<!-- *************************************************************************************** -->
 				<rdf:Description>
 					<xsl:variable name="PropertyIdTest"><xsl:value-of select="../swe:elementType/swe:DataRecord/swe:field[not (descendant::swe2:value)][$drCount]/*/@definition
 				  														     | ../swe2:elementType/swe2:DataRecord/swe2:field[not (descendant::swe2:value)][$drCount]/*/@definition" /></xsl:variable>
