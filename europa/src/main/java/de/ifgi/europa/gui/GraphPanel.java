@@ -50,86 +50,37 @@ public class GraphPanel extends JPanel {
 	public GraphPanel(MainFrame mF) {
 		super(new BorderLayout());
 		this.setMainFrame(mF);
-		
+		System.setProperty("org.graphstream.ui.renderer", "org.graphstream.ui.j2dviewer.J2DGraphRenderer");
 		
 		graph  = new MultiGraph("mg");
+		
         viewer = new Viewer(graph, Viewer.ThreadingModel.GRAPH_IN_SWING_THREAD);
+        
+//        Generator gen = new BarabasiAlbertGenerator(1);
+//        gen.addSink(graph);
+//		gen.begin();
+//		for(int i=0; i<50; i++) {
+//		    gen.nextEvents();
+//		}
+//		gen.end();
         
         graph.setStrict(false);
         graph.setAutoCreate(true);
 
-        graph.addEdge("AB", "A", "B").addAttribute("ui.label", "TEST");
+        graph.addNode("A");
+        graph.addEdge("AB", "A", "B").addAttribute("ui.label", "test");
         graph.addEdge("AC", "A", "C");
         graph.addEdge("AD", "A", "D");
-        
-        for (Node node : graph) {
-        	node.addAttribute("ui.label", node.getId());
-        }
-        
-        final ViewerPipe fromViewerPipe = viewer.newViewerPipe();
-        fromViewerPipe.addViewerListener(new ViewerListener() {
-			
-			@Override
-			public void viewClosed(String arg0) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void buttonReleased(String id) {
-				// TODO Auto-generated method stub
-				System.out.println("Button released on node "+id);
-			}
-			
-			@Override
-			public void buttonPushed(String id) {
-				// TODO Auto-generated method stub
-				System.out.println("Button pushed on node "+id);
-			}
-		});
-        fromViewerPipe.addSink(graph);
-        
-        
-        
+//        
+//        for (Node node : graph) {
+//        	node.addAttribute("ui.label", node.getId());
+//        }
+               
         viewer.enableAutoLayout();
         view = viewer.addDefaultView(false);
-        
-        view.addMouseListener(new MouseListener() {
-			
-			@Override
-			public void mouseReleased(MouseEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void mousePressed(MouseEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void mouseExited(MouseEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void mouseEntered(MouseEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				// TODO Auto-generated method stub
-				fromViewerPipe.pump();
-			}
-		});
-        
+//        graph.addAttribute("ui.stylesheet", "url('http://graphstream-project.org/media/data/css/fill_mode_pride.css')");
+//        graph.addAttribute("ui.stylesheet", "url('http://graphstream-project.org/media/data/css/fill_mode_radial1.css')");
         add(view, BorderLayout.CENTER);
-        
-        
         
 	}
 

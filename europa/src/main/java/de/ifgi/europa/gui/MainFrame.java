@@ -52,6 +52,7 @@ public class MainFrame extends JFrame {
 	    
 	    pnlFilter = new FilterPanel(this);
 	    pnlMap = new MapPanel(this);
+//	    pnlMap = null;
 	    pnlGraph = new GraphPanel(this);
 	    
 	    splitPaneTop = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,pnlFilter,pnlMap);

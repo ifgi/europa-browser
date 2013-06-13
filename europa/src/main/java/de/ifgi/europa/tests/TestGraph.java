@@ -16,15 +16,11 @@
 
 package de.ifgi.europa.tests;
 
-import gov.nasa.worldwindx.examples.view.AddAnimator;
-
+import org.graphstream.algorithm.generator.BarabasiAlbertGenerator;
+import org.graphstream.algorithm.generator.Generator;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.implementations.MultiGraph;
 import org.graphstream.graph.implementations.SingleGraph;
-import org.graphstream.ui.spriteManager.Sprite;
-import org.graphstream.ui.spriteManager.SpriteManager;
-import org.graphstream.ui.swingViewer.View;
-import org.graphstream.ui.swingViewer.Viewer;
 
 public class TestGraph {
 
@@ -32,40 +28,37 @@ public class TestGraph {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-
-		Graph graph = new MultiGraph("Tutorial 1");
+		System.setProperty("gs.ui.renderer", "org.graphstream.ui.j2dviewer.J2DGraphRenderer");
 		
-		graph.addNode("A" );
-		graph.addNode("B" );
-		graph.addNode("C" );
-		graph.addEdge("AB", "A", "B");
-		graph.addEdge("BC", "B", "C");
-		graph.addEdge("CA", "C", "A");
+		Graph graph = new MultiGraph("sg");
+		graph.addAttribute("ui.stylesheet", "url('http://graphstream-project.org/media/data/css/fill_mode_pride.css')");
+//		graph.addAttribute("ui.stylesheet", "node {shape: freeplane; fill-color:white; stroke-mode:plain; size-mode: fit;} edge {shape: freeplane; text-color:red;}");
+		graph.addNode("A").addAttribute("ui.label", "Sofia Vergara");
+		graph.addNode("B").addAttribute("ui.label", "1");
+		graph.addNode("C").addAttribute("ui.label", "1972-07-10");;
+		graph.addNode("D").addAttribute("ui.label", "Model and actress");;
+		graph.addEdge("AB", "A", "B").addAttribute("ui.label", "children");
+		graph.addEdge("AC", "A", "C").addAttribute("ui.label", "birthDate");
+		graph.addEdge("AD", "A", "D").addAttribute("ui.label", "shortDescription");
 		
-		graph.addAttribute("ui.quality");
-		
-		
-	
-		
-		
-		SpriteManager sman = new SpriteManager(graph);
-		
-		Sprite s = sman.addSprite("S1");
-		s.setPosition(2, 1, 0);
-		
-		s.attachToNode("A");
-		
-		
-		s.attachToEdge("AB");
-		
-		s.setPosition(0.5);
-		
-		graph.addAttribute("ui.stylesheet", "graph { fill-color: red; }");
-		graph.addAttribute("ui.stylehseet", "url('http://www.deep.in/the/site/mystylesheet')");
-		graph.addAttribute("ui.stylesheet", "url(file:///somewhere/over/the/rainbow/stylesheet')");
-		
+		graph.addAttribute("ui.stylesheet", "node#A {size: 25px; fill-color: red; text-alignment:at-right;} node {size: 15px; fill-color: green; text-alignment:at-left;} edge {fill-color: blue; text-alignment: along; text-style: bold;}");
 		
 		graph.display();
+		
+//		Graph graph = new SingleGraph("Barabasi-Albert");
+//		graph.addAttribute("ui.stylesheet", "url('http://graphstream-project.org/media/data/css/fill_mode_pride.css')");
+//		// Between 1 and 3 new links per node added.
+//		Generator gen = new BarabasiAlbertGenerator(1);
+//		graph.display();
+//	
+//		gen.addSink(graph);
+//		gen.begin();
+//		for(int i=0; i<100; i++) {
+//		    gen.nextEvents();
+//		}
+//		gen.end();
+		
+		
 
 	}
 	

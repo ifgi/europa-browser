@@ -17,18 +17,13 @@
 package de.ifgi.europa.gui;
 
 import java.awt.GridLayout;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.util.Iterator;
 
 import gov.nasa.worldwind.BasicModel;
 import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.awt.WorldWindowGLCanvas;
-import gov.nasa.worldwind.event.PositionEvent;
-import gov.nasa.worldwind.event.PositionListener;
 import gov.nasa.worldwind.geom.Position;
-import gov.nasa.worldwind.geom.Vec4;
 import gov.nasa.worldwind.globes.Earth;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.layers.CompassLayer;
@@ -64,7 +59,7 @@ public class MapPanel extends JPanel {
 	private MainFrame mainFrame;
 	final RenderableLayer layer;
 	Globe earth;
-	final WorldWindowGLCanvas wwd = new WorldWindowGLCanvas();
+	final WorldWindowGLCanvas wwd;
 	public static String newline = System.getProperty("line.separator");
 	AnnotationWindow tip;
 	AnnotationWindowLayer awl;
@@ -72,7 +67,7 @@ public class MapPanel extends JPanel {
 	public MapPanel(MainFrame mF) {
 		super(new GridLayout(1, 1));
 		this.setMainFrame(mF);
-		
+		wwd = new WorldWindowGLCanvas();
 		layer = new RenderableLayer();
 		
 		/*activate tooltip */
