@@ -112,24 +112,41 @@ public class GlobalSettings {
 	 */
 
 	public static String geFOILastObservation = prefixes +
-
-			"SELECT  ?wkt ?value ?samplingTime " + 
-			"WHERE { GRAPH <PARAM_GRAPH> { " +    
+			"SELECT ?wkt ?value ?samplingTime " +
+			"WHERE{GRAPH <PARAM_GRAPH> { " +
+			"	?in3prop a purl:Property . " +
+			"	?in3prop purl:hasQuality <http://dbpedia.org/page/Quantity> . " +
+			"	?in2obsValue purl:forProperty ?in3prop . " +
+			"	?in2obsValue purl:hasValue ?value . " +
 			"	<PARAM_FOI> geo:defaultGeometry ?point . " +
-			"	?point geo:asWKT ?wkt  .  " +
-			"	?propertyST purl:isPropertyOf <PARAM_FOI> . " +   
-			"	?propertyST purl:hasQuality <http://dbpedia.org/resource/Time> . " +
-			"	?obsValST purl:forProperty ?propertyST . " +
-			"	?obsValST purl:hasValue  ?samplingTime . " +
-			"	?senOut purl:hasValue ?obsValST . " +
-			"	?senOut purl:hasValue ?obsValQT . " +
-			"	?obsValQT purl:hasValue ?value . " +
-			"	?obsValQT purl:forProperty ?propertyQT . " +
-			"	?propertyQT purl:hasQuality <http://dbpedia.org/page/Quantity> . " +
-			"} } ORDER BY DESC(?samplingTime) LIMIT 1 ";
-
-
-
+			"	?point geo:asWKT ?wkt . " +
+			"	{ " +
+			"		#Retrieves the observed values of the latest sensor output " +
+			"		SELECT ?in2obsValue ?samplingTime " +
+			"		WHERE{GRAPH <PARAM_GRAPH> { " +
+			"			?in2obs a purl:Observation . " +
+			"			?in2senOut a purl:SensorOutput . " +
+			"			?in2obsValue a purl:ObservationValue . " +
+			"			?in2obs purl:featureOfInterest <PARAM_FOI> . " +
+			"			?in2obs purl:observationResult ?in2senOut . " +
+			"			?in2senOut purl:observationSamplingTime ?in2st . " +
+			"			?in2senOut purl:hasValue ?in2obsValue . " +
+			"			{ " +
+			"				#Retrieves the time of the latest observed value " +
+			"				SELECT ?samplingTime " +
+			"				WHERE { GRAPH <PARAM_GRAPH> { " +
+			"					?in1obs a purl:Observation . " +
+			"					?in1senOut a purl:SensorOutput . " +
+			"					?in1obs purl:featureOfInterest <PARAM_FOI> . " +
+			"					?in1obs purl:observationResult ?in1senOut . " +
+			"					?in1senOut purl:observationSamplingTime ?samplingTime . " +
+			"				} } ORDER BY DESC(?samplingTime) LIMIT 1 " +
+			"			} " +
+			"			FILTER(?in2st = ?samplingTime) " +
+			"		} } " +
+			"	} " +
+			"} } ";
+	
 	/**
 	 * Retrieves a list of observations related to a given feature of interest (SOSFeatureOfInterest), 
 	 * constrained by a time interval (TimeInterval).
