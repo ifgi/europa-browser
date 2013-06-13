@@ -22,8 +22,8 @@ import java.util.Map;
 
 public class GlobalSettings {
 
-	
-	
+
+
 	/**
 	 * Address to sample SPARQL Endpoints 
 	 */
@@ -31,14 +31,6 @@ public class GlobalSettings {
 	public static String CurrentNamedGraph = "";
 	//public static String LinkedScience_Endpoint = "http://spatial.linkedscience.org/sparql";
 
-	
-	/**
-	 * Lists all graphs available in the triple store.
-	 * @author jones
-	 */
-	
-	public static String SPARQL_ListAvailableGraphs = "SELECT DISTINCT ?graph WHERE { GRAPH ?graph {} }";
-	
 	/**
 	 * Standard prefixes used by all SPARQL Queries used in the project
 	 * @author jones
@@ -52,15 +44,39 @@ public class GlobalSettings {
 			" PREFIX geo:  <http://www.opengis.net/def/geosparql/>" +  
 			" PREFIX dbpedia:  <http://dbpedia.org/resource/> " + 
 			" PREFIX hyd:  <http://ifgi.uni-muenster.de/hydrolodVocabulary#>" +  
-			" PREFIX my:   <http://ifgi.uni-muenster.de/hydrolod#> "; 
+			" PREFIX my:   <http://ifgi.uni-muenster.de/hydrolod#> " +
+			" PREFIX wgs84: <http://www.w3.org/2003/01/geo/wgs84_pos#>  "; 
+
+
+
+
 
 	
+	public static String getExternalData = prefixes + " " +			
+			" SELECT * WHERE { " +
+			"	?subject wgs84:lat ?lat ." +
+			"	?subject wgs84:long ?long ." +
+			"	?subject rdfs:label ?label." +
+			"	FILTER(?lat - xsd:float(PARAM_LAT) <= 0.05 && xsd:float(PARAM_LAT) - ?lat <= 0.05 &&" +
+			"	?long - xsd:float(PARAM_LONG) <= 0.05 && xsd:float(PARAM_LONG) - ?long <= 0.05 && " +
+			"	lang(?label) = \"en\") ." +
+			" } LIMIT 10"; 
+
+	/**
+	 * Lists all graphs available in the triple store.
+	 * @author jones
+	 */
+
+	public static String SPARQL_ListAvailableGraphs = "SELECT DISTINCT ?graph WHERE { GRAPH ?graph {} }";
+
+
+
 	/**
 	 * Lists all features of interest for a given SOSParameter
 	 * @author jones 
 	 * 
 	 * */
-	
+
 	public static String listFeaturesOfInterest = prefixes +
 			" SELECT ?foi  " +
 			" WHERE { GRAPH <PARAM_GRAPH> {<PARAM_PROPERTY> purl:isPropertyOf ?foi }} ";
@@ -70,7 +86,7 @@ public class GlobalSettings {
 	 * @author jones
 	 * @deprecated
 	 */
-	
+
 
 	public static String geFOILastObservation_old = prefixes +
 			" SELECT  ?wkt ?value ?samplingTime " + 
@@ -87,7 +103,7 @@ public class GlobalSettings {
 			"   ?foi geo:defaultGeometry ?point . " +
 			"   ?point geo:asWKT ?wkt  . " +
 			"} } ORDER BY DESC(?end) LIMIT 1";
-	
+
 
 	/**
 	 * Retrieves the last observation for a given feature of interest (SOSFeatureOfInterest)
@@ -113,31 +129,31 @@ public class GlobalSettings {
 			"} } ORDER BY DESC(?samplingTime) LIMIT 1 ";
 
 
-	
+
 	/**
 	 * Retrieves a list of observations related to a given feature of interest (SOSFeatureOfInterest), 
 	 * constrained by a time interval (TimeInterval).
 	 * @author jones
 	 * @deprecated
 	 */
-	
+
 	public static String getObservationsbyTimeInterval_old=prefixes+
 			" SELECT  ?wkt ?value ?samplingTime " +
 			"           WHERE { GRAPH <PARAM_GRAPH> { " +
 			"           ?property purl:isPropertyOf ?foi . " +
-		    "           ?property purl:isPropertyOf <PARAM_FOI> . " +
-		    "           ?observation purl:featureOfInterest ?foi . " +
-		    "           ?observation purl:observationResult ?sensorOutput . " +
-		    "           ?sensorOutput purl:hasValue ?observationValue . " +
-		    "           ?sensorOutput purl:observationSamplingTime ?samplingTime . " +
-		    "           ?observationValue purl:hasValue ?value . " +
-		    "           ?foi geo:defaultGeometry ?point . " +
-		    "           ?point geo:asWKT ?wkt  . " +
-		    "           FILTER (xsd:dateTime(?samplingTime) >= \"PARAM_DATE1\"^^xsd:dateTime && " +  
-	    	"					xsd:dateTime(?samplingTime) <= \"PARAM_DATE2\"^^xsd:dateTime) .  " +
-	    	"} } ORDER BY ?samplingTime ";
-	
-	
+			"           ?property purl:isPropertyOf <PARAM_FOI> . " +
+			"           ?observation purl:featureOfInterest ?foi . " +
+			"           ?observation purl:observationResult ?sensorOutput . " +
+			"           ?sensorOutput purl:hasValue ?observationValue . " +
+			"           ?sensorOutput purl:observationSamplingTime ?samplingTime . " +
+			"           ?observationValue purl:hasValue ?value . " +
+			"           ?foi geo:defaultGeometry ?point . " +
+			"           ?point geo:asWKT ?wkt  . " +
+			"           FILTER (xsd:dateTime(?samplingTime) >= \"PARAM_DATE1\"^^xsd:dateTime && " +  
+			"					xsd:dateTime(?samplingTime) <= \"PARAM_DATE2\"^^xsd:dateTime) .  " +
+			"} } ORDER BY ?samplingTime ";
+
+
 	/**
 	 * Retrieves a list of observations related to a given feature of interest (SOSFeatureOfInterest), 
 	 * constrained by a time interval (TimeInterval).
@@ -145,49 +161,49 @@ public class GlobalSettings {
 	 * 
 	 */
 	public static String getObservationsbyTimeInterval=prefixes+
-						"SELECT  ?wkt ?value ?samplingTime " + 
-						"WHERE { GRAPH <PARAM_GRAPH> { " +    
-						"	<PARAM_FOI> geo:defaultGeometry ?point . " +
-						"	?point geo:asWKT ?wkt  .  " +
-						"	?propertyST purl:isPropertyOf <PARAM_FOI> . " +   
-						"	?propertyST purl:hasQuality <http://dbpedia.org/resource/Time> . " +
-						"	?obsValST purl:forProperty ?propertyST . " +
-						"	?obsValST purl:hasValue  ?samplingTime . " +
-						"	?senOut purl:hasValue ?obsValST . " +
-						"	?senOut purl:hasValue ?obsValQT . " +
-						"	?obsValQT purl:hasValue ?value . " +
-						"	?obsValQT purl:forProperty ?propertyQT . " +
-						"	?propertyQT purl:hasQuality <http://dbpedia.org/page/Quantity> . " +
-					    "        FILTER (xsd:dateTime(?samplingTime) >= \"PARAM_DATE1\"^^xsd:dateTime && " +  
-				    	"			     xsd:dateTime(?samplingTime) <= \"PARAM_DATE2\"^^xsd:dateTime) .  " +
-				    	"} } ORDER BY ?samplingTime ";
+			"SELECT  ?wkt ?value ?samplingTime " + 
+			"WHERE { GRAPH <PARAM_GRAPH> { " +    
+			"	<PARAM_FOI> geo:defaultGeometry ?point . " +
+			"	?point geo:asWKT ?wkt  .  " +
+			"	?propertyST purl:isPropertyOf <PARAM_FOI> . " +   
+			"	?propertyST purl:hasQuality <http://dbpedia.org/resource/Time> . " +
+			"	?obsValST purl:forProperty ?propertyST . " +
+			"	?obsValST purl:hasValue  ?samplingTime . " +
+			"	?senOut purl:hasValue ?obsValST . " +
+			"	?senOut purl:hasValue ?obsValQT . " +
+			"	?obsValQT purl:hasValue ?value . " +
+			"	?obsValQT purl:forProperty ?propertyQT . " +
+			"	?propertyQT purl:hasQuality <http://dbpedia.org/page/Quantity> . " +
+			"        FILTER (xsd:dateTime(?samplingTime) >= \"PARAM_DATE1\"^^xsd:dateTime && " +  
+			"			     xsd:dateTime(?samplingTime) <= \"PARAM_DATE2\"^^xsd:dateTime) .  " +
+			"} } ORDER BY ?samplingTime ";
 
-						
-	
+
+
 	/**
 	 * Returns all PROPERTIES from a given SPARQL Endpoint and Named Graph.
 	 */
 	public static String SPARQL_getListProperties = "PREFIX purl:  <http://purl.oclc.org/NET/ssnx/ssn#> " +  
-													"SELECT ?property " + 
-													"WHERE { GRAPH <PARAM_GRAPH> {  " + 
-													"?property a purl:Property . " +  
-													" } } ORDER BY ?property";
+			"SELECT ?property " + 
+			"WHERE { GRAPH <PARAM_GRAPH> {  " + 
+			"?property a purl:Property . " +  
+			" } } ORDER BY ?property";
 
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	/**
 	 * Returns all PROPERTIES from a SPARQL ENDPOINT.
 	 */
@@ -342,7 +358,7 @@ public class GlobalSettings {
 			"           ?property = PARAM_PROPERTY2  ||  " + 
 			"           ?property = PARAM_PROPERTY3 ) .}";
 
-	
+
 	public static String SPARQL_ListSubjectElements = "SELECT DISTINCT ?s ?p ?o ?dataType WHERE { <PARAM_URI> ?p ?o .}";
 
 	public static String DATE_Format = "yyyy-MM-dd HH:mm:ss";
@@ -400,5 +416,5 @@ public class GlobalSettings {
 	public static String PREDICATE_Detects = "http://purl.oclc.org/NET/ssnx/ssn#detects";
 	public static String PREDICATE_HasValue = "http://purl.oclc.org/NET/ssnx/ssn#hasValue";
 
-	
+
 }

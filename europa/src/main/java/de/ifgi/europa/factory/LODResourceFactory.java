@@ -24,6 +24,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
+
+import com.hp.hpl.jena.query.ARQ;
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.QueryExecutionFactory;
@@ -469,13 +471,36 @@ public class LODResourceFactory {
 	
 	
 	
+	public ResultSet getExternalData(double latitude, double longitude){
+		
+		String SPARQL = GlobalSettings.getExternalData.replace("PARAM_LAT", Double.toString(latitude));
+		SPARQL = SPARQL.replace("PARAM_LONG", Double.toString(longitude));
+		
+        Query query = QueryFactory.create(SPARQL);
+        //ARQ.getContext().setTrue(ARQ.useSAX);
+ 
+        QueryExecution qexec = QueryExecutionFactory.sparqlService("http://DBpedia.org/sparql", query);
+
+        ResultSet results = qexec.execSelect();
+               
+        qexec.close();
+
+
+
+		return results;
+	}
+	
+	
+	
+	
+	
 	
 	
 	/**
 	 *  Lists all properties available in the current named graph.
 	 *  
 	 * @author jones
-	 * @return
+	 * @return ArrayList<SOSProperty>
 	 */
 	
 	public ArrayList<SOSProperty> getListProperties(){
