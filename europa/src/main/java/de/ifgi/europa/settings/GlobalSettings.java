@@ -112,8 +112,8 @@ public class GlobalSettings {
 	 */
 
 	public static String geFOILastObservation = prefixes +
-			"SELECT ?wkt ?value ?samplingTime " +
-			"WHERE{GRAPH <PARAM_GRAPH> { " +
+			" SELECT ?wkt ?value ?samplingTime " +
+			" WHERE{GRAPH <PARAM_GRAPH> { " +
 			"	?in3prop a purl:Property . " +
 			"	?in3prop purl:hasQuality <http://dbpedia.org/page/Quantity> . " +
 			"	?in2obsValue purl:forProperty ?in3prop . " +
@@ -121,7 +121,7 @@ public class GlobalSettings {
 			"	<PARAM_FOI> geo:defaultGeometry ?point . " +
 			"	?point geo:asWKT ?wkt . " +
 			"	{ " +
-			"		#Retrieves the observed values of the latest sensor output " +
+			"		 " +
 			"		SELECT ?in2obsValue ?samplingTime " +
 			"		WHERE{GRAPH <PARAM_GRAPH> { " +
 			"			?in2obs a purl:Observation . " +
@@ -132,7 +132,7 @@ public class GlobalSettings {
 			"			?in2senOut purl:observationSamplingTime ?in2st . " +
 			"			?in2senOut purl:hasValue ?in2obsValue . " +
 			"			{ " +
-			"				#Retrieves the time of the latest observed value " +
+			"				 " +
 			"				SELECT ?samplingTime " +
 			"				WHERE { GRAPH <PARAM_GRAPH> { " +
 			"					?in1obs a purl:Observation . " +
