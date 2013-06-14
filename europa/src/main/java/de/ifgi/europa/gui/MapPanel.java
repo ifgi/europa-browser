@@ -235,6 +235,7 @@ public class MapPanel extends JPanel {
 	        cylinder.setVisible(true);
 	        cylinder.setValue(AVKey.DISPLAY_NAME, toolTip);
 	        layer.addRenderable(cylinder);
+	        
 		} else {
 			Iterable<Renderable> renderables = layer.getRenderables();
 			Iterator<Renderable> iter = renderables.iterator();
