@@ -46,6 +46,7 @@ import gov.nasa.worldwind.render.GlobeAnnotation;
 import gov.nasa.worldwind.render.Material;
 import gov.nasa.worldwind.render.Renderable;
 import gov.nasa.worldwind.render.ShapeAttributes;
+import gov.nasa.worldwind.terrain.ZeroElevationModel;
 import gov.nasa.worldwindx.examples.util.ToolTipController;
 
 import javax.swing.JPanel;
@@ -107,6 +108,7 @@ public class MapPanel extends JPanel {
 		
 		
 		earth = new Earth();
+		earth.setElevationModel(new ZeroElevationModel());
 		BasicModel modelForWindowA = new BasicModel();
 		modelForWindowA.setGlobe(earth);
 		modelForWindowA.setLayers(new LayerList(layers));
@@ -123,9 +125,9 @@ public class MapPanel extends JPanel {
 			@Override
 			public void selected(SelectEvent sE) {
 				
-				if (sE.getEventAction().equals(SelectEvent.LEFT_PRESS)) {
-					System.out.println("left click");
-				}
+//				if (sE.getEventAction().equals(SelectEvent.LEFT_PRESS)) {
+//					System.out.println("left click");
+//				}
 			}
 		});
         
@@ -157,12 +159,12 @@ public class MapPanel extends JPanel {
 			
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
-				Position currentPosition = wwd.getCurrentPosition();
-				ResultSet rs = ((FilterPanel) getMainFrame().getFilterPanel()).getFacade().getExternalData(currentPosition.getLatitude().getDegrees(), currentPosition.getLongitude().getDegrees());
-				while (rs.hasNext()) {
-					QuerySolution soln = rs.nextSolution();
-					System.out.println(soln.get("?label") + " - Lat: " + soln.getLiteral("?lat").getValue().toString() + " - Long: " + soln.getLiteral("?long").getValue().toString() );                                                
-				}
+//				Position currentPosition = wwd.getCurrentPosition();
+//				ResultSet rs = ((FilterPanel) getMainFrame().getFilterPanel()).getFacade().getExternalData(currentPosition.getLatitude().getDegrees(), currentPosition.getLongitude().getDegrees());
+//				while (rs.hasNext()) {
+//					QuerySolution soln = rs.nextSolution();
+//					System.out.println(soln.get("?label") + " - Lat: " + soln.getLiteral("?lat").getValue().toString() + " - Long: " + soln.getLiteral("?long").getValue().toString() );                                                
+//				}
 			}
 		});
         
@@ -230,7 +232,7 @@ public class MapPanel extends JPanel {
 				cylinder = new Cylinder(Position.fromDegrees(lat, lon, 0), defaultHeight, defaultRadius);
 			}
 	        
-	        cylinder.setAltitudeMode(WorldWind.RELATIVE_TO_GROUND);
+	        cylinder.setAltitudeMode(WorldWind.ABSOLUTE);
 	        cylinder.setAttributes(attrs);
 	        cylinder.setVisible(true);
 	        cylinder.setValue(AVKey.DISPLAY_NAME, toolTip);
