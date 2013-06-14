@@ -610,6 +610,7 @@ public class LODResourceFactory {
 		return result;
 	}
 	
+	
 
 	/**
 	 * Retrieves the last observation for a given feature of interest (SOSFeatureOfInterest)
@@ -626,6 +627,9 @@ public class LODResourceFactory {
 		String SPARQL = new String();
 		SPARQL = GlobalSettings.geFOILastObservation.replace("PARAM_FOI", featureOfInterest.getUri().toString());
 		SPARQL = SPARQL.replace("PARAM_GRAPH", GlobalSettings.CurrentNamedGraph);
+		
+		System.out.println(SPARQL);
+		
 		ResultSet rs = cnn.executeSPARQLQuery(SPARQL);
 					
 		System.out.println(SPARQL);
