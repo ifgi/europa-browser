@@ -16,7 +16,9 @@
 
 package de.ifgi.europa.gui;
 
+import java.awt.Color;
 import java.awt.GridLayout;
+import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.Iterator;
@@ -44,9 +46,13 @@ import gov.nasa.worldwind.render.BasicShapeAttributes;
 import gov.nasa.worldwind.render.Cylinder;
 import gov.nasa.worldwind.render.GlobeAnnotation;
 import gov.nasa.worldwind.render.Material;
+import gov.nasa.worldwind.render.Offset;
+import gov.nasa.worldwind.render.PointPlacemark;
+import gov.nasa.worldwind.render.PointPlacemarkAttributes;
 import gov.nasa.worldwind.render.Renderable;
 import gov.nasa.worldwind.render.ShapeAttributes;
 import gov.nasa.worldwind.terrain.ZeroElevationModel;
+import gov.nasa.worldwindx.examples.PlaceNames;
 import gov.nasa.worldwindx.examples.util.ToolTipController;
 
 import javax.swing.JPanel;
@@ -67,7 +73,7 @@ public class MapPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 	private MainFrame mainFrame;
 	private GlobeAnnotation tooltipAnnotation;
-	final RenderableLayer layer;
+	final RenderableLayer layer, dbpedia;
 	Globe earth;
 	final WorldWindowGLCanvas wwd;
 	public static String newline = System.getProperty("line.separator");
@@ -79,6 +85,7 @@ public class MapPanel extends JPanel {
 		this.setMainFrame(mF);
 		wwd = new WorldWindowGLCanvas();
 		layer = new RenderableLayer();
+        dbpedia = new RenderableLayer();
         
 		/*activate tooltip */
 		ToolTipController toolTip = new ToolTipController(wwd,AVKey.DISPLAY_NAME,null);
@@ -97,10 +104,11 @@ public class MapPanel extends JPanel {
 		Layer[] layers = new Layer[]
         {
 			layer,
+			dbpedia,
             new StarsLayer(),
             new CompassLayer(),
             new BMNGWMSLayer(),
-            new LandsatI3WMSLayer(), 
+            new LandsatI3WMSLayer(),
             awl,
             new ScalebarLayer(),  
         };
@@ -125,50 +133,54 @@ public class MapPanel extends JPanel {
 			@Override
 			public void selected(SelectEvent sE) {
 				
-//				if (sE.getEventAction().equals(SelectEvent.LEFT_PRESS)) {
-//					System.out.println("left click");
-//				}
+
+				if (sE.getEventAction().equals(SelectEvent.LEFT_PRESS)) {
+					dbpedia.removeAllRenderables();
+					Position currentPosition = wwd.getCurrentPosition();
+					Object selected = sE.getTopObject();
+					Cylinder tempSelected = (Cylinder) selected;
+					String caption = (String) tempSelected.getValue(AVKey.DISPLAY_NAME);
+					String[] arrCaption = caption.split("\\#");
+					ResultSet rs = ((FilterPanel) getMainFrame().getFilterPanel()).getFacade().getExternalData(currentPosition.getLatitude().getDegrees(), currentPosition.getLongitude().getDegrees());
+					try {
+						addDBpediaToGlobe(rs);
+					} catch (Exception e) {
+						// TODO: handle exception
+						System.out.println(e);
+					}
+					
+					((GraphPanel) mainFrame.getGraphPanel()).updateGraph(rs, arrCaption[1]);
+				}
 			}
 		});
-        
-        wwd.addMouseListener(new MouseListener() {
-			
-			@Override
-			public void mouseReleased(MouseEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void mousePressed(MouseEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void mouseExited(MouseEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void mouseEntered(MouseEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void mouseClicked(MouseEvent arg0) {
-//				Position currentPosition = wwd.getCurrentPosition();
-//				ResultSet rs = ((FilterPanel) getMainFrame().getFilterPanel()).getFacade().getExternalData(currentPosition.getLatitude().getDegrees(), currentPosition.getLongitude().getDegrees());
-//				while (rs.hasNext()) {
-//					QuerySolution soln = rs.nextSolution();
-//					System.out.println(soln.get("?label") + " - Lat: " + soln.getLiteral("?lat").getValue().toString() + " - Long: " + soln.getLiteral("?long").getValue().toString() );                                                
-//				}
-			}
-		});
-        
 	}	
+	
+	/**
+	 * Add the dbpedia entries to the globe
+	 * @param rs ResultSet containing the dbpedia entries
+	 */
+	public void addDBpediaToGlobe(ResultSet rs) {
+		while (rs.hasNext()) {
+			QuerySolution soln = rs.nextSolution();
+			String latitude = soln.getLiteral("?lat").getValue().toString();
+//			String[] latArray = latitude.split("\\^");
+			String longitude = soln.getLiteral("?long").getValue().toString();
+//			String[] longArray = longitude.split("\\^");
+			
+			PointPlacemark pp = new PointPlacemark(Position.fromDegrees(Double.parseDouble(latitude), Double.parseDouble(longitude), 0));
+	        pp.setValue(AVKey.DISPLAY_NAME, soln.getLiteral("?label").getValue().toString());
+	        pp.setLineEnabled(false);
+	        pp.setAltitudeMode(WorldWind.CLAMP_TO_GROUND);
+	        PointPlacemarkAttributes attrs = new PointPlacemarkAttributes();
+	        attrs.setImageAddress("dbpedia.jpeg");
+	        attrs.setImageColor(new Color(1f, 1f, 1f, 1f));
+	        attrs.setScale(1.0);
+	        attrs.setLabelOffset(new Offset(0.9d, 0.6d, AVKey.FRACTION, AVKey.FRACTION));
+	        pp.setAttributes(attrs);
+	        dbpedia.addRenderable(pp);
+		}
+		
+	}
 	
 	/**
 	 * Remove all renderables from wwd.
@@ -198,6 +210,7 @@ public class MapPanel extends JPanel {
 				SOSValue value = observation.getSensorOutput().get(i).getValue();
 				val = value.getHasValue();
 				toolTip = toolTip + newline + "Value: " + val;
+				toolTip = toolTip + newline + "Click to look what is around!";
 			}
 			
 			//Get geometry of observation and parse latitude and longitude
@@ -223,9 +236,9 @@ public class MapPanel extends JPanel {
 	        
 	        if (viz.compareTo("width") == 0) {
 	        	defaultRadius = defaultRadius*val*10;
-	        	cylinder = new Cylinder(Position.fromDegrees(lat, lon, 0), defaultHeight, defaultRadius);
+	        	cylinder = new Cylinder(Position.fromDegrees(lat, lon, 0), defaultHeight, val);
 			} else if (viz.compareTo("height") == 0) {
-				defaultHeight = defaultHeight*val*1000;
+				defaultHeight = defaultHeight*val*10;
 				cylinder = new Cylinder(Position.fromDegrees(lat, lon, 0), defaultHeight, 10000);
 			} else if (viz.compareTo("color") == 0) {
 				attrs.setInteriorMaterial(Material.RED);

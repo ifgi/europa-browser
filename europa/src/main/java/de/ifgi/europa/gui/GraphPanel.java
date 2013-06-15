@@ -16,7 +16,15 @@
 
 package de.ifgi.europa.gui;
 
+import gov.nasa.worldwind.WorldWind;
+import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.geom.Position;
+import gov.nasa.worldwind.render.Offset;
+import gov.nasa.worldwind.render.PointPlacemark;
+import gov.nasa.worldwind.render.PointPlacemarkAttributes;
+
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
@@ -26,6 +34,8 @@ import java.awt.event.MouseMotionListener;
 
 import javax.swing.JPanel;
 
+import org.graphstream.algorithm.generator.BarabasiAlbertGenerator;
+import org.graphstream.algorithm.generator.Generator;
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
@@ -38,6 +48,9 @@ import org.graphstream.ui.swingViewer.View;
 import org.graphstream.ui.swingViewer.Viewer;
 import org.graphstream.ui.swingViewer.ViewerListener;
 import org.graphstream.ui.swingViewer.ViewerPipe;
+
+import com.hp.hpl.jena.query.QuerySolution;
+import com.hp.hpl.jena.query.ResultSet;
 
 public class GraphPanel extends JPanel {
 	
@@ -66,22 +79,34 @@ public class GraphPanel extends JPanel {
         
         graph.setStrict(false);
         graph.setAutoCreate(true);
-
-        graph.addNode("A");
-        graph.addEdge("AB", "A", "B").addAttribute("ui.label", "test");
-        graph.addEdge("AC", "A", "C");
-        graph.addEdge("AD", "A", "D");
-//        
-//        for (Node node : graph) {
-//        	node.addAttribute("ui.label", node.getId());
-//        }
                
         viewer.enableAutoLayout();
         view = viewer.addDefaultView(false);
-//        graph.addAttribute("ui.stylesheet", "url('http://graphstream-project.org/media/data/css/fill_mode_pride.css')");
-//        graph.addAttribute("ui.stylesheet", "url('http://graphstream-project.org/media/data/css/fill_mode_radial1.css')");
+        graph.addAttribute("ui.stylesheet", "node#A {size: 25px; fill-color: red; text-alignment:at-right;} node {size: 15px; fill-color: green; text-alignment:at-left;} edge {fill-color: blue; text-alignment: along; text-style: bold;}");
         add(view, BorderLayout.CENTER);
         
+	}
+	
+	public void updateGraph(ResultSet rs, String selectedFOI) {
+		Integer count = 0;
+		graph.addNode("A").addAttribute("ui.label", selectedFOI);
+		for(int i = 0; i < 5; i++) {
+			count = i;
+			String temp = count.toString();
+			graph.addNode(temp).addAttribute("ui.label", temp);
+			graph.addEdge("A"+temp, "A", temp).addAttribute("ui.label", "edge");
+		}
+		
+		
+//		graph.addNode("A").addAttribute("ui.label", selectedFOI);
+//		while (rs.hasNext()) {
+////			QuerySolution soln = rs.nextSolution();
+//			String nodeName = count.toString();
+//			graph.addNode(nodeName).addAttribute("ui.label", "asdasdsad");
+////			graph.addEdge("A"+count.toString(), "A", count.toString()).addAttribute("ui.label", "edge");
+//			count++;
+//		}
+		view.updateUI();
 	}
 
 	/**

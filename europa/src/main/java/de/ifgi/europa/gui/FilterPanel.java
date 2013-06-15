@@ -141,11 +141,11 @@ public class FilterPanel extends JPanel {
 		final JComboBox cbURI = new JComboBox(cbModel);
 		
 		btnQuery = new JButton();
-		btnQuery.setEnabled(false);
+		btnQuery.setEnabled(true);
 		
 		btnQuery.setIcon(iconConnect);
 	    
-		txtSPARQLEndpoint = new JTextField("");
+		txtSPARQLEndpoint = new JTextField("http://giv-siidemo.uni-muenster.de:8081/parliament/sparql");
 		txtSPARQLEndpoint.setColumns(20);
 	    
 	    JPanel pnlFilter = new JPanel(new BorderLayout());

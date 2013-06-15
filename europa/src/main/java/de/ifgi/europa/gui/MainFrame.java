@@ -105,6 +105,7 @@ public class MainFrame extends JFrame {
                 JButton button = (JButton) buttonField.get(((BasicSplitPaneUI) sp.getUI()).getDivider());
                 button.getActionListeners()[0].actionPerformed(new ActionEvent(bspd, MouseEvent.MOUSE_CLICKED,
                         "bum"));
+                getGraphPanel().updateUI();
             } catch (Exception e) {
                 e.printStackTrace();
             }
