@@ -18,13 +18,9 @@ package de.ifgi.europa.facade;
 
 import java.net.URI;
 import java.util.ArrayList;
-
 import com.hp.hpl.jena.query.ResultSet;
-
-import de.ifgi.europa.core.LODResource;
 import de.ifgi.europa.core.SOSFeatureOfInterest;
 import de.ifgi.europa.core.SOSObservation;
-import de.ifgi.europa.core.SOSPoint;
 import de.ifgi.europa.core.SOSProperty;
 import de.ifgi.europa.core.TimeInterval;
 import de.ifgi.europa.factory.LODResourceFactory;
