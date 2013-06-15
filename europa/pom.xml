@@ -31,6 +31,10 @@
 			<id>java.net</id>
 			<url>https://repository.apache.org/content/repositories/releases/</url>
 		</repository>
+		<repository>
+	        <id>NASA Worldwind for Java Repo</id>
+	        <url>https://github.com/mpfeil/mvn-repo/raw/master</url>
+	    </repository>
 	</repositories>
 	<dependencies>
 		<dependency>
@@ -45,29 +49,29 @@
 			<version>2.10.0</version>
 		</dependency>
 		<dependency>
-			<groupId>de.wwj.rep</groupId>
-			<artifactId>worldwind</artifactId>
-			<version>1.0.0</version>
+	    	<groupId>de.ifgi.nasa.wwj</groupId>
+	    	<artifactId>gdal</artifactId>
+	    	<version>1.5</version>
 		</dependency>
 		<dependency>
-			<groupId>de.wwj.rep</groupId>
-			<artifactId>worldwindx</artifactId>
-			<version>1.0.0</version>
+	    	<groupId>de.ifgi.nasa.wwj</groupId>
+	    	<artifactId>gluegen</artifactId>
+	    	<version>1.5</version>
 		</dependency>
 		<dependency>
-			<groupId>de.wwj.rep</groupId>
-			<artifactId>gdal</artifactId>
-			<version>1.0.0</version>
+	    	<groupId>de.ifgi.nasa.wwj</groupId>
+	    	<artifactId>worldwind</artifactId>
+	    	<version>1.5</version>
 		</dependency>
 		<dependency>
-			<groupId>de.wwj.rep</groupId>
-			<artifactId>gluegen</artifactId>
-			<version>1.0.0</version>
+	    	<groupId>de.ifgi.nasa.wwj</groupId>
+	    	<artifactId>worldwindx</artifactId>
+	    	<version>1.5</version>
 		</dependency>
 		<dependency>
-			<groupId>de.wwj.rep</groupId>
-			<artifactId>jogl</artifactId>
-			<version>1.0.0</version>
+	    	<groupId>de.ifgi.nasa.wwj</groupId>
+	    	<artifactId>jogl</artifactId>
+	    	<version>1.5</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
