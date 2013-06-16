@@ -112,14 +112,15 @@ public class GlobalSettings {
 	 */
 
 	public static String geFOILastObservation = prefixes +
-			" SELECT ?wkt ?value ?samplingTime " +
+			" SELECT ?wkt ?value ?samplingTime ?uom ?prop" +
 			" WHERE{GRAPH <PARAM_GRAPH> { " +
-			"	?in3prop a purl:Property . " +
-			"	?in3prop purl:hasQuality <http://dbpedia.org/page/Quantity> . " +
-			"	?in2obsValue purl:forProperty ?in3prop . " +
+			"	?prop a purl:Property . " +
+			"	?prop purl:hasQuality <http://dbpedia.org/page/Quantity> . " +
+			"	?in2obsValue purl:forProperty ?prop . " +
 			"	?in2obsValue purl:hasValue ?value . " +
 			"	<PARAM_FOI> geo:defaultGeometry ?point . " +
 			"	?point geo:asWKT ?wkt . " +
+			"   ?prop <http://purl.org/goodrelations/v1#hasUnitOfMeasurement> ?uom ." + 
 			"	{ " +
 			"		 " +
 			"		SELECT ?in2obsValue ?samplingTime " +
