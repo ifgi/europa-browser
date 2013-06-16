@@ -264,10 +264,24 @@ public class FilterPanel extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				for (int i = 0; i < resultsTable.getRowCount(); i++) {
-					if (!(Boolean) resultsTable.getModel().getValueAt(i, 1)) {
-						System.out.println("not checked");
+					if (resultsTable.getModel().getValueAt(i, 1) == null || !(Boolean) resultsTable.getModel().getValueAt(i, 1)) {
+						resultsTable.getModel().setValueAt(true, i, 1);
 					}
 				}
+			}
+		});
+		
+		btnUnselectAll.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				((MapPanel) getMainFrame().getMapPanel()).clearGlobe();
+				for (int i = 0; i < resultsTable.getRowCount(); i++) {
+					if ((Boolean) resultsTable.getModel().getValueAt(i, 1)) {
+						resultsTable.getModel().setValueAt(false, i, 1);
+					}
+				}
+				
 			}
 		});
 		
@@ -478,6 +492,7 @@ public class FilterPanel extends JPanel {
 										SOSObservation observation = getFacade().getFOILastObservation(foi);
 										((MapPanel) getMainFrame().getMapPanel()).updateGlobe(observation,foi,prop);
 										foisOnTheGlobe.add(new FeaturesOnTheGlobe(foi, prop));
+										break;
 									}
 								}
 							}
