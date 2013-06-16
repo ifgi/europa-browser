@@ -55,7 +55,7 @@ public class awTip extends JPanel {
 	private MainFrame mainFrame;
 	private String startTime ="";
 	private String endTime = "";
-	private ArrayList<ArrayList<SOSObservation>> ons = new ArrayList<ArrayList<SOSObservation>>();
+	private ArrayList<ArrayList<SOSObservation>> ons;
 	private int delay = 1000;
 	private Image imgPlay = null;
 	private Image imgPause = null;
@@ -67,6 +67,7 @@ public class awTip extends JPanel {
     	super(true);
 		this.setLayout(new BorderLayout());
 		this.setMainFrame(mF);
+		ons = new ArrayList<ArrayList<SOSObservation>>();
 		slider = new JSlider(JSlider.HORIZONTAL, 0, 10, 0);
 		final SimpleDateFormat dateFormatString = new SimpleDateFormat("yyyy-MM-dd");
 		final JButton btnPlay = new JButton("Play");
@@ -179,7 +180,7 @@ public class awTip extends JPanel {
 					((MapPanel) getMainFrame().getMapPanel()).clearGlobe();
 					for (int i = 0; i < ons.size(); i++) {
 						SOSObservation obs =  ons.get(i).get(slider.getValue());
-						((MapPanel) getMainFrame().getMapPanel()).updateGlobe(obs, "", ons.get(i).get(slider.getValue()).getLabel().toLowerCase());
+//						((MapPanel) getMainFrame().getMapPanel()).updateGlobe(obs, "", ons.get(i).get(slider.getValue()).getLabel().toLowerCase());
 					}
 				} else {
 					btnPlay.doClick();

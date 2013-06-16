@@ -42,14 +42,14 @@ public class TestGraph {
 			graph.addEdge("A"+temp, "A", temp).addAttribute("ui.label", "edge");
 		}
 		
-		Generator gen = new BarabasiAlbertGenerator(1);
-		gen.addSink(graph);
-		gen.begin();
-		
-		for (int i = 0; i < graph.getNodeCount(); i++) {
-			
-		}
-		gen.end();
+//		Generator gen = new BarabasiAlbertGenerator(1);
+//		gen.addSink(graph);
+//		gen.begin();
+//		
+//		for (int i = 0; i < graph.getNodeCount(); i++) {
+//			
+//		}
+//		gen.end();
 //		graph.addAttribute("ui.stylesheet", "node {shape: freeplane; fill-color:white; stroke-mode:plain; size-mode: fit;} edge {shape: freeplane; text-color:red;}");
 //		graph.addNode("A").addAttribute("ui.label", "Sofia Vergara");
 //		graph.addNode("B").addAttribute("ui.label", "1");

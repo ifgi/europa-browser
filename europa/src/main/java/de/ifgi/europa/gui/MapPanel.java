@@ -60,8 +60,10 @@ import javax.swing.JPanel;
 import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
 
+import de.ifgi.europa.core.SOSFeatureOfInterest;
 import de.ifgi.europa.core.SOSObservation;
 import de.ifgi.europa.core.SOSValue;
+import de.ifgi.europa.gui.FilterPanel.SelectedProperties;
 
 /**
  * Represents the NASA Globe view.
@@ -133,23 +135,24 @@ public class MapPanel extends JPanel {
 			@Override
 			public void selected(SelectEvent sE) {
 				
-
 				if (sE.getEventAction().equals(SelectEvent.LEFT_PRESS)) {
 					dbpedia.removeAllRenderables();
 					Position currentPosition = wwd.getCurrentPosition();
 					Object selected = sE.getTopObject();
-					Cylinder tempSelected = (Cylinder) selected;
-					String caption = (String) tempSelected.getValue(AVKey.DISPLAY_NAME);
-					String[] arrCaption = caption.split("\\#");
-					ResultSet rs = ((FilterPanel) getMainFrame().getFilterPanel()).getFacade().getExternalData(currentPosition.getLatitude().getDegrees(), currentPosition.getLongitude().getDegrees());
-					try {
-						addDBpediaToGlobe(rs);
-					} catch (Exception e) {
-						// TODO: handle exception
-						System.out.println(e);
+					System.out.println(selected.getClass().toString());
+					if (selected.getClass().toString().compareTo("class gov.nasa.worldwind.render.Cylinder") == 0) {
+						Cylinder tempSelected = (Cylinder) selected;
+						String caption = (String) tempSelected.getValue(AVKey.DISPLAY_NAME);
+						String[] arrCaption = caption.split("\\#");
+						ResultSet rs = ((FilterPanel) getMainFrame().getFilterPanel()).getFacade().getExternalData(currentPosition.getLatitude().getDegrees(), currentPosition.getLongitude().getDegrees());
+						try {
+							addDBpediaToGlobe(rs);
+						} catch (Exception e) {
+							System.out.println(e);
+						}
+						
+						((GraphPanel) mainFrame.getGraphPanel()).updateGraph(rs, arrCaption[1]);
 					}
-					
-					((GraphPanel) mainFrame.getGraphPanel()).updateGraph(rs, arrCaption[1]);
 				}
 			}
 		});
@@ -163,9 +166,7 @@ public class MapPanel extends JPanel {
 		while (rs.hasNext()) {
 			QuerySolution soln = rs.nextSolution();
 			String latitude = soln.getLiteral("?lat").getValue().toString();
-//			String[] latArray = latitude.split("\\^");
 			String longitude = soln.getLiteral("?long").getValue().toString();
-//			String[] longArray = longitude.split("\\^");
 			
 			PointPlacemark pp = new PointPlacemark(Position.fromDegrees(Double.parseDouble(latitude), Double.parseDouble(longitude), 0));
 	        pp.setValue(AVKey.DISPLAY_NAME, soln.getLiteral("?label").getValue().toString());
@@ -196,7 +197,7 @@ public class MapPanel extends JPanel {
 	 * @param foi
 	 * @param viz
 	 */
-	public void updateGlobe(SOSObservation observation, String foi, String viz) {
+	public void updateGlobe(SOSObservation observation, SOSFeatureOfInterest foi, SelectedProperties property) {
 
 		if (observation != null) {
 			Double defaultHeight = 10.0;
@@ -234,15 +235,15 @@ public class MapPanel extends JPanel {
 	        //Create cylinder depending on chosen visualization and add it to the renderable layer
 	        Cylinder cylinder = null;
 	        
-	        if (viz.compareTo("width") == 0) {
+	        if (property.getVisualization().compareTo("width") == 0) {
 	        	defaultRadius = defaultRadius*val*10;
 	        	cylinder = new Cylinder(Position.fromDegrees(lat, lon, 0), defaultHeight, val);
-			} else if (viz.compareTo("height") == 0) {
+			} else if (property.getVisualization().toLowerCase().compareTo("height") == 0) {
 				defaultHeight = defaultHeight*val*10;
 				cylinder = new Cylinder(Position.fromDegrees(lat, lon, 0), defaultHeight, 10000);
-			} else if (viz.compareTo("color") == 0) {
-				attrs.setInteriorMaterial(Material.RED);
-				cylinder = new Cylinder(Position.fromDegrees(lat, lon, 0), defaultHeight, defaultRadius);
+			} else if (property.getVisualization().toLowerCase().compareTo("color") == 0) {
+				attrs.setInteriorMaterial(new Material(property.getColors()[0]));
+				cylinder = new Cylinder(Position.fromDegrees(lat, lon, 0), 1000, 1000);
 			}
 	        
 	        cylinder.setAltitudeMode(WorldWind.ABSOLUTE);
@@ -257,7 +258,7 @@ public class MapPanel extends JPanel {
 			while (iter.hasNext()) {
 				Cylinder temp = (Cylinder) iter.next();
 				String displayName = (String) temp.getValue(AVKey.DISPLAY_NAME);
-				if (displayName.contains(foi)) {
+				if (displayName.toLowerCase().contains(foi.getUri().toString().toLowerCase())) {
 					layer.removeRenderable(temp);
 				}
 			}
