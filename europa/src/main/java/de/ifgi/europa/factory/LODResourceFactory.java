@@ -19,6 +19,8 @@ package de.ifgi.europa.factory;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Iterator;
+
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.QueryExecutionFactory;
@@ -199,27 +201,50 @@ public class LODResourceFactory {
 		//TODO Delete System.out.println(SPARQL); 
 		System.out.println(SPARQL);
 		
-		ArrayList<SOSSensorOutput> sensorOutput = new ArrayList<SOSSensorOutput>();
-		
-		SOSFeatureOfInterest foi = new SOSFeatureOfInterest();
-		SOSPoint point = new SOSPoint();
-		SOSValue value = new SOSValue();
+		ArrayList<SOSSensorOutput> sensorOutputArray = new ArrayList<SOSSensorOutput>();
+		ArrayList<SOSValue> valueArray = new ArrayList<SOSValue>();
+		ArrayList<SOSProperty> propArray = new ArrayList<SOSProperty>(); 
 		SOSObservation observation = new SOSObservation();
 		SOSSensorOutput output = new SOSSensorOutput();
-		
+		SOSFeatureOfInterest foi = new SOSFeatureOfInterest();
+		SOSPoint point = new SOSPoint();
 
-		QuerySolution soln = rs.nextSolution();
+		int counter = 0;
 		
-		point.setAsWKT(soln.get("?wkt").toString());		
+		//Assuming only one DataArray per observation
+		//Assuming only one SensorOurput can be the latest one
+		while(rs.hasNext()){
+			QuerySolution soln = rs.nextSolution();	
+
+			SOSValue value = new SOSValue();
+			SOSProperty prop = new SOSProperty();
+
+			if(counter == 0){
+				point.setAsWKT(soln.get("?wkt").toString());
+				output.setSamplingTime(soln.get("?samplingTime").toString());
+			}
+			
+			prop.setUri(URI.create(soln.get("?prop").toString()));
+			prop.setUom(soln.get("?uom").toString());
+			propArray.add(prop);
+			
+			value.setHasValue(soln.getLiteral("?value").getDouble());
+			value.setForProperty(prop);
+			
+			valueArray.add(value);
+
+			counter++;
+		}
+		
 		foi.setDefaultGeometry(point);
 		
-		value.setHasValue(soln.getLiteral("?value").getDouble());			
-		output.setValue(value);						
-		sensorOutput.add(output);
+		output.setValue(valueArray);
+		sensorOutputArray.add(output);
 		
-		observation.setSensorOutput(sensorOutput);
-		observation.setFeatureOfInterest(foi);					
-		output.setSamplingTime(soln.get("?samplingTime").toString());
+		observation.setFeatureOfInterest(foi);
+		observation.setProperty(propArray);
+		observation.setSensorOutput(sensorOutputArray);
+
 		return observation;		
 	}
 	
@@ -232,9 +257,7 @@ public class LODResourceFactory {
 	 * @param SOSFeatureOfInterest TimeInterval
 	 * @return ArrayList<SOSObservation>
 	 */
-
-	
-	public ArrayList<SOSObservation> getObservationTimeInterval(SOSFeatureOfInterest featureOfInterest, TimeInterval interval){
+	public SOSObservation getObservationTimeInterval(SOSFeatureOfInterest featureOfInterest, TimeInterval interval){
 		
 		JenaConnector cnn = new JenaConnector(GlobalSettings.CurrentSPARQLEndpoint);
 		
@@ -243,35 +266,100 @@ public class LODResourceFactory {
 		SPARQL = SPARQL.replace("PARAM_DATE2", interval.getEndDate());
 		SPARQL = SPARQL.replace("PARAM_FOI", featureOfInterest.getUri().toString());
 		SPARQL = SPARQL.replace("PARAM_GRAPH", GlobalSettings.CurrentNamedGraph);
+System.out.println(SPARQL);//TODO:Log
 		
 		ResultSet rs = cnn.executeSPARQLQuery(SPARQL);
 		
-		ArrayList<SOSObservation> result = new ArrayList<SOSObservation>();
+		ArrayList<SOSSensorOutput> sensorOutputArray = new ArrayList<SOSSensorOutput>();
+		ArrayList<SOSValue> valueArray = new ArrayList<SOSValue>(); 
+		ArrayList<SOSProperty> propertyArray = new ArrayList<SOSProperty>(); 
 		
+		SOSFeatureOfInterest foi = new SOSFeatureOfInterest();
+		SOSPoint point = new SOSPoint();
+		SOSObservation observation = new SOSObservation();
+		
+		
+		int counter = 0;
 		while (rs.hasNext()) {
-			ArrayList<SOSSensorOutput> sensorOutput = new ArrayList<SOSSensorOutput>();
-			SOSFeatureOfInterest foi = new SOSFeatureOfInterest();
-			SOSPoint point = new SOSPoint();
-			SOSValue value = new SOSValue();
-			SOSObservation observation = new SOSObservation();
-			SOSSensorOutput output = new SOSSensorOutput();
-
 			QuerySolution soln = rs.nextSolution();
 			
-			point.setAsWKT(soln.get("?wkt").toString());		
-			foi.setDefaultGeometry(point);
+			if(counter == 0){
+				point.setAsWKT(soln.get("?wkt").toString());
+				foi.setDefaultGeometry(point);
+			}
+
+			String st = soln.getLiteral("?samplingTime").getValue().toString();
+			double val = soln.getLiteral("?value").getDouble();
+			String uom = soln.getLiteral("?uom").getValue().toString();
+			String propUri = soln.get("?prop").toString();
+
+			SOSProperty prop = findPropertyByUri(propertyArray, propUri);
+			if(prop ==  null){
+				prop = new SOSProperty();
+				prop.setUri(URI.create(propUri));
+				prop.setUom(uom);
+				prop.addFoi(foi);
+			}
+			SOSSensorOutput output = findSensorOutputByDate(sensorOutputArray, st);
+			boolean soIsThere = true;
+			if(output == null){
+				soIsThere = false;
+				output = new SOSSensorOutput();
+				output.setSamplingTime(st);
+			}
 			
-			value.setHasValue(soln.getLiteral("?value").getDouble());			
-			output.setValue(value);						
-			output.setSamplingTime(soln.getLiteral("?samplingTime").getValue().toString());
-			sensorOutput.add(output);
+			SOSValue value = new SOSValue();
+			value.setHasValue(val);
+			value.setForProperty(prop);
+			valueArray.add(value);
 			
-			observation.setSensorOutput(sensorOutput);
-			observation.setFeatureOfInterest(foi);	
-			result.add(observation);
+			output.getValue().add(value);
+			if(!soIsThere){
+				sensorOutputArray.add(output);		
+			}
+			counter++;
 		}
 
-		return result;
+		observation.setSensorOutput(sensorOutputArray);
+		observation.setFeatureOfInterest(foi);
+		return observation;
 	}
+
+	/**
+	 * Search for a property in the array using a URI
+	 * @param prArray An array of properties.
+	 * @param propUri A URI.
+	 * @return A property.
+	 */
+	private SOSProperty findPropertyByUri(ArrayList<SOSProperty> prArray, String propUri){
+		SOSProperty res = null;
+		for (SOSProperty sosProperty : prArray) {
+			if(sosProperty.getUri().toString().equals(propUri)){
+				res = sosProperty;
+				break;
+			}
+		}
+		return res;
+	}
+	
+	/**
+	 * Searchs for a sensor output in the array using a date.
+	 * @param soArray Sensor output array.
+	 * @param date A date.
+	 * @return The found sensor output otherwise null.
+	 */
+	private SOSSensorOutput findSensorOutputByDate(ArrayList<SOSSensorOutput> soArray, String date){
+		SOSSensorOutput res = null;
+		for (SOSSensorOutput so : soArray) {
+			if(so.getSamplingTime().equals(date)){
+				res = so;
+				break;
+			}
+		}
+		return res;
+	}
+
+	
+	
 	
 }

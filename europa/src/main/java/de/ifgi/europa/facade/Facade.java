@@ -137,7 +137,7 @@ public class Facade {
 	 * @return ArrayList<SOSObservation>
 	 */
 	
-	public ArrayList<SOSObservation> getObservationByInterval(SOSFeatureOfInterest featureOfInterest, TimeInterval interval){
+	public SOSObservation getObservationByInterval(SOSFeatureOfInterest featureOfInterest, TimeInterval interval){
 		
 		return factory.getObservationTimeInterval(featureOfInterest, interval);
 		
