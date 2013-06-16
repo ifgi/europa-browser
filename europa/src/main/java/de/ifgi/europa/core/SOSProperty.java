@@ -27,9 +27,12 @@ import java.util.ArrayList;
 public class SOSProperty extends LODResource {
 
 	 URI uri;	
-	 ArrayList<SOSFeatureOfInterest> foi;
+	 ArrayList<SOSFeatureOfInterest> foi = new ArrayList<SOSFeatureOfInterest>();
 	 String description;
 	 String label;
+	 String uom;
+
+
 	boolean isFilled = false;
 	
 	
@@ -63,14 +66,16 @@ public class SOSProperty extends LODResource {
 	 * @param foi Property's set of features of interests.
 	 * @param description Property's description.
 	 * @param label Property's label.
+	 * @param uom Unit of measurement.
 	 */
 	public SOSProperty(URI uri, ArrayList<SOSFeatureOfInterest> foi,
-			String description, String label) {
+			String description, String label, String uom) {
 		super();
 		this.uri = uri;
 		this.foi = foi;
 		this.description = description;
 		this.label = label;
+		this.uom = uom;
 		this.isFilled = true;
 	}
 	
@@ -103,7 +108,7 @@ public class SOSProperty extends LODResource {
 	public void setFoi(ArrayList<SOSFeatureOfInterest> foi) {
 		this.foi = foi;
 	}
-	
+
 	/**
 	 * Returns the property's description.
 	 * @return
@@ -135,4 +140,34 @@ public class SOSProperty extends LODResource {
 	public void setLabel(String label) {
 		this.label = label;
 	}
+
+	/**
+	 * Returns the units of measurement.
+	 * @return
+	 */
+	public String getUom() {
+		return uom;
+	}
+
+	/**
+	 * Sets the units of measurement.
+	 * @param uom
+	 */
+	public void setUom(String uom) {
+		this.uom = uom;
+	}
+	
+	/**
+	 * Adds a FOI to the list of FOIs
+	 * @param foi A feature of interest.
+	 */
+	public void addFoi(SOSFeatureOfInterest aFoi) {
+		if(aFoi != null){
+			if(this.foi.contains(aFoi) == false){
+				this.foi.add(aFoi);
+			}
+		}
+	}
+
+	
 }

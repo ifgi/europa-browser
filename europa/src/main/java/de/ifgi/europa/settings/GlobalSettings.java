@@ -148,29 +148,8 @@ public class GlobalSettings {
 			"	} " +
 			"} } ";
 	
-	/**
-	 * Retrieves a list of observations related to a given feature of interest (SOSFeatureOfInterest), 
-	 * constrained by a time interval (TimeInterval).
-	 * @author jones
-	 * @deprecated
-	 */
-
-	public static String getObservationsbyTimeInterval_old=prefixes+
-			" SELECT  ?wkt ?value ?samplingTime " +
-			"           WHERE { GRAPH <PARAM_GRAPH> { " +
-			"           ?property purl:isPropertyOf ?foi . " +
-			"           ?property purl:isPropertyOf <PARAM_FOI> . " +
-			"           ?observation purl:featureOfInterest ?foi . " +
-			"           ?observation purl:observationResult ?sensorOutput . " +
-			"           ?sensorOutput purl:hasValue ?observationValue . " +
-			"           ?sensorOutput purl:observationSamplingTime ?samplingTime . " +
-			"           ?observationValue purl:hasValue ?value . " +
-			"           ?foi geo:defaultGeometry ?point . " +
-			"           ?point geo:asWKT ?wkt  . " +
-			"           FILTER (xsd:dateTime(?samplingTime) >= \"PARAM_DATE1\"^^xsd:dateTime && " +  
-			"					xsd:dateTime(?samplingTime) <= \"PARAM_DATE2\"^^xsd:dateTime) .  " +
-			"} } ORDER BY ?samplingTime ";
-
+	
+	
 
 	/**
 	 * Retrieves a list of observations related to a given feature of interest (SOSFeatureOfInterest), 
@@ -178,7 +157,26 @@ public class GlobalSettings {
 	 * @author Alber Sanchez
 	 * 
 	 */
-	public static String getObservationsbyTimeInterval=prefixes+
+	public static String getObservationsbyTimeInterval= prefixes +
+			" SELECT ?wkt ?value ?samplingTime ?uom ?prop" +
+			" WHERE{GRAPH <PARAM_GRAPH> {" +
+			" 	?in2obs a purl:Observation ." +
+			" 	?in2senOut a purl:SensorOutput ." +
+			" 	?in2obs purl:featureOfInterest <PARAM_FOI> ." +
+			" 	?in2obs purl:observationResult ?in2senOut ." +
+			" 	?in2senOut purl:observationSamplingTime ?in2st ." +
+			" 	?in3obsValue purl:forProperty ?prop ." +
+			" 	?in3obsValue purl:hasValue ?value ." +
+			" 	<PARAM_FOI> geo:defaultGeometry ?point ." +
+			" 	?point geo:asWKT ?wkt ." +
+			" 	?prop <http://purl.org/goodrelations/v1#hasUnitOfMeasurement> ?uom ." +
+			" 	?prop purl:hasQuality <http://dbpedia.org/page/Quantity> ." +
+			" 	?in2senOut purl:observationSamplingTime ?samplingTime ." +
+			" 	?in2senOut ?hasValue ?in3obsValue ." +
+			" 	FILTER (xsd:dateTime(?in2st) >= \"PARAM_DATE1\"^^xsd:dateTime && " +
+			" 			xsd:dateTime(?in2st) <= \"PARAM_DATE2\"^^xsd:dateTime) ." +
+			" } }";
+	/*prefixes+
 			"SELECT  ?wkt ?value ?samplingTime " + 
 			"WHERE { GRAPH <PARAM_GRAPH> { " +    
 			"	<PARAM_FOI> geo:defaultGeometry ?point . " +
@@ -194,10 +192,33 @@ public class GlobalSettings {
 			"	?propertyQT purl:hasQuality <http://dbpedia.org/page/Quantity> . " +
 			"        FILTER (xsd:dateTime(?samplingTime) >= \"PARAM_DATE1\"^^xsd:dateTime && " +  
 			"			     xsd:dateTime(?samplingTime) <= \"PARAM_DATE2\"^^xsd:dateTime) .  " +
-			"} } ORDER BY ?samplingTime ";
+			"} } ORDER BY ?samplingTime ";*/
 
 
 
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	/**
 	 * Returns all PROPERTIES from a given SPARQL Endpoint and Named Graph.
 	 */

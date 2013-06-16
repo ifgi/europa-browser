@@ -88,18 +88,18 @@ public class TestingSPARQL {
 
 //		Facade facade = new Facade();
 					
-		ArrayList<SOSObservation> observation = new ArrayList<SOSObservation>();
+		SOSObservation observation = new SOSObservation();
 		SOSFeatureOfInterest featureOfInterest = new SOSFeatureOfInterest();
 		featureOfInterest.setUri(URI.create("http://ifgi.uni-muenster.de/hydrolod#FOI_1"));
 		
 		TimeInterval interval = new TimeInterval("2012-11-19T13:02:00Z", "2012-11-19T13:04:00Z");
 		observation = facade.getObservationByInterval(featureOfInterest, interval);
 		
-		for (int i = 0; i < observation.size(); i++) {
-			System.out.println("WKT --> " + observation.get(i).getFeatureOfInterest().getDefaultGeometry().getAsWKT());
-			System.out.println("Date --> " + observation.get(i).getSensorOutput().get(0).getSamplingTime());
-			System.out.println("Value --> " + observation.get(i).getSensorOutput().get(0).getValue().getHasValue());
-		}
+		//for (int i = 0; i < observation.size(); i++) {
+			System.out.println("WKT --> " + observation.getFeatureOfInterest().getDefaultGeometry().getAsWKT());
+			System.out.println("Date --> " + observation.getSensorOutput().get(0).getSamplingTime());
+			//System.out.println("Value --> " + observation.get(i).getSensorOutput().get(0).getValue().getHasValue());
+		//}
 
 		
 		
