@@ -26,6 +26,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -64,15 +66,17 @@ public class FilterPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 	private MainFrame mainFrame;
 	private JButton btnQuery;
+	private JButton btnUnselectAll;
+	private JButton btnSelectAll;
 	private JTextField txtSPARQLEndpoint;
 	private Facade facade;
 	private ArrayList<URI> graphs;
-	
 	private ArrayList<Properties> properties;
+	private ArrayList<FeaturesOnTheGlobe> foisOnTheGlobe;
 	final DefaultTableModel resultsTableModel;
 	final JTable resultsTable;
 	
-	ImageIcon iconSpin, iconConnect;
+	ImageIcon iconSpin, iconConnect, iconSelect, iconUnselect;
 	
 	public FilterPanel(MainFrame mF) {
 		super(new GridLayout(2,1));
@@ -80,11 +84,16 @@ public class FilterPanel extends JPanel {
 		this.setFacade(new Facade());
 		
 		properties = new ArrayList<Properties>();
+		foisOnTheGlobe = new ArrayList<FilterPanel.FeaturesOnTheGlobe>();
 		
 		Image imgSpinner = Toolkit.getDefaultToolkit().createImage("spinner.gif");
 		Image imgConnect = Toolkit.getDefaultToolkit().createImage("connect2.png");
+		Image imgSelect = Toolkit.getDefaultToolkit().createImage("select.png");
+		Image imgUnselect = Toolkit.getDefaultToolkit().createImage("unselect.png");
         iconSpin = new ImageIcon(imgSpinner);
         iconConnect = new ImageIcon(imgConnect.getScaledInstance(16, 16, java.awt.Image.SCALE_SMOOTH));
+        iconSelect = new ImageIcon(imgSelect.getScaledInstance(16, 16, java.awt.Image.SCALE_SMOOTH));
+        iconUnselect = new ImageIcon(imgUnselect.getScaledInstance(16, 16, java.awt.Image.SCALE_SMOOTH));
         
 		/**
 		 * Filter panel
@@ -213,12 +222,18 @@ public class FilterPanel extends JPanel {
 		 */
 		JPanel pnlResult = new JPanel(new BorderLayout());
 		pnlResult.setBorder(BorderFactory.createTitledBorder("Results"));
+		btnSelectAll = new JButton("Select all", iconSelect);
+		btnUnselectAll = new JButton("Unselect all", iconUnselect);
+		JPanel pnlTableOptions = new JPanel(new GridLayout(1,2));
+		pnlTableOptions.add(btnSelectAll);
+		pnlTableOptions.add(btnUnselectAll);
+		pnlResult.add(pnlTableOptions,BorderLayout.PAGE_START);
 		
 		//Setting up TableModel for results table final DefaultTableModel 
 		resultsTableModel = new DefaultTableModel(data, new String[] {"Features of interest","Show"}){
-
+				
 			private static final long serialVersionUID = 1L;
-
+			
 			@Override
 			public boolean isCellEditable(int row, int column) {
 				if(column == 0) {
@@ -241,8 +256,21 @@ public class FilterPanel extends JPanel {
 		
 		resultsTable = new JTable(resultsTableModel);
 		JScrollPane scrollPaneResultsTable = new JScrollPane(resultsTable);
-		pnlResult.add(scrollPaneResultsTable);
+		pnlResult.add(scrollPaneResultsTable,BorderLayout.CENTER);
 		this.add(pnlResult);
+		
+		btnSelectAll.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				for (int i = 0; i < resultsTable.getRowCount(); i++) {
+					if (!(Boolean) resultsTable.getModel().getValueAt(i, 1)) {
+						System.out.println("not checked");
+					}
+				}
+			}
+		});
+		
 		
 		/**
 		 * ActionListener for Query button. On click get all Graphs for
@@ -449,20 +477,28 @@ public class FilterPanel extends JPanel {
 									if (foi.getUri().toString().toLowerCase().contains(arrSelectedFOI[1].toLowerCase())) {
 										SOSObservation observation = getFacade().getFOILastObservation(foi);
 										((MapPanel) getMainFrame().getMapPanel()).updateGlobe(observation,foi,prop);
+										foisOnTheGlobe.add(new FeaturesOnTheGlobe(foi, prop));
 									}
 								}
 							}
 						}
+						System.out.println(foisOnTheGlobe.size());
 					} else {
 						for (Properties prop : properties) {
 							if (prop.getProperty().getUri().toString().toLowerCase().contains(arrSelectedFOI[0].toLowerCase())) {
 								for (SOSFeatureOfInterest foi : prop.getProperty().getFoi()) {
 									if (foi.getUri().toString().toLowerCase().contains(arrSelectedFOI[1].toLowerCase())) {
 										((MapPanel) getMainFrame().getMapPanel()).updateGlobe(null,foi,null);
+										for (int i = 0; i < foisOnTheGlobe.size(); i++) {
+											if (foisOnTheGlobe.get(i).getFoi().getUri().toString().toLowerCase().compareTo(foi.getUri().toString().toLowerCase()) == 0) {
+												foisOnTheGlobe.remove(i);
+											}
+										}
 									}
 								}
 							}
 						}
+						System.out.println(foisOnTheGlobe.size());
 					}	
 				}
 			}
@@ -530,6 +566,10 @@ public class FilterPanel extends JPanel {
 	 */
 	public MainFrame getMainFrame() {
 		return mainFrame;
+	}
+	
+	public ArrayList<FeaturesOnTheGlobe> getFoisOnTheGlobe() {
+		return foisOnTheGlobe;
 	}
 
 	/**
@@ -633,6 +673,33 @@ public class FilterPanel extends JPanel {
 		
 	}
 
+	
+	public class FeaturesOnTheGlobe {
+		
+		private SOSFeatureOfInterest foi;
+		private Properties property;
+		
+		public FeaturesOnTheGlobe(SOSFeatureOfInterest foi, Properties property) {
+			this.foi = foi;
+			this.property = property;
+		}
+		
+		public SOSFeatureOfInterest getFoi() {
+			return foi;
+		}
+
+		public void setFoi(SOSFeatureOfInterest foi) {
+			this.foi = foi;
+		}
+
+		public Properties getProperty() {
+			return property;
+		}
+
+		public void setProperty(Properties property) {
+			this.property = property;
+		}
+	}
 //	
 //	/**
 //	 * Custom TableCellRenderer to set background color of visualization cloumn if the user selects

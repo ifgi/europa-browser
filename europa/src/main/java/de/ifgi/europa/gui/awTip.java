@@ -44,6 +44,7 @@ import de.ifgi.europa.core.SOSFeatureOfInterest;
 import de.ifgi.europa.core.SOSObservation;
 import de.ifgi.europa.core.TimeInterval;
 import de.ifgi.europa.facade.Facade;
+import de.ifgi.europa.gui.FilterPanel.FeaturesOnTheGlobe;
 
 /**
  * This class represents all functionalities inside the <code>{@link AnnotationWindow}</code>
@@ -178,7 +179,7 @@ public class awTip extends JPanel {
 					((MapPanel) getMainFrame().getMapPanel()).clearGlobe();
 					for (int i = 0; i < ons.size(); i++) {
 						SOSObservation obs =  ons.get(i).get(slider.getValue());
-//						((MapPanel) getMainFrame().getMapPanel()).updateGlobe(obs, foi, property)
+//						((MapPanel) getMainFrame().getMapPanel()).updateGlobe(obs, foi, property);
 //						((MapPanel) getMainFrame().getMapPanel()).updateGlobe(obs, "", ons.get(i).get(slider.getValue()).getLabel().toLowerCase());
 					}
 				} else {
@@ -217,11 +218,19 @@ public class awTip extends JPanel {
      */
 	protected void buildTimeSeries() {
 		if (startTime != "" && endTime != "") {
-			TimeInterval interval = new TimeInterval(startTime, endTime);
+//			TimeInterval interval = new TimeInterval(startTime, endTime);
+//			
+//			ArrayList<FeaturesOnTheGlobe> selectedFOIs = ((FilterPanel) getMainFrame().getFilterPanel()).getFoisOnTheGlobe();
+//			
+////			ArrayList<SOSFeatureOfInterest> selectedFOIs = ((FilterPanel) getMainFrame().getFilterPanel()).getFOIs();
+//
+//			Facade facade = ((FilterPanel) getMainFrame().getFilterPanel()).getFacade();
+//			
+//			for (int i = 0; i < selectedFOIs.size(); i++) {
+//				ArrayList<SOSObservation> obs = facade.getObservationByInterval(selectedFOIs.get(i).getFoi(), interval);
+//				ons.add(obs);
+//			}
 			
-//			ArrayList<SOSFeatureOfInterest> selectedFOIs = ((FilterPanel) getMainFrame().getFilterPanel()).getFOIs();
-
-			Facade facade = ((FilterPanel) getMainFrame().getFilterPanel()).getFacade();
 			
 //			for (int i = 0; i < selectedFOIs.size(); i++) {
 //				ArrayList<SOSObservation> obs = facade.getObservationByInterval(selectedFOIs.get(i), interval);
