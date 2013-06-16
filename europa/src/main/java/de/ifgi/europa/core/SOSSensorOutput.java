@@ -17,7 +17,6 @@
 package de.ifgi.europa.core;
 
 import java.net.URI;
-import java.util.Date;
 
 /**
  * This class represents a sensor output 
