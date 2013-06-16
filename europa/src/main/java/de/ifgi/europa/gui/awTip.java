@@ -19,6 +19,7 @@ package de.ifgi.europa.gui;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.Image;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -71,13 +72,10 @@ public class awTip extends JPanel {
 		slider = new JSlider(JSlider.HORIZONTAL, 0, 10, 0);
 		final SimpleDateFormat dateFormatString = new SimpleDateFormat("yyyy-MM-dd");
 		final JButton btnPlay = new JButton("Play");
-//		try {
-//			imgPlay = ImageIO.read(getClass().getResource("/src/main/resources/play.png"));
-////			imgPause = ImageIO.read(getClass().getResource("/de/ifgi/europa/resources/pause.png"));
-//			btnPlay.setIcon(new ImageIcon(imgPlay.getScaledInstance(16, 16, java.awt.Image.SCALE_SMOOTH)));
-//		} catch (IOException e1) {
-//			e1.printStackTrace();
-//		}
+		
+		imgPlay = Toolkit.getDefaultToolkit().createImage("play.png");
+		imgPause = Toolkit.getDefaultToolkit().createImage("pause.png");
+		btnPlay.setIcon(new ImageIcon(imgPlay.getScaledInstance(16, 16, java.awt.Image.SCALE_SMOOTH)));
 		
 		final JDateChooser dcFrom = new JDateChooser();
 		final JDateChooser dcUntil = new JDateChooser();
@@ -180,6 +178,7 @@ public class awTip extends JPanel {
 					((MapPanel) getMainFrame().getMapPanel()).clearGlobe();
 					for (int i = 0; i < ons.size(); i++) {
 						SOSObservation obs =  ons.get(i).get(slider.getValue());
+//						((MapPanel) getMainFrame().getMapPanel()).updateGlobe(obs, foi, property)
 //						((MapPanel) getMainFrame().getMapPanel()).updateGlobe(obs, "", ons.get(i).get(slider.getValue()).getLabel().toLowerCase());
 					}
 				} else {
@@ -200,11 +199,11 @@ public class awTip extends JPanel {
 				if (startTime != "" && endTime != "") {
 					if (timerswing.isRunning()) {
 						btnPlay.setText("Play");
-//						btnPlay.setIcon(new ImageIcon(imgPlay.getScaledInstance(16, 16, java.awt.Image.SCALE_SMOOTH)));
+						btnPlay.setIcon(new ImageIcon(imgPlay.getScaledInstance(16, 16, java.awt.Image.SCALE_SMOOTH)));
 						timerswing.stop();
 					} else {
 						btnPlay.setText("Pause");
-//						btnPlay.setIcon(new ImageIcon(imgPause.getScaledInstance(16, 16, java.awt.Image.SCALE_SMOOTH)));
+						btnPlay.setIcon(new ImageIcon(imgPause.getScaledInstance(16, 16, java.awt.Image.SCALE_SMOOTH)));
 						timerswing.start();
 					}
 				}
@@ -219,17 +218,18 @@ public class awTip extends JPanel {
 	protected void buildTimeSeries() {
 		if (startTime != "" && endTime != "") {
 			TimeInterval interval = new TimeInterval(startTime, endTime);
-			ArrayList<SOSFeatureOfInterest> selectedFOIs = ((FilterPanel) getMainFrame().getFilterPanel()).getFOIs();
+			
+//			ArrayList<SOSFeatureOfInterest> selectedFOIs = ((FilterPanel) getMainFrame().getFilterPanel()).getFOIs();
 
 			Facade facade = ((FilterPanel) getMainFrame().getFilterPanel()).getFacade();
 			
-			for (int i = 0; i < selectedFOIs.size(); i++) {
-				ArrayList<SOSObservation> obs = facade.getObservationByInterval(selectedFOIs.get(i), interval);
-				for (int j = 0; j < obs.size(); j++) {
-					obs.get(j).setLabel(selectedFOIs.get(i).getLabel());
-				}
-				ons.add(obs);
-			}
+//			for (int i = 0; i < selectedFOIs.size(); i++) {
+//				ArrayList<SOSObservation> obs = facade.getObservationByInterval(selectedFOIs.get(i), interval);
+//				for (int j = 0; j < obs.size(); j++) {
+//					obs.get(j).setLabel(selectedFOIs.get(i).getLabel());
+//				}
+//				ons.add(obs);
+//			}
 			
 			slider.setMaximum(ons.get(0).size()-1);
 			slider.setMinorTickSpacing(1);

@@ -18,12 +18,10 @@ package de.ifgi.europa.gui;
 
 import java.awt.Color;
 import java.awt.GridLayout;
-import java.awt.Point;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.util.Iterator;
 
 import gov.nasa.worldwind.BasicModel;
+import gov.nasa.worldwind.Configuration;
 import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.awt.WorldWindowGLCanvas;
@@ -52,7 +50,6 @@ import gov.nasa.worldwind.render.PointPlacemarkAttributes;
 import gov.nasa.worldwind.render.Renderable;
 import gov.nasa.worldwind.render.ShapeAttributes;
 import gov.nasa.worldwind.terrain.ZeroElevationModel;
-import gov.nasa.worldwindx.examples.PlaceNames;
 import gov.nasa.worldwindx.examples.util.ToolTipController;
 
 import javax.swing.JPanel;
@@ -63,7 +60,7 @@ import com.hp.hpl.jena.query.ResultSet;
 import de.ifgi.europa.core.SOSFeatureOfInterest;
 import de.ifgi.europa.core.SOSObservation;
 import de.ifgi.europa.core.SOSValue;
-import de.ifgi.europa.gui.FilterPanel.SelectedProperties;
+import de.ifgi.europa.gui.FilterPanel.Properties;
 
 /**
  * Represents the NASA Globe view.
@@ -84,6 +81,11 @@ public class MapPanel extends JPanel {
 	
 	public MapPanel(MainFrame mF) {
 		super(new GridLayout(1, 1));
+		
+		Configuration.setValue(AVKey.INITIAL_LATITUDE, 51);
+        Configuration.setValue(AVKey.INITIAL_LONGITUDE, 10);
+        Configuration.setValue(AVKey.INITIAL_ALTITUDE, 120e4);
+		
 		this.setMainFrame(mF);
 		wwd = new WorldWindowGLCanvas();
 		layer = new RenderableLayer();
@@ -119,6 +121,7 @@ public class MapPanel extends JPanel {
 		
 		earth = new Earth();
 		earth.setElevationModel(new ZeroElevationModel());
+		
 		BasicModel modelForWindowA = new BasicModel();
 		modelForWindowA.setGlobe(earth);
 		modelForWindowA.setLayers(new LayerList(layers));
@@ -197,7 +200,7 @@ public class MapPanel extends JPanel {
 	 * @param foi
 	 * @param viz
 	 */
-	public void updateGlobe(SOSObservation observation, SOSFeatureOfInterest foi, SelectedProperties property) {
+	public void updateGlobe(SOSObservation observation, SOSFeatureOfInterest foi, Properties property) {
 
 		if (observation != null) {
 			Double defaultHeight = 10.0;
@@ -206,7 +209,7 @@ public class MapPanel extends JPanel {
 			String toolTip = "";
 			
 			//Build tooltip text
-			toolTip = "FOI: " + observation.getFeatureOfInterest().getName();
+			toolTip = "FOI: " + foi.getUri().toString();
 			for (int i = 0; i < observation.getSensorOutput().size(); i++) {
 				SOSValue value = observation.getSensorOutput().get(i).getValue();
 				val = value.getHasValue();
@@ -234,6 +237,7 @@ public class MapPanel extends JPanel {
 			
 	        //Create cylinder depending on chosen visualization and add it to the renderable layer
 	        Cylinder cylinder = null;
+	        
 	        
 	        if (property.getVisualization().compareTo("width") == 0) {
 	        	defaultRadius = defaultRadius*val*10;
