@@ -60,7 +60,7 @@ public class GlobalSettings {
 			"	FILTER(?lat - xsd:float(PARAM_LAT) <= 0.05 && xsd:float(PARAM_LAT) - ?lat <= 0.05 &&" +
 			"	?long - xsd:float(PARAM_LONG) <= 0.05 && xsd:float(PARAM_LONG) - ?long <= 0.05 && " +
 			"	lang(?label) = \"en\") ." +
-			" } LIMIT 10"; 
+			" } ORDER BY ((?long - xsd:float(PARAM_LONG))+(?lat - xsd:float(PARAM_LAT))) LIMIT 15 "; 
 
 	/**
 	 * Lists all graphs available in the triple store.
