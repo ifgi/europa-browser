@@ -175,7 +175,7 @@ public class GlobalSettings {
 			" 	?in2senOut ?hasValue ?in3obsValue ." +
 			" 	FILTER (xsd:dateTime(?in2st) >= \"PARAM_DATE1\"^^xsd:dateTime && " +
 			" 			xsd:dateTime(?in2st) <= \"PARAM_DATE2\"^^xsd:dateTime) ." +
-			" } }";
+			" } } ORDER BY ?samplingTime";
 	/*prefixes+
 			"SELECT  ?wkt ?value ?samplingTime " + 
 			"WHERE { GRAPH <PARAM_GRAPH> { " +    
