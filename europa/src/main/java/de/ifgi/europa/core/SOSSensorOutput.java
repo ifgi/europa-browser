@@ -17,6 +17,7 @@
 package de.ifgi.europa.core;
 
 import java.net.URI;
+import java.util.ArrayList;
 
 /**
  * This class represents a sensor output 
@@ -27,10 +28,9 @@ public class SOSSensorOutput  extends LODResource {
 
 	private URI uri;		
 
-
 	SOSSensor sensor;
 	String label;
-	SOSValue value;
+	ArrayList<SOSValue> value = new ArrayList<SOSValue>();
 	String samplingTime;
 	boolean isFilled = false;
 
@@ -92,7 +92,7 @@ public class SOSSensorOutput  extends LODResource {
 	 * Returns the sensor output's value.
 	 * @return
 	 */
-	public SOSValue getValue() {
+	public ArrayList<SOSValue> getValue() {
 		return value;
 	}
 	
@@ -100,7 +100,7 @@ public class SOSSensorOutput  extends LODResource {
 	 * Sets the sensor output's value.
 	 * @return
 	 */
-	public void setValue(SOSValue value) {
+	public void setValue(ArrayList<SOSValue> value) {
 		this.value = value;
 	}
 	
@@ -145,7 +145,7 @@ public class SOSSensorOutput  extends LODResource {
 	 * @param samplingTime Sensor output's sampling time.
 	 */
 	public SOSSensorOutput(URI uri, SOSSensor sensor, String label,
-			SOSValue value, String samplingTime) {
+			ArrayList<SOSValue> value, String samplingTime) {
 		super();
 		this.uri = uri;
 		this.sensor = sensor;

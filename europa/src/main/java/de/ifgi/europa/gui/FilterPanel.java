@@ -18,7 +18,6 @@ package de.ifgi.europa.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.Image;
@@ -27,20 +26,18 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Iterator;
-
 import javax.swing.BorderFactory;
 import javax.swing.DefaultCellEditor;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JColorChooser;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
-import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -49,7 +46,6 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
@@ -67,29 +63,37 @@ import de.ifgi.europa.settings.GlobalSettings;
  */
 public class FilterPanel extends JPanel {
 	
-	
-	
 	private static final long serialVersionUID = 1L;
 	private MainFrame mainFrame;
 	private JButton btnQuery;
+	private JButton btnUnselectAll;
+	private JButton btnSelectAll;
 	private JTextField txtSPARQLEndpoint;
 	private Facade facade;
-	private ArrayList<SOSProperty> properties;
-	private ArrayList<SOSFeatureOfInterest> fois = new ArrayList<SOSFeatureOfInterest>();
 	private ArrayList<URI> graphs;
-	private ArrayList<SelectedProperties> props;
-	ImageIcon iconSpin, iconConnect;
+	private ArrayList<Properties> properties;
+	private ArrayList<FeaturesOnTheGlobe> foisOnTheGlobe;
+	final DefaultTableModel resultsTableModel;
+	final JTable resultsTable;
+	
+	ImageIcon iconSpin, iconConnect, iconSelect, iconUnselect;
 	
 	public FilterPanel(MainFrame mF) {
 		super(new GridLayout(2,1));
 		this.setMainFrame(mF);
 		this.setFacade(new Facade());
-		props = new ArrayList<SelectedProperties>();
+		
+		properties = new ArrayList<Properties>();
+		foisOnTheGlobe = new ArrayList<FilterPanel.FeaturesOnTheGlobe>();
 		
 		Image imgSpinner = Toolkit.getDefaultToolkit().createImage("spinner.gif");
 		Image imgConnect = Toolkit.getDefaultToolkit().createImage("connect2.png");
+		Image imgSelect = Toolkit.getDefaultToolkit().createImage("select.png");
+		Image imgUnselect = Toolkit.getDefaultToolkit().createImage("unselect.png");
         iconSpin = new ImageIcon(imgSpinner);
         iconConnect = new ImageIcon(imgConnect.getScaledInstance(16, 16, java.awt.Image.SCALE_SMOOTH));
+        iconSelect = new ImageIcon(imgSelect.getScaledInstance(16, 16, java.awt.Image.SCALE_SMOOTH));
+        iconUnselect = new ImageIcon(imgUnselect.getScaledInstance(16, 16, java.awt.Image.SCALE_SMOOTH));
         
 		/**
 		 * Filter panel
@@ -218,12 +222,18 @@ public class FilterPanel extends JPanel {
 		 */
 		JPanel pnlResult = new JPanel(new BorderLayout());
 		pnlResult.setBorder(BorderFactory.createTitledBorder("Results"));
+		btnSelectAll = new JButton("Select all", iconSelect);
+		btnUnselectAll = new JButton("Unselect all", iconUnselect);
+		JPanel pnlTableOptions = new JPanel(new GridLayout(1,2));
+		pnlTableOptions.add(btnSelectAll);
+		pnlTableOptions.add(btnUnselectAll);
+		pnlResult.add(pnlTableOptions,BorderLayout.PAGE_START);
 		
-		//Setting up TableModel for results table
-		final DefaultTableModel resultsTableModel = new DefaultTableModel(data, new String[] {"Features of interest","Show"}){
-
+		//Setting up TableModel for results table final DefaultTableModel 
+		resultsTableModel = new DefaultTableModel(data, new String[] {"Features of interest","Show"}){
+				
 			private static final long serialVersionUID = 1L;
-
+			
 			@Override
 			public boolean isCellEditable(int row, int column) {
 				if(column == 0) {
@@ -244,10 +254,37 @@ public class FilterPanel extends JPanel {
             }
 		};
 		
-		final JTable resultsTable = new JTable(resultsTableModel);
+		resultsTable = new JTable(resultsTableModel);
 		JScrollPane scrollPaneResultsTable = new JScrollPane(resultsTable);
-		pnlResult.add(scrollPaneResultsTable);
+		pnlResult.add(scrollPaneResultsTable,BorderLayout.CENTER);
 		this.add(pnlResult);
+		
+		btnSelectAll.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				for (int i = 0; i < resultsTable.getRowCount(); i++) {
+					if (resultsTable.getModel().getValueAt(i, 1) == null || !(Boolean) resultsTable.getModel().getValueAt(i, 1)) {
+						resultsTable.getModel().setValueAt(true, i, 1);
+					}
+				}
+			}
+		});
+		
+		btnUnselectAll.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				((MapPanel) getMainFrame().getMapPanel()).clearGlobe();
+				for (int i = 0; i < resultsTable.getRowCount(); i++) {
+					if ((Boolean) resultsTable.getModel().getValueAt(i, 1)) {
+						resultsTable.getModel().setValueAt(false, i, 1);
+					}
+				}
+				
+			}
+		});
+		
 		
 		/**
 		 * ActionListener for Query button. On click get all Graphs for
@@ -263,7 +300,9 @@ public class FilterPanel extends JPanel {
 				btnQuery.setIcon(iconSpin);
 				clearTable(propertiesTable);
 				clearTable(resultsTable);
-				props.clear();
+				
+				//Delete everything from properties if the SPARQL Endpoint changes
+				properties.clear();
 				
 				cbURI.removeAllItems();
 				
@@ -297,16 +336,22 @@ public class FilterPanel extends JPanel {
 				if (e.getStateChange() == ItemEvent.SELECTED) {
 					clearTable(propertiesTable);
 					clearTable(resultsTable);
-					props.clear();
+					
+					//Delete everything from properties if the graph url changes
+					properties.clear();	
 					
 					((MapPanel) getMainFrame().getMapPanel()).clearGlobe();
 					
 					GlobalSettings.CurrentNamedGraph = cbModel.getSelectedItem().toString();
 					
-					setProperties(getFacade().listProperties());
-					
-					for (int i = 0; i < getProperties().size(); i++) {
-						propertiesTableModel.addRow(new Object[] {getProperties().get(i).getUri()});
+					//Fill list with properties and add the fois to the property
+					for(SOSProperty prop : getFacade().listProperties()){
+						
+						ArrayList<SOSFeatureOfInterest> foi = getFacade().listFeaturesOfInterest(prop);
+						prop.setFoi(foi);
+						properties.add(new Properties(prop, "", null, false));
+						
+						propertiesTableModel.addRow(new Object[] {prop.getUri()});
 					}
 				}
 			}
@@ -335,12 +380,9 @@ public class FilterPanel extends JPanel {
 								visualization = propertiesTable.getValueAt(e.getFirstRow(), 1).toString();
 							} else {
 								visualization = "width";
-							}
+							}			
 							
-							checkSelectedProperties(model.getValueAt(e.getFirstRow(), 0).toString(), visualization, null, true);
-							
-							//Update and add depending FOIs to results table
-							updateResultsTable(propertiesTable.getValueAt(e.getFirstRow(), 0).toString(), visualization ,1);
+							checkSelectedProperties(model.getValueAt(e.getFirstRow(), 0).toString(), visualization, null, true, 1);
 						} else {
 							
 							if (propertiesTable.getValueAt(e.getFirstRow(), 1) != null) {
@@ -349,37 +391,32 @@ public class FilterPanel extends JPanel {
 								visualization = "width";
 							}
 							
-							checkSelectedProperties(model.getValueAt(e.getFirstRow(), 0).toString(), visualization, null, false);
-							
-							//Update and remove depending FOIs from results table
-							updateResultsTable(propertiesTable.getValueAt(e.getFirstRow(), 0).toString(), "",2);
+							checkSelectedProperties(model.getValueAt(e.getFirstRow(), 0).toString(), visualization, null, false, 2);
 						}
 					}
 					//If something happens inside the 'Visualization' column
 					if (columnName == "Visualization") {
-						if (model.getValueAt(e.getFirstRow(), 2) != null && (Boolean) model.getValueAt(e.getFirstRow(), 2)) {
-							
+						if (model.getValueAt(e.getFirstRow(), 1).toString().toLowerCase().compareTo("color") == 0) {
+							ColorDialog cd = new ColorDialog(getMainFrame(), "Color range chooser");  
+							cd.setVisible(true);
+							Color[] colors = cd.getColors();
+							cd.setVisible(false);
+							checkSelectedProperties(model.getValueAt(e.getFirstRow(), 0).toString(), "color", colors, ((Boolean) model.getValueAt(e.getFirstRow(), 2)!=null) ? (Boolean) model.getValueAt(e.getFirstRow(), 2) : false, 0);
+						} else {
 							if (propertiesTable.getValueAt(e.getFirstRow(), 1) != null) {
 								visualization = propertiesTable.getValueAt(e.getFirstRow(), 1).toString();
 							} else {
 								visualization = "width";
 							}
 							
-							checkSelectedProperties(model.getValueAt(e.getFirstRow(), 0).toString(), visualization, null, (Boolean) model.getValueAt(e.getFirstRow(), 2));
-							//TODO Update resultstabel and updateglobe
-//							updateResultsTable(propertiesTable.getValueAt(e.getFirstRow(), 0).toString(), visualization ,1);
-						}
-						if (model.getValueAt(e.getFirstRow(), 1).toString().toLowerCase().compareTo("color") == 0) {
-							ColorDialog cd = new ColorDialog(getMainFrame(), "Color range chooser");  
-							cd.setVisible(true);
-							Color[] colors = cd.getColors();
-							cd.setVisible(false);
-							checkSelectedProperties(model.getValueAt(e.getFirstRow(), 0).toString(), "color", colors, ((Boolean) model.getValueAt(e.getFirstRow(), 2)!=null) ? (Boolean) model.getValueAt(e.getFirstRow(), 2) : false);
+							checkSelectedProperties(model.getValueAt(e.getFirstRow(), 0).toString(), visualization, null, ((Boolean) model.getValueAt(e.getFirstRow(), 2)!=null) ? (Boolean) model.getValueAt(e.getFirstRow(), 2) : false, 0);
 						}
 					}
 				}
 			}
 			
+			
+			//DEPRECATED will be deleted
 			/**
 			 * Gets all depending FOIs of a selected property and adds these FOIs to the results table.
 			 * @param property selected property
@@ -388,48 +425,48 @@ public class FilterPanel extends JPanel {
 			 */
 			private void updateResultsTable(String property, String visualization ,int flag) {
 				if (flag == 1) {
-					for (int i = 0; i < getProperties().size(); i++) {
-						if (property.compareTo(getProperties().get(i).getUri().toString()) == 0) {
-							ArrayList<SOSFeatureOfInterest> availableFOIs = getFacade().listFeaturesOfInterest(getProperties().get(i));
-							for (int k = 0; k < availableFOIs.size(); k++) {
-								String name = availableFOIs.get(k).getUri().toString();
-								availableFOIs.get(k).setIdentifier(property.toLowerCase());
-								fois.add(availableFOIs.get(k));
-								resultsTableModel.addRow(new Object[] {name});
-							}
-						}
-					}
+//					for (int i = 0; i < getProperties().size(); i++) {
+//						if (property.compareTo(getProperties().get(i).getUri().toString()) == 0) {
+//							ArrayList<SOSFeatureOfInterest> availableFOIs = getFacade().listFeaturesOfInterest(getProperties().get(i));
+//							for (int k = 0; k < availableFOIs.size(); k++) {
+//								String name = availableFOIs.get(k).getUri().toString();
+//								availableFOIs.get(k).setIdentifier(property.toLowerCase());
+//								fois.add(availableFOIs.get(k));
+//								resultsTableModel.addRow(new Object[] {name});
+//							}
+//						}
+//					}
 				} else if (flag == 2) {
 					Boolean somethingVisible = false;
-					for(SelectedProperties prop : props) {
-						if (prop.isVisible()) {
-							somethingVisible = true;
-							break;
-						}
-					}
+//					for(SelectedProperties prop : props) {
+//						if (prop.isVisible()) {
+//							somethingVisible = true;
+//							break;
+//						}
+//					}
 					if (!somethingVisible) {
 						clearTable(resultsTable);
 						((MapPanel) getMainFrame().getMapPanel()).clearGlobe();
 					} else {
-						for (int i = 0; i < getProperties().size(); i++) {
-							if (property.compareTo(getProperties().get(i).getUri().toString()) == 0) {
-								ArrayList<SOSFeatureOfInterest> availableFOIs = getFacade().listFeaturesOfInterest(getProperties().get(i));
-								for (int j = 0; j < availableFOIs.size(); j++) {
-									for (int k = 0; k < fois.size(); k++) {
-										if (fois.get(k).getUri().toString().compareTo(availableFOIs.get(j).getUri().toString()) == 0) {
-											fois.remove(k);
-										}
-									}
-									for (int k = 0; k < resultsTable.getRowCount(); k++) {
-										if (resultsTable.getValueAt(k, 0).toString().compareTo(availableFOIs.get(j).getUri().toString()) == 0) {
-											((MapPanel) getMainFrame().getMapPanel()).updateGlobe(null, availableFOIs.get(j), null);
-											resultsTableModel.removeRow(k);
-											resultsTableModel.fireTableDataChanged();
-										}
-									}
-								}
-							}
-						}
+//						for (int i = 0; i < getProperties().size(); i++) {
+//							if (property.compareTo(getProperties().get(i).getUri().toString()) == 0) {
+//								ArrayList<SOSFeatureOfInterest> availableFOIs = getFacade().listFeaturesOfInterest(getProperties().get(i));
+//								for (int j = 0; j < availableFOIs.size(); j++) {
+//									for (int k = 0; k < fois.size(); k++) {
+//										if (fois.get(k).getUri().toString().compareTo(availableFOIs.get(j).getUri().toString()) == 0) {
+//											fois.remove(k);
+//										}
+//									}
+//									for (int k = 0; k < resultsTable.getRowCount(); k++) {
+//										if (resultsTable.getValueAt(k, 0).toString().compareTo(availableFOIs.get(j).getUri().toString()) == 0) {
+//											((MapPanel) getMainFrame().getMapPanel()).updateGlobe(null, availableFOIs.get(j), null);
+//											resultsTableModel.removeRow(k);
+//											resultsTableModel.fireTableDataChanged();
+//										}
+//									}
+//								}
+//							}
+//						}
 					}
 				} 
 			}
@@ -444,59 +481,97 @@ public class FilterPanel extends JPanel {
 			@Override
 			public void tableChanged(TableModelEvent e) {
 				if (e.getColumn() != -1) {
-					if ((Boolean) resultsTableModel.getValueAt(e.getFirstRow(), 1)) {
-						for (int i = 0; i < fois.size(); i++) {
-							if (fois.get(i).getUri().toString().compareTo(resultsTableModel.getValueAt(e.getFirstRow(), 0).toString()) == 0) {
-								SOSFeatureOfInterest foi = fois.get(i);
-								SOSObservation observation = getFacade().getFOILastObservation(foi);
-								observation.getFeatureOfInterest().setName(resultsTableModel.getValueAt(e.getFirstRow(), 0).toString());
-								
-								SelectedProperties correspondingProperty = null;
-								for(SelectedProperties tempProps : props) {
-									if (tempProps.getUrl().toLowerCase().compareTo(foi.getIdentifier().toLowerCase()) == 0) {
-										correspondingProperty = tempProps;
+					String selectedFOI = resultsTableModel.getValueAt(e.getFirstRow(), 0).toString();
+					String[] arrSelectedFOI = selectedFOI.split("\\-");
+					
+					if ((Boolean) resultsTableModel.getValueAt(e.getFirstRow(), 1)) {	
+						for (Properties prop : properties) {
+							if (prop.getProperty().getUri().toString().toLowerCase().contains(arrSelectedFOI[0].toLowerCase())) {
+								for (SOSFeatureOfInterest foi : prop.getProperty().getFoi()) {
+									if (foi.getUri().toString().toLowerCase().contains(arrSelectedFOI[1].toLowerCase())) {
+										SOSObservation observation = getFacade().getFOILastObservation(foi);
+										((MapPanel) getMainFrame().getMapPanel()).updateGlobe(observation,foi,prop,selectedFOI);
+										foisOnTheGlobe.add(new FeaturesOnTheGlobe(foi, prop));
 										break;
 									}
 								}
-								((MapPanel) getMainFrame().getMapPanel()).updateGlobe(observation,foi,correspondingProperty);
 							}
 						}
+						System.out.println(foisOnTheGlobe.size());
 					} else {
-						for (int i = 0; i < fois.size(); i++) {
-							if (fois.get(i).getUri().toString().compareTo(resultsTableModel.getValueAt(e.getFirstRow(), 0).toString()) == 0) {
-								SOSFeatureOfInterest foi = fois.get(i);
-								((MapPanel) getMainFrame().getMapPanel()).updateGlobe(null, foi,null);
+						for (Properties prop : properties) {
+							if (prop.getProperty().getUri().toString().toLowerCase().contains(arrSelectedFOI[0].toLowerCase())) {
+								for (SOSFeatureOfInterest foi : prop.getProperty().getFoi()) {
+									if (foi.getUri().toString().toLowerCase().contains(arrSelectedFOI[1].toLowerCase())) {
+										((MapPanel) getMainFrame().getMapPanel()).updateGlobe(null,foi,prop,selectedFOI);
+										for (int i = 0; i < foisOnTheGlobe.size(); i++) {
+											if (foisOnTheGlobe.get(i).getFoi().getUri().toString().toLowerCase().compareTo(foi.getUri().toString().toLowerCase()) == 0) {
+												foisOnTheGlobe.remove(i);
+											}
+										}
+									}
+								}
 							}
 						}
+						System.out.println(foisOnTheGlobe.size());
 					}	
 				}
 			}
 		});
 	}
 	
-	public void checkSelectedProperties(String url, String viz, Color[] colors, boolean visible) {
-		if(props.size() == 0) {
-			SelectedProperties tempProp = new SelectedProperties(url, viz, colors, visible);
-			props.add(tempProp);
-		} else {
-			int found = 0;
-			for(SelectedProperties selProps : props) {
-				if (url.toLowerCase().compareTo(selProps.getUrl().toLowerCase()) == 0) {
-					found = 1;
-					selProps.setVisualization(viz);
-					if (colors != null) {
-						selProps.setColors(colors);
-					}
-					selProps.setVisible(visible);
+	/**
+	 * 
+	 */
+	public void checkSelectedProperties(String url, String viz, Color[] colors, boolean visible, int flag) {
+		int found = 0;
+		for(Properties prop : properties) {
+			if (url.toLowerCase().compareTo(prop.getProperty().getUri().toString().toLowerCase()) == 0) {
+				found = 1;
+				prop.setVisualization(viz);
+				if (colors != null) {
+					prop.setColors(colors);
 				}
-				if (found == 1) {
-					break;
-				}
+				prop.setVisible(visible);
 				
+				if (flag == 1) {
+					for (int k = 0; k < prop.getProperty().getFoi().size(); k++) {
+						String name = prop.getProperty().getFoi().get(k).getUri().toString();
+						String[] arrName = name.split("\\#");
+						prop.getProperty().getFoi().get(k).setIdentifier(prop.getProperty().getUri().toString().toLowerCase());
+						String tempUri = prop.getProperty().getUri().toString();
+						String[] arrUri = tempUri.split("\\#");
+						resultsTableModel.addRow(new Object[] {arrUri[1]+"-"+arrName[1]});
+					}
+				} else if(flag == 2) {
+					Boolean someVisible = false;
+					for(Properties tempProp : properties) {
+						if (tempProp.getVisible()) {
+							someVisible = true;
+							break;
+						}
+					}
+					if (!someVisible) {
+						clearTable(resultsTable);
+						((MapPanel) getMainFrame().getMapPanel()).clearGlobe();
+					} else {
+						String tempUri = prop.getProperty().getUri().toString();
+						String[] arrUri = tempUri.split("\\#");
+						System.out.println(resultsTable.getRowCount());
+						System.out.println(resultsTableModel.getRowCount());
+						//funzt noch nicht
+						for (int k = 0; k < resultsTable.getRowCount(); k++) {
+//								if (resultsTable.getValueAt(k, 0).toString().compareTo(availableFOIs.get(j).getUri().toString()) == 0) {
+//									((MapPanel) getMainFrame().getMapPanel()).updateGlobe(null, availableFOIs.get(j), null);
+//									resultsTableModel.removeRow(k);
+//									resultsTableModel.fireTableDataChanged();
+//								}
+						}
+					}
+				}
 			}
-			if (found == 0) {
-				SelectedProperties tempProp = new SelectedProperties(url, viz, colors, visible);
-				props.add(tempProp);
+			if (found == 1) {
+				break;
 			}
 		}
 	}
@@ -506,6 +581,10 @@ public class FilterPanel extends JPanel {
 	 */
 	public MainFrame getMainFrame() {
 		return mainFrame;
+	}
+	
+	public ArrayList<FeaturesOnTheGlobe> getFoisOnTheGlobe() {
+		return foisOnTheGlobe;
 	}
 
 	/**
@@ -527,20 +606,6 @@ public class FilterPanel extends JPanel {
 	 */
 	public void setFacade(Facade facade) {
 		this.facade = facade;
-	}
-
-	/**
-	 * @return the properties
-	 */
-	public ArrayList<SOSProperty> getProperties() {
-		return properties;
-	}
-
-	/**
-	 * @param properties the properties to set
-	 */
-	public void setProperties(ArrayList<SOSProperty> properties) {
-		this.properties = properties;
 	}
 	
 	/**
@@ -566,11 +631,6 @@ public class FilterPanel extends JPanel {
 	public void setGraphs(ArrayList<URI> graphs) {
 		this.graphs = graphs;
 	}
-
-	public ArrayList<SOSFeatureOfInterest> getFOIs() {
-		return this.fois;
-		
-	}
 	
 	/**
 	 * Inner class for storing selected properties with their
@@ -578,84 +638,90 @@ public class FilterPanel extends JPanel {
 	 * @author Matthias Pfeil
 	 *
 	 */
-	public class SelectedProperties {
+	public class Properties {
 		
-		private String url;
-		private String visualization;
-		private Color[] colors;
-		private boolean visible;
+		SOSProperty property;
+		String visualization;
+		Color[] colors;
+		Boolean visible;
 		
-		public SelectedProperties(String url, String viz, Color[] colors, boolean visible){
-			this.setUrl(url);
-			this.setVisualization(viz);
-			this.setColors(colors);
-			this.setVisible(visible);
-		}
-
-		/**
-		 * @return the colors
-		 */
-		public Color[] getColors() {
-			return colors;
-		}
-
-		/**
-		 * @param colors the colors to set
-		 */
-		public void setColors(Color[] colors) {
+		public Properties(SOSProperty prop, String viz, Color[] colors, Boolean visible) {
+			this.property = prop;
+			this.visualization = viz;
 			this.colors = colors;
+			this.visible = visible;
 		}
 
-		/**
-		 * @return the visualization
-		 */
+		public SOSProperty getProperty() {
+			return property;
+		}
+
+		public void setProperty(SOSProperty property) {
+			this.property = property;
+		}
+
 		public String getVisualization() {
 			return visualization;
 		}
 
-		/**
-		 * @param visualization the visualization to set
-		 */
 		public void setVisualization(String visualization) {
 			this.visualization = visualization;
 		}
 
-		/**
-		 * @return the url
-		 */
-		public String getUrl() {
-			return url;
+		public Color[] getColors() {
+			return colors;
 		}
 
-		/**
-		 * @param url the url to set
-		 */
-		public void setUrl(String url) {
-			this.url = url;
+		public void setColors(Color[] colors) {
+			this.colors = colors;
 		}
 
-		/**
-		 * @return the visible
-		 */
-		public boolean isVisible() {
+		public Boolean getVisible() {
 			return visible;
 		}
 
-		/**
-		 * @param visible the visible to set
-		 */
-		public void setVisible(boolean visible) {
+		public void setVisible(Boolean visible) {
 			this.visible = visible;
 		}
 		
+		
+		
 	}
+
 	
-	/**
-	 * Custom TableCellRenderer to set background color of visualization cloumn if the user selects
-	 * color option.
-	 * @author Matthias Pfeil
-	 *
-	 */
+	public class FeaturesOnTheGlobe {
+		
+		private SOSFeatureOfInterest foi;
+		private Properties property;
+		
+		public FeaturesOnTheGlobe(SOSFeatureOfInterest foi, Properties property) {
+			this.foi = foi;
+			this.property = property;
+		}
+		
+		public SOSFeatureOfInterest getFoi() {
+			return foi;
+		}
+
+		public void setFoi(SOSFeatureOfInterest foi) {
+			this.foi = foi;
+		}
+
+		public Properties getProperty() {
+			return property;
+		}
+
+		public void setProperty(Properties property) {
+			this.property = property;
+		}
+	}
+//	
+//	/**
+//	 * Custom TableCellRenderer to set background color of visualization cloumn if the user selects
+//	 * color option.
+//	 * @author Matthias Pfeil
+//	 *
+//	 */
 //	public static class CustomRenderer extends DefaultTableCellRenderer {
 //	    private boolean render = false;
 //	    private Color color = null;
