@@ -87,8 +87,8 @@ public class GraphPanel extends JPanel {
         
 	}
 	
-	public void updateGraph(ResultSet rs, String selectedFOI) {
 		Integer count = 0;
+		public void updateGraph(ResultSet rs, String selectedFOI) {
 		graph.addNode("A").addAttribute("ui.label", selectedFOI);
 		for(int i = 0; i < 5; i++) {
 			count = i;

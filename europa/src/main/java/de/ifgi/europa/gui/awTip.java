@@ -27,6 +27,7 @@ import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
+import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
@@ -38,10 +39,13 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 
+import com.sun.tools.javac.code.Attribute.Array;
 import com.toedter.calendar.JDateChooser;
 
 import de.ifgi.europa.core.SOSFeatureOfInterest;
 import de.ifgi.europa.core.SOSObservation;
+import de.ifgi.europa.core.SOSSensorOutput;
+import de.ifgi.europa.core.SOSValue;
 import de.ifgi.europa.core.TimeInterval;
 import de.ifgi.europa.facade.Facade;
 import de.ifgi.europa.gui.FilterPanel.FeaturesOnTheGlobe;
@@ -58,6 +62,7 @@ public class awTip extends JPanel {
 	private String startTime ="";
 	private String endTime = "";
 	private ArrayList<ArrayList<SOSObservation>> ons;
+	private ArrayList<FeaturesOnTheGlobe> selectedFOIs;
 	private int delay = 1000;
 	private Image imgPlay = null;
 	private Image imgPause = null;
@@ -81,7 +86,7 @@ public class awTip extends JPanel {
 		final JDateChooser dcFrom = new JDateChooser();
 		final JDateChooser dcUntil = new JDateChooser();
 		
-		MyDateListener dateChooserListener = new MyDateListener();
+//		MyDateListener dateChooserListener = new MyDateListener();
 		
 		dcFrom.addPropertyChangeListener(new PropertyChangeListener() {
 			
@@ -174,13 +179,26 @@ public class awTip extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				
 				slider.setValue(sliderIndex++);
+				System.out.println(sliderIndex);
+				System.out.println(slider.getMaximum());
+				System.out.println("--Check--");
 				
 				if(sliderIndex <= slider.getMaximum()) {
+					System.out.println("--Clear globe--");
 					((MapPanel) getMainFrame().getMapPanel()).clearGlobe();
 					for (int i = 0; i < ons.size(); i++) {
+						System.out.println("getObs");
 						SOSObservation obs =  ons.get(i).get(slider.getValue());
-//						((MapPanel) getMainFrame().getMapPanel()).updateGlobe(obs, foi, property);
-//						((MapPanel) getMainFrame().getMapPanel()).updateGlobe(obs, "", ons.get(i).get(slider.getValue()).getLabel().toLowerCase());
+						for (int j = 0; j < selectedFOIs.size(); j++) {
+							System.out.println(obs.getFeatureOfInterest().getIdentifier());
+							System.out.println(selectedFOIs.get(j).getProperty().getProperty().getUri());
+							System.out.println(selectedFOIs.get(j).getFoi().getUri());
+							String[] arrProp = selectedFOIs.get(j).getProperty().getProperty().getUri().toString().split("\\#");
+							String[] arrFOI = selectedFOIs.get(j).getFoi().getUri().toString().split("\\#");
+							if (obs.getFeatureOfInterest().getIdentifier().toString().toLowerCase().compareTo(selectedFOIs.get(j).getProperty().getProperty().getUri().toString().toLowerCase()) == 0) {
+								((MapPanel) getMainFrame().getMapPanel()).updateGlobe(obs, null, selectedFOIs.get(j).getProperty(), arrProp[1]+"-"+arrFOI[1]);
+							}
+						}
 					}
 				} else {
 					btnPlay.doClick();
@@ -218,6 +236,69 @@ public class awTip extends JPanel {
      */
 	protected void buildTimeSeries() {
 		if (startTime != "" && endTime != "") {
+			
+			TimeInterval interval = new TimeInterval(startTime, endTime);
+			selectedFOIs = ((FilterPanel) getMainFrame().getFilterPanel()).getFoisOnTheGlobe();
+			Facade facade = ((FilterPanel) getMainFrame().getFilterPanel()).getFacade();
+			System.out.println("\n**** GET OBSERVATIONS BY TIME-INTERVAL **** \n");
+			for (int i = 0; i < selectedFOIs.size(); i++) {
+				SOSObservation obs = facade.getObservationByInterval(selectedFOIs.get(i).getFoi(), interval);
+				ArrayList<SOSObservation> tempSOSObservation = new ArrayList<SOSObservation>();
+				ArrayList<SOSSensorOutput> aSo = obs.getSensorOutput();
+				for (SOSSensorOutput sosSensorOutput : aSo) {
+					System.out.println("-Date  --> " + sosSensorOutput.getSamplingTime());
+					
+					ArrayList<SOSValue> asVal = sosSensorOutput.getValue();
+					
+					for (SOSValue sosValue : asVal) {
+						
+						//TODO vergleiche property und property to get the right value
+						if (sosValue.getForProperty().getUri().toString().toLowerCase().compareTo(selectedFOIs.get(i).getProperty().getProperty().getUri().toString().toLowerCase()) == 0) {
+							System.out.println("Prop: "+sosValue.getForProperty().getUri().toString());
+							System.out.println("--Value --> " + sosValue.getHasValue());
+							System.out.println("--Uom --> " + sosValue.getForProperty().getUom());
+							
+							SOSObservation tempObs = new SOSObservation();
+							tempObs.setFeatureOfInterest(selectedFOIs.get(i).getFoi());
+							tempObs.getFeatureOfInterest().setDefaultGeometry(obs.getFeatureOfInterest().getDefaultGeometry());
+							SOSValue tempSOSValue = new SOSValue();
+							tempSOSValue.setHasValue(sosValue.getHasValue());
+							tempSOSValue.setForProperty(sosValue.getForProperty());
+							SOSSensorOutput tempSOSSensorOutput = new SOSSensorOutput();
+							ArrayList<SOSValue> tempALSOSValue = new ArrayList<SOSValue>();
+							tempALSOSValue.add(tempSOSValue);
+							tempSOSSensorOutput.setValue(tempALSOSValue);
+							ArrayList<SOSSensorOutput> tempALSOSSensorOutput = new ArrayList<SOSSensorOutput>();
+							tempALSOSSensorOutput.add(tempSOSSensorOutput);
+							tempObs.setSensorOutput(tempALSOSSensorOutput);
+							tempSOSObservation.add(tempObs);
+						}
+					}
+				}
+				ons.add(tempSOSObservation);
+			}
+			
+			
+//			observation = Facade.getInstance().getObservationByInterval(featureOfInterest, interval);
+//			System.out.println("WKT --> " + observation.getFeatureOfInterest().getDefaultGeometry().getAsWKT());
+//			
+//			ArrayList<SOSSensorOutput> aSo = observation.getSensorOutput();
+//			int cso = 0;
+//			for (SOSSensorOutput sosSensorOutput : aSo) {
+//				System.out.println("-Date" + cso + " --> " + sosSensorOutput.getSamplingTime());
+//				ArrayList<SOSValue> asVal = sosSensorOutput.getValue();
+//				int cov = 0;
+//				for (SOSValue sosValue : asVal) {
+//					System.out.println("--Value" + cov + " --> " + sosValue.getHasValue());
+//					System.out.println("--Uom" + cov + " --> " + sosValue.getForProperty().getUom());
+//					System.out.println("--Prop" + cov + " --> " + sosValue.getForProperty().getUri());
+//					
+//					cov++;
+//				}
+//				cso++;
+//			}
+			
+			
 //			TimeInterval interval = new TimeInterval(startTime, endTime);
 //			
 //			ArrayList<FeaturesOnTheGlobe> selectedFOIs = ((FilterPanel) getMainFrame().getFilterPanel()).getFoisOnTheGlobe();
