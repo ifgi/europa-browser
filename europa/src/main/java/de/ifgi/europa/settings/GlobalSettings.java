@@ -60,7 +60,7 @@ public class GlobalSettings {
 			"	FILTER(?lat - xsd:float(PARAM_LAT) <= 0.05 && xsd:float(PARAM_LAT) - ?lat <= 0.05 &&" +
 			"	?long - xsd:float(PARAM_LONG) <= 0.05 && xsd:float(PARAM_LONG) - ?long <= 0.05 && " +
 			"	lang(?label) = \"en\") ." +
-			" } LIMIT 10"; 
+			" } ORDER BY ((?long - xsd:float(PARAM_LONG))+(?lat - xsd:float(PARAM_LAT))) LIMIT 15 "; 
 
 	/**
 	 * Lists all graphs available in the triple store.
@@ -175,7 +175,7 @@ public class GlobalSettings {
 			" 	?in2senOut ?hasValue ?in3obsValue ." +
 			" 	FILTER (xsd:dateTime(?in2st) >= \"PARAM_DATE1\"^^xsd:dateTime && " +
 			" 			xsd:dateTime(?in2st) <= \"PARAM_DATE2\"^^xsd:dateTime) ." +
-			" } }";
+			" } } ORDER BY ?samplingTime";
 	/*prefixes+
 			"SELECT  ?wkt ?value ?samplingTime " + 
 			"WHERE { GRAPH <PARAM_GRAPH> { " +    
