@@ -21,6 +21,9 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import scala.collection.mutable.SynchronizedPriorityQueue;
+
+import com.hp.hpl.jena.query.ARQ;
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.QueryExecutionFactory;
@@ -47,7 +50,7 @@ public class LODResourceFactory {
 		SPARQL = SPARQL.replace("PARAM_LONG", Double.toString(longitude));
 		
         Query query = QueryFactory.create(SPARQL);
-        //ARQ.getContext().setTrue(ARQ.useSAX);
+        ARQ.getContext().setTrue(ARQ.useSAX);
  
         QueryExecution qexec = QueryExecutionFactory.sparqlService("http://DBpedia.org/sparql", query);
 
@@ -55,7 +58,7 @@ public class LODResourceFactory {
                
         qexec.close();
 
-
+        System.out.println(SPARQL);
 
 		return results;
 	}
@@ -63,6 +66,24 @@ public class LODResourceFactory {
 	
 	
 	
+	
+	public ResultSet getNodeExternalData(String node){
+		
+		String SPARQL = GlobalSettings.getNodeExternalData.replace("PARAM_SUBJECT", node);
+				
+        Query query = QueryFactory.create(SPARQL);
+        ARQ.getContext().setTrue(ARQ.useSAX);
+        
+        QueryExecution qexec = QueryExecutionFactory.sparqlService("http://DBpedia.org/sparql", query);
+
+        ResultSet results = qexec.execSelect();
+               
+        qexec.close();
+
+        System.out.println(SPARQL);
+
+		return results;
+	}
 	
 	
 	

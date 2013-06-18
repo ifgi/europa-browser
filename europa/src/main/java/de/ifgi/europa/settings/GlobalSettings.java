@@ -45,23 +45,42 @@ public class GlobalSettings {
 			" PREFIX dbpedia:  <http://dbpedia.org/resource/> " + 
 			" PREFIX hyd:  <http://ifgi.uni-muenster.de/hydrolodVocabulary#>" +  
 			" PREFIX my:   <http://ifgi.uni-muenster.de/hydrolod#> " +
-			" PREFIX wgs84: <http://www.w3.org/2003/01/geo/wgs84_pos#>  "; 
+			" PREFIX wgs84: <http://www.w3.org/2003/01/geo/wgs84_pos#>  " +
+			" PREFIX dbpedia-ontology: <http://dbpedia.org/ontology/> " +
+			" PREFIX owl: <http://www.w3.org/2002/07/owl#> "; 
 
 
 
-
-
+	public static String getNodeExternalData = prefixes + 
+			"SELECT DISTINCT * WHERE { " + 
+		    " 	{ 	<PARAM_SUBJECT> ?predicate ?object . " + 
+		    " 	  	FILTER isIRI(?object) . " + 
+		    " 	  	FILTER (?predicate != rdf:type && " +  
+		    "       ?predicate != owl:sameAs && " + 
+		    "       ?predicate != dbpedia-ontology:wikiPageExternalLink ) } " + 
+		    " UNION " + 
+		    " 	{ 	<PARAM_SUBJECT> ?predicate ?object ." + 
+		    " 		FILTER isLiteral(?object) . " +
+		    "		FILTER (LANG(?object)='en' && " +
+		    "               ?predicate != dbpedia-ontology:abstract ) }    "  + 
+			" } LIMIT 100 ";
+	
+	
 	
 	public static String getExternalData = prefixes + " " +			
 			" SELECT * WHERE { " +
 			"	?subject wgs84:lat ?lat ." +
 			"	?subject wgs84:long ?long ." +
-			"	?subject rdfs:label ?label." +
+			"	?subject rdfs:label ?label. " +
+			
+			"	?subject a dbpedia-ontology:PopulatedPlace . " +
+			"	OPTIONAL {?subject dbpedia-ontology:populationTotal ?population } . " +
+			
 			"	FILTER(?lat - xsd:float(PARAM_LAT) <= 0.05 && xsd:float(PARAM_LAT) - ?lat <= 0.05 &&" +
 			"	?long - xsd:float(PARAM_LONG) <= 0.05 && xsd:float(PARAM_LONG) - ?long <= 0.05 && " +
 			"	lang(?label) = \"en\") ." +
-			" } ORDER BY ((?long - xsd:float(PARAM_LONG))+(?lat - xsd:float(PARAM_LAT))) LIMIT 15 "; 
-
+			" } ORDER BY ?population LIMIT 15 ";
+	
 	/**
 	 * Lists all graphs available in the triple store.
 	 * @author jones

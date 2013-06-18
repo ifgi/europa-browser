@@ -55,6 +55,13 @@ public class Facade {
 		return factory.getExternalData(latitude, longitude);
 		
 	}
+
+	
+	public ResultSet getNodeExternalData(String node){
+		
+		return factory.getNodeExternalData(node);
+		
+	}
 	
 	
 	/**
