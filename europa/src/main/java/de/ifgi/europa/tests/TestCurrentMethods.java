@@ -86,7 +86,7 @@ public class TestCurrentMethods {
 		//TEST FOI GET LAST OBSERVATION
 		SOSObservation observation2 = new SOSObservation();
 		SOSFeatureOfInterest featureOfInterest2 = new SOSFeatureOfInterest();
-		featureOfInterest2.setUri(URI.create("http://ifgi.uni-muenster.de/hydrolod#Suelfeld_31010094"));//featureOfInterest2.setUri(URI.create("http://ifgi.uni-muenster.de/hydrolod#Nalje_Siel_126001"));
+		featureOfInterest2.setUri(URI.create("http://ifgi.uni-muenster.de/hydrolod#Duesseldorf_2750010"));//featureOfInterest2.setUri(URI.create("http://ifgi.uni-muenster.de/hydrolod#Nalje_Siel_126001"));
 		observation2 = Facade.getInstance().getFOILastObservation(featureOfInterest2);
 		System.out.println("\n**** FOI LAST OBSERVATION ****\n");
 		System.out.println("WKT --> " + observation2.getFeatureOfInterest().getDefaultGeometry().getAsWKT());

@@ -16,43 +16,21 @@
 
 package de.ifgi.europa.gui;
 
-import gov.nasa.worldwind.WorldWind;
-import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.geom.Position;
-import gov.nasa.worldwind.render.Offset;
-import gov.nasa.worldwind.render.PointPlacemark;
-import gov.nasa.worldwind.render.PointPlacemarkAttributes;
-
 import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.event.ActionEvent;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
-
 import javax.swing.JPanel;
 
-import org.graphstream.algorithm.generator.BarabasiAlbertGenerator;
-import org.graphstream.algorithm.generator.Generator;
-import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
-import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.MultiGraph;
-import org.graphstream.stream.AttributeSink;
-import org.graphstream.stream.ElementSink;
-import org.graphstream.stream.ProxyPipe;
-import org.graphstream.stream.Sink;
 import org.graphstream.ui.swingViewer.View;
 import org.graphstream.ui.swingViewer.Viewer;
 import org.graphstream.ui.swingViewer.ViewerListener;
 import org.graphstream.ui.swingViewer.ViewerPipe;
 
-import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
 
-public class GraphPanel extends JPanel {
+public class GraphPanel extends JPanel implements ViewerListener {
 	
 	private MainFrame mainFrame;
 	protected boolean loop = true;
@@ -63,32 +41,58 @@ public class GraphPanel extends JPanel {
 	public GraphPanel(MainFrame mF) {
 		super(new BorderLayout());
 		this.setMainFrame(mF);
-		System.setProperty("org.graphstream.ui.renderer", "org.graphstream.ui.j2dviewer.J2DGraphRenderer");
 		
-		graph  = new MultiGraph("mg");
-		
-        viewer = new Viewer(graph, Viewer.ThreadingModel.GRAPH_IN_SWING_THREAD);
+		Graph g = new MultiGraph("mg");
+        Viewer v = new Viewer(g, Viewer.ThreadingModel.GRAPH_IN_SWING_THREAD);
         
-//        Generator gen = new BarabasiAlbertGenerator(1);
-//        gen.addSink(graph);
-//		gen.begin();
-//		for(int i=0; i<50; i++) {
-//		    gen.nextEvents();
-//		}
-//		gen.end();
+        final ViewerPipe fromViewer = v.newViewerPipe();
+		fromViewer.addViewerListener(this);
+		fromViewer.addSink(g);
+
+        g.addAttribute("ui.antialias");
+        g.addAttribute("ui.quality");
+
+        v.enableAutoLayout();
+        add(v.addDefaultView(false), BorderLayout.CENTER);
+//        view = v.addDefaultView(false);
+////    graph.addAttribute("ui.stylesheet", "node#A {size: 25px; fill-color: red; text-alignment:at-right;} node {size: 15px; fill-color: green; text-alignment:at-left;} edge {fill-color: blue; text-alignment: along; text-style: bold;}");
+//        add(view, BorderLayout.CENTER);
         
-        graph.setStrict(false);
-        graph.setAutoCreate(true);
-               
-        viewer.enableAutoLayout();
-        view = viewer.addDefaultView(false);
-        graph.addAttribute("ui.stylesheet", "node#A {size: 25px; fill-color: red; text-alignment:at-right;} node {size: 15px; fill-color: green; text-alignment:at-left;} edge {fill-color: blue; text-alignment: along; text-style: bold;}");
-        add(view, BorderLayout.CENTER);
         
+        g.addNode("A").addAttribute("ui.label", "TEST");
+        
+        v.getDefaultView().addMouseListener(new MouseListener() {
+			
+			@Override
+			public void mouseReleased(MouseEvent arg0) {
+				
+			}
+			
+			@Override
+			public void mousePressed(MouseEvent arg0) {
+				
+			}
+			
+			@Override
+			public void mouseExited(MouseEvent arg0) {
+				
+			}
+			
+			@Override
+			public void mouseEntered(MouseEvent arg0) {
+				
+			}
+			
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				System.out.println("viewer clicked");
+				fromViewer.pump();
+			}
+		});
 	}
 	
+	Integer count = 0;
 	public void updateGraph(ResultSet rs, String selectedFOI) {
-		Integer count = 0;
 		graph.addNode("A").addAttribute("ui.label", selectedFOI);
 		for(int i = 0; i < 5; i++) {
 			count = i;
@@ -97,7 +101,7 @@ public class GraphPanel extends JPanel {
 			graph.addEdge("A"+temp, "A", temp).addAttribute("ui.label", "edge");
 		}
 		
-		
+		view.updateUI();	
 //		graph.addNode("A").addAttribute("ui.label", selectedFOI);
 //		while (rs.hasNext()) {
 ////			QuerySolution soln = rs.nextSolution();
@@ -106,7 +110,18 @@ public class GraphPanel extends JPanel {
 ////			graph.addEdge("A"+count.toString(), "A", count.toString()).addAttribute("ui.label", "edge");
 //			count++;
 //		}
-		view.updateUI();
+	
+	}
+	
+	public void nada() {
+		System.out.println("ich tue heute mal nichts!");
+		graph.addNode("A").addAttribute("ui.label", "CENTER");
+		for(int i = 0; i < 5; i++) {
+			count = i;
+			String temp = count.toString();
+			graph.addNode(temp).addAttribute("ui.label", temp);
+			graph.addEdge("A"+temp, "A", temp).addAttribute("ui.label", "edge");
+		}
 	}
 
 	/**
@@ -121,6 +136,24 @@ public class GraphPanel extends JPanel {
 	 */
 	public void setMainFrame(MainFrame mainFrame) {
 		this.mainFrame = mainFrame;
+	}
+
+	@Override
+	public void buttonPushed(String id) {
+		// TODO Auto-generated method stub
+		System.out.println("Button pushed on node "+id);
+	}
+
+	@Override
+	public void buttonReleased(String id) {
+		// TODO Auto-generated method stub
+		System.out.println("Button released on node "+id);
+	}
+
+	@Override
+	public void viewClosed(String arg0) {
+		// TODO Auto-generated method stub
+		loop = false;
 	}
 	
 
