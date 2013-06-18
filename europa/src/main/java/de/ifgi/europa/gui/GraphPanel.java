@@ -157,23 +157,21 @@ public class GraphPanel extends JPanel implements ViewerListener {
 
 	@Override
 	public void buttonPushed(String id) {
-		System.out.println("Button pushed on node "+id);
-		
-		System.out.println(g.getNode(id).getLeavingEdgeSet().size());
-		System.out.println(g.getNode(id).getEnteringEdgeSet().size());
-		
-		if(g.getNode(id).getLeavingEdgeSet().size() == 0) {
-			ResultSet rs = ((FilterPanel) getMainFrame().getFilterPanel()).getFacade().getNodeExternalData(g.getNode(id).toString());
-			while(rs.hasNext()) {
-				QuerySolution soln = rs.nextSolution();
-				updateGraph(soln, id, 1);
-			}
-		} else {
-			if(id != "A") {
-				while(g.getNode(id).getLeavingEdgeIterator().hasNext())
-				{
-					Edge e = g.getNode(id).getLeavingEdgeIterator().next();
-					g.removeNode(e.getNode1());
+		String style = g.getNode(id).getAttribute("ui.style");
+		if (!style.contains("literal")) {
+			if(g.getNode(id).getLeavingEdgeSet().size() == 0) {
+				ResultSet rs = ((FilterPanel) getMainFrame().getFilterPanel()).getFacade().getNodeExternalData(g.getNode(id).toString());
+				while(rs.hasNext()) {
+					QuerySolution soln = rs.nextSolution();
+					updateGraph(soln, id, 1);
+				}
+			} else {
+				if(id != "A") {
+					while(g.getNode(id).getLeavingEdgeIterator().hasNext())
+					{
+						Edge e = g.getNode(id).getLeavingEdgeIterator().next();
+						g.removeNode(e.getNode1());
+					}
 				}
 			}
 		}
