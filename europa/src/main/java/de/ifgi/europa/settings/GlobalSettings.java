@@ -131,7 +131,7 @@ public class GlobalSettings {
 	 * 
 	 */
 
-	public static String geFOILastObservation = prefixes +
+	/*public static String geFOILastObservation = prefixes +
 			" SELECT ?wkt ?value ?samplingTime ?uom ?prop" +
 			" WHERE{GRAPH <PARAM_GRAPH> { " +
 			"	?prop a purl:Property . " +
@@ -166,8 +166,41 @@ public class GlobalSettings {
 			"			FILTER(?in2st = ?samplingTime) " +
 			"		} } " +
 			"	} " +
-			"} } ";
-	
+			"} } ";*/
+public static String geFOILastObservation = prefixes +	
+"SELECT ?wkt ?value ?samplingTime ?uom ?prop" +
+"		WHERE{GRAPH <PARAM_GRAPH> {" +
+"			?prop a purl:Property ." +
+"			?prop purl:hasQuality <http://dbpedia.org/page/Quantity> ." +
+"			?in2obsValue purl:forProperty ?prop ." +
+"			?in2obsValue purl:hasValue ?value ." +
+"			<PARAM_FOI> geo:defaultGeometry ?point ." +
+"			?point geo:asWKT ?wkt ." +
+"		   ?prop <http://purl.org/goodrelations/v1#hasUnitOfMeasurement> ?uom ." +
+"			{" +
+"				SELECT ?in2obsValue ?samplingTime" +
+"				WHERE{GRAPH <PARAM_GRAPH> {" +
+"					?in2obs a purl:Observation ." +
+"					?in2senOut a purl:SensorOutput ." +
+"					?in2obsValue a purl:ObservationValue ." +
+"					?in2obs purl:featureOfInterest <PARAM_FOI> ." +
+"					?in2obs purl:observationResult ?in2senOut ." +
+"					?in2senOut purl:observationSamplingTime ?in2st ." +
+"					?in2senOut purl:hasValue ?in2obsValue ." +
+"					{" +
+"						SELECT (MAX(?st) AS ?samplingTime)" +
+"						WHERE { GRAPH <PARAM_GRAPH> {" +
+"							?in1obs a purl:Observation ." +
+"							?in1senOut a purl:SensorOutput ." +
+"							?in1obs purl:featureOfInterest <PARAM_FOI> ." +
+"							?in1obs purl:observationResult ?in1senOut ." +
+"							?in1senOut purl:observationSamplingTime ?st ." +
+"						} }" +
+"					}" +
+"					FILTER(?in2st = ?samplingTime)" +
+"				} }" +
+"			}" +
+"		} }	";
 	
 	
 
