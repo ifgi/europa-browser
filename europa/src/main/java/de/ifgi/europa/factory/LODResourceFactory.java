@@ -50,7 +50,7 @@ public class LODResourceFactory {
 		SPARQL = SPARQL.replace("PARAM_LONG", Double.toString(longitude));
 		
         Query query = QueryFactory.create(SPARQL);
-        ARQ.getContext().setTrue(ARQ.useSAX);
+        //ARQ.getContext().setTrue(ARQ.useSAX);
  
         QueryExecution qexec = QueryExecutionFactory.sparqlService("http://DBpedia.org/sparql", query);
 
