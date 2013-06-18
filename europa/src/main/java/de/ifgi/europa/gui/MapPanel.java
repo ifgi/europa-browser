@@ -147,13 +147,13 @@ public class MapPanel extends JPanel {
 						String caption = (String) tempSelected.getValue(AVKey.DISPLAY_NAME);
 						String[] arrCaption = caption.split("\\#");
 						ResultSet rs = ((FilterPanel) getMainFrame().getFilterPanel()).getFacade().getExternalData(currentPosition.getLatitude().getDegrees(), currentPosition.getLongitude().getDegrees());
+//						((GraphPanel) mainFrame.getGraphPanel()).updateGraph(rs, arrCaption[1]);
+						((GraphPanel) mainFrame.getGraphPanel()).nada();
 						try {
 							addDBpediaToGlobe(rs);
 						} catch (Exception e) {
 							System.out.println(e);
-						}
-						
-						((GraphPanel) mainFrame.getGraphPanel()).updateGraph(rs, arrCaption[1]);
+						} 
 					}
 				}
 			}
@@ -218,12 +218,12 @@ public class MapPanel extends JPanel {
 				ArrayList<SOSValue> asVal = sosSensorOutput.getValue();
 				for (SOSValue sosValue : asVal) {
 					if (sosValue.getForProperty().getUri().toString().toLowerCase().compareTo(property.getProperty().getUri().toString().toLowerCase()) == 0) {
-						System.out.println("--Prop --> " + sosValue.getForProperty().getUri());
+//						System.out.println("--Prop --> " + sosValue.getForProperty().getUri());
 						toolTipProperty = toolTipProperty + selectedFOI;
-						System.out.println("--Value --> " + sosValue.getHasValue());
+//						System.out.println("--Value --> " + sosValue.getHasValue());
 						toolTipValue = toolTipValue + sosValue.getHasValue();
 						val = sosValue.getHasValue();
-						System.out.println("--Uom --> " + sosValue.getForProperty().getUom());
+//						System.out.println("--Uom --> " + sosValue.getForProperty().getUom());
 						toolTipUom = toolTipUom + sosValue.getForProperty().getUom();
 					}
 				}
@@ -254,7 +254,7 @@ public class MapPanel extends JPanel {
 	        Cylinder cylinder = null;
 	        
 	        if (property.getVisualization().compareTo("width") == 0) {
-	        	defaultRadius = defaultRadius*val*10;
+	        	defaultRadius = defaultRadius*val*1000;
 	        	if (val < 0) {
 					val = val * -1;
 				}

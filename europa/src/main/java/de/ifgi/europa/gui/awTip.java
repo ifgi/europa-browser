@@ -63,7 +63,7 @@ public class awTip extends JPanel {
 	private String endTime = "";
 	private ArrayList<ArrayList<SOSObservation>> ons;
 	private ArrayList<FeaturesOnTheGlobe> selectedFOIs;
-	private int delay = 1000;
+	private int delay = 500;
 	private Image imgPlay = null;
 	private Image imgPause = null;
 
@@ -134,9 +134,11 @@ public class awTip extends JPanel {
 		slider.setLabelTable(slider.createStandardLabels(10));
 		
 		final JComboBox cbDelay = new JComboBox();
-		cbDelay.addItem(1);
-		cbDelay.addItem(2);
-		cbDelay.addItem(3);
+		cbDelay.addItem(100);
+		cbDelay.addItem(200);
+		cbDelay.addItem(300);
+		cbDelay.addItem(400);
+		cbDelay.addItem(500);
 		
 		cbDelay.addItemListener(new ItemListener() {
 			
@@ -152,7 +154,7 @@ public class awTip extends JPanel {
 		JPanel blCenter = new JPanel(new BorderLayout());
 		JPanel panelDelay = new JPanel(new GridLayout(1, 2));
 		
-		JLabel labelDelay = new JLabel("Delay in sec:");
+		JLabel labelDelay = new JLabel("Delay in msec:");
 		
 		panelDelay.add(labelDelay);
 		panelDelay.add(cbDelay);
@@ -190,11 +192,9 @@ public class awTip extends JPanel {
 						System.out.println("getObs");
 						SOSObservation obs =  ons.get(i).get(slider.getValue());
 						for (int j = 0; j < selectedFOIs.size(); j++) {
-							System.out.println(obs.getFeatureOfInterest().getIdentifier());
-							System.out.println(selectedFOIs.get(j).getProperty().getProperty().getUri());
-							System.out.println(selectedFOIs.get(j).getFoi().getUri());
 							String[] arrProp = selectedFOIs.get(j).getProperty().getProperty().getUri().toString().split("\\#");
 							String[] arrFOI = selectedFOIs.get(j).getFoi().getUri().toString().split("\\#");
+							System.out.println(arrProp[1]+"-"+arrFOI[1]);
 							if (obs.getFeatureOfInterest().getIdentifier().toString().toLowerCase().compareTo(selectedFOIs.get(j).getProperty().getProperty().getUri().toString().toLowerCase()) == 0) {
 								((MapPanel) getMainFrame().getMapPanel()).updateGlobe(obs, null, selectedFOIs.get(j).getProperty(), arrProp[1]+"-"+arrFOI[1]);
 							}
@@ -252,7 +252,6 @@ public class awTip extends JPanel {
 					
 					for (SOSValue sosValue : asVal) {
 						
-						//TODO vergleiche property und property to get the right value
 						if (sosValue.getForProperty().getUri().toString().toLowerCase().compareTo(selectedFOIs.get(i).getProperty().getProperty().getUri().toString().toLowerCase()) == 0) {
 							System.out.println("Prop: "+sosValue.getForProperty().getUri().toString());
 							System.out.println("--Value --> " + sosValue.getHasValue());
@@ -268,6 +267,7 @@ public class awTip extends JPanel {
 							ArrayList<SOSValue> tempALSOSValue = new ArrayList<SOSValue>();
 							tempALSOSValue.add(tempSOSValue);
 							tempSOSSensorOutput.setValue(tempALSOSValue);
+							tempSOSSensorOutput.setSamplingTime(sosSensorOutput.getSamplingTime());
 							ArrayList<SOSSensorOutput> tempALSOSSensorOutput = new ArrayList<SOSSensorOutput>();
 							tempALSOSSensorOutput.add(tempSOSSensorOutput);
 							tempObs.setSensorOutput(tempALSOSSensorOutput);
@@ -278,49 +278,6 @@ public class awTip extends JPanel {
 				ons.add(tempSOSObservation);
 			}
 			
-			
-//			observation = Facade.getInstance().getObservationByInterval(featureOfInterest, interval);
-//			System.out.println("WKT --> " + observation.getFeatureOfInterest().getDefaultGeometry().getAsWKT());
-//			
-//			ArrayList<SOSSensorOutput> aSo = observation.getSensorOutput();
-//			int cso = 0;
-//			for (SOSSensorOutput sosSensorOutput : aSo) {
-//				System.out.println("-Date" + cso + " --> " + sosSensorOutput.getSamplingTime());
-//				ArrayList<SOSValue> asVal = sosSensorOutput.getValue();
-//				int cov = 0;
-//				for (SOSValue sosValue : asVal) {
-//					System.out.println("--Value" + cov + " --> " + sosValue.getHasValue());
-//					System.out.println("--Uom" + cov + " --> " + sosValue.getForProperty().getUom());
-//					System.out.println("--Prop" + cov + " --> " + sosValue.getForProperty().getUri());
-//					
-//					cov++;
-//				}
-//				cso++;
-//			}
-			
-			
-//			TimeInterval interval = new TimeInterval(startTime, endTime);
-//			
-//			ArrayList<FeaturesOnTheGlobe> selectedFOIs = ((FilterPanel) getMainFrame().getFilterPanel()).getFoisOnTheGlobe();
-//			
-////			ArrayList<SOSFeatureOfInterest> selectedFOIs = ((FilterPanel) getMainFrame().getFilterPanel()).getFOIs();
-//
-//			Facade facade = ((FilterPanel) getMainFrame().getFilterPanel()).getFacade();
-//			
-//			for (int i = 0; i < selectedFOIs.size(); i++) {
-//				ArrayList<SOSObservation> obs = facade.getObservationByInterval(selectedFOIs.get(i).getFoi(), interval);
-//				ons.add(obs);
-//			}
-			
-			
-//			for (int i = 0; i < selectedFOIs.size(); i++) {
-//				ArrayList<SOSObservation> obs = facade.getObservationByInterval(selectedFOIs.get(i), interval);
-//				for (int j = 0; j < obs.size(); j++) {
-//					obs.get(j).setLabel(selectedFOIs.get(i).getLabel());
-//				}
-//				ons.add(obs);
-//			}
-			
 			slider.setMaximum(ons.get(0).size()-1);
 			slider.setMinorTickSpacing(1);
 			slider.setMajorTickSpacing(1);
@@ -328,7 +285,6 @@ public class awTip extends JPanel {
 			slider.setPaintLabels(true);
 			slider.updateUI();
 		}
-		
 	}
 
 	/**
