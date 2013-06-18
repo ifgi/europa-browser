@@ -21,7 +21,7 @@ public class TestDBPediaQuery {
 //		
 				
 
-		ResultSet rs2 =	Facade.getInstance().getNodeExternalData("http://dbpedia.org/resource/Innenstadt,_Cologne");
+		ResultSet rs2 =	Facade.getInstance().getNodeExternalData("http://dbpedia.org/resource/Rodenkirchen");
 
 
 		

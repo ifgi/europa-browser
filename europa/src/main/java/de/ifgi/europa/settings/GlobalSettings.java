@@ -55,7 +55,8 @@ public class GlobalSettings {
 			"SELECT DISTINCT * WHERE { " + 
 		    " 	{ 	<PARAM_SUBJECT> ?predicate ?object . " + 
 		    " 	  	FILTER isIRI(?object) . " +
-		    "		OPTIONAL{?object rdfs:label ?labelNode. FILTER (LANG(?labelNode)='en')} ." + 
+		    //"		OPTIONAL{?object rdfs:label ?labelNode. FILTER (LANG(?labelNode)='en')} ." + 
+		    "		?object rdfs:label ?labelNode. FILTER (LANG(?labelNode)='en') ." +
 		    " 	  	FILTER (?predicate != rdf:type && " +  
 		    "       ?predicate != owl:sameAs && " + 
 		    "       ?predicate != dbpedia-ontology:wikiPageExternalLink ) } " + 
