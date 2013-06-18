@@ -53,7 +53,7 @@ public class LODResourceFactory {
 		logger.debug("getExternalData query: " + SPARQL);
 		
         Query query = QueryFactory.create(SPARQL);
-        //ARQ.getContext().setTrue(ARQ.useSAX);
+        ARQ.getContext().setTrue(ARQ.useSAX);
  
         QueryExecution qexec = QueryExecutionFactory.sparqlService("http://DBpedia.org/sparql", query);
 
