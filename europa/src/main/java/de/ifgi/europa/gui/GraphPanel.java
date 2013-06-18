@@ -21,6 +21,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import javax.swing.JPanel;
 
+import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.implementations.MultiGraph;
 import org.graphstream.ui.swingViewer.View;
@@ -127,7 +128,7 @@ public class GraphPanel extends JPanel implements ViewerListener {
 		if (g.getNode(nodeName) == null) {
 			g.addNode(nodeName).addAttribute("ui.label", nodeLabel);
 			g.getNode(nodeName).addAttribute("ui.style", nodeAttribtue);
-			g.addEdge(attachTo.toString()+nodeName, attachTo.toString(), nodeName).addAttribute("ui.label", edgeLabel);
+			g.addEdge(attachTo.toString()+nodeName, attachTo.toString(), nodeName,true).addAttribute("ui.label", edgeLabel);
 			g.getEdge(attachTo.toString()+nodeName).addAttribute("ui.style", "fill-color: blue;");
 		}
 			
@@ -157,12 +158,25 @@ public class GraphPanel extends JPanel implements ViewerListener {
 	@Override
 	public void buttonPushed(String id) {
 		System.out.println("Button pushed on node "+id);
-		ResultSet rs = ((FilterPanel) getMainFrame().getFilterPanel()).getFacade().getNodeExternalData(g.getNode(id).toString());
-		while(rs.hasNext()) {
-			QuerySolution soln = rs.nextSolution();
-			updateGraph(soln, id, 1);
-		}
 		
+		System.out.println(g.getNode(id).getLeavingEdgeSet().size());
+		System.out.println(g.getNode(id).getEnteringEdgeSet().size());
+		
+		if(g.getNode(id).getLeavingEdgeSet().size() == 0) {
+			ResultSet rs = ((FilterPanel) getMainFrame().getFilterPanel()).getFacade().getNodeExternalData(g.getNode(id).toString());
+			while(rs.hasNext()) {
+				QuerySolution soln = rs.nextSolution();
+				updateGraph(soln, id, 1);
+			}
+		} else {
+			if(id != "A") {
+				while(g.getNode(id).getLeavingEdgeIterator().hasNext())
+				{
+					Edge e = g.getNode(id).getLeavingEdgeIterator().next();
+					g.removeNode(e.getNode1());
+				}
+			}
+		}
 	}
 
 	@Override
