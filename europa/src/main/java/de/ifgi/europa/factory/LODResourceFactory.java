@@ -21,6 +21,8 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.apache.log4j.Logger;
+
 import scala.collection.mutable.SynchronizedPriorityQueue;
 
 import com.hp.hpl.jena.query.ARQ;
@@ -42,12 +44,13 @@ import de.ifgi.europa.settings.GlobalSettings;
 
 public class LODResourceFactory {
 	
-	
+	Logger  logger = Logger.getRootLogger();
 	
 	public ResultSet getExternalData(double latitude, double longitude){
 		
 		String SPARQL = GlobalSettings.getExternalData.replace("PARAM_LAT", Double.toString(latitude));
 		SPARQL = SPARQL.replace("PARAM_LONG", Double.toString(longitude));
+		logger.debug("getExternalData query: " + SPARQL);
 		
         Query query = QueryFactory.create(SPARQL);
         //ARQ.getContext().setTrue(ARQ.useSAX);
@@ -70,7 +73,8 @@ public class LODResourceFactory {
 	public ResultSet getNodeExternalData(String node){
 		
 		String SPARQL = GlobalSettings.getNodeExternalData.replace("PARAM_SUBJECT", node);
-				
+		logger.debug("getNodeExternalData query: " + SPARQL);
+		
         Query query = QueryFactory.create(SPARQL);
         ARQ.getContext().setTrue(ARQ.useSAX);
         
@@ -100,6 +104,8 @@ public class LODResourceFactory {
 		String SPARQL = new String();
 		
 		SPARQL = GlobalSettings.SPARQL_getListProperties.replace("PARAM_GRAPH", GlobalSettings.CurrentNamedGraph);
+		logger.debug("getListProperties query: " + SPARQL);
+		
 		ArrayList<SOSProperty> result = new ArrayList<SOSProperty>();
 
 		ResultSet results = cnn.executeSPARQLQuery(SPARQL);
@@ -180,8 +186,7 @@ public class LODResourceFactory {
 		String SPARQL = new String();
 		SPARQL = GlobalSettings.listFeaturesOfInterest.replace("PARAM_PROPERTY", property.getUri().toString());
 		SPARQL = SPARQL.replace("PARAM_GRAPH", GlobalSettings.CurrentNamedGraph);
-				
-		//System.out.println(SPARQL);
+		logger.debug("listFeaturesOfInterest query: " + SPARQL);
 		
 		ResultSet rs = cnn.executeSPARQLQuery(SPARQL);
 		ArrayList<SOSFeatureOfInterest> result = new ArrayList<SOSFeatureOfInterest>();
@@ -216,11 +221,10 @@ public class LODResourceFactory {
 		String SPARQL = new String();
 		SPARQL = GlobalSettings.geFOILastObservation.replace("PARAM_FOI", featureOfInterest.getUri().toString());
 		SPARQL = SPARQL.replace("PARAM_GRAPH", GlobalSettings.CurrentNamedGraph);
+		logger.debug("getFOILastObservation query: " + SPARQL);
 		
 		ResultSet rs = cnn.executeSPARQLQuery(SPARQL);
 		
-		//TODO Delete System.out.println(SPARQL); 
-		System.out.println(SPARQL);
 		
 		ArrayList<SOSSensorOutput> sensorOutputArray = new ArrayList<SOSSensorOutput>();
 		ArrayList<SOSValue> valueArray = new ArrayList<SOSValue>();
@@ -287,7 +291,7 @@ public class LODResourceFactory {
 		SPARQL = SPARQL.replace("PARAM_DATE2", interval.getEndDate());
 		SPARQL = SPARQL.replace("PARAM_FOI", featureOfInterest.getUri().toString());
 		SPARQL = SPARQL.replace("PARAM_GRAPH", GlobalSettings.CurrentNamedGraph);
-System.out.println(SPARQL);//TODO:Log
+		logger.debug("getObservationTimeInterval query: " + SPARQL);
 		
 		ResultSet rs = cnn.executeSPARQLQuery(SPARQL);
 		
