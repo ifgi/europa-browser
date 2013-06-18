@@ -172,9 +172,14 @@ public class MapPanel extends JPanel {
 			((GraphPanel) mainFrame.getGraphPanel()).updateGraph(soln, caption, 0);
 			String latitude = soln.getLiteral("?lat").getValue().toString();
 			String longitude = soln.getLiteral("?long").getValue().toString();
+			String displayText = soln.getLiteral("?label").getValue().toString();
+			
+			if (soln.get("?population") != null) {
+				displayText = displayText + newline + "Population: " + soln.getLiteral("?population").getValue().toString();
+			}
 			
 			PointPlacemark pp = new PointPlacemark(Position.fromDegrees(Double.parseDouble(latitude), Double.parseDouble(longitude), 0));
-	        pp.setValue(AVKey.DISPLAY_NAME, soln.getLiteral("?label").getValue().toString());
+	        pp.setValue(AVKey.DISPLAY_NAME, displayText);
 	        pp.setLineEnabled(false);
 	        pp.setAltitudeMode(WorldWind.CLAMP_TO_GROUND);
 	        PointPlacemarkAttributes attrs = new PointPlacemarkAttributes();
