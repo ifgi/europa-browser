@@ -27,23 +27,26 @@ import org.graphstream.ui.swingViewer.View;
 import org.graphstream.ui.swingViewer.Viewer;
 import org.graphstream.ui.swingViewer.ViewerListener;
 import org.graphstream.ui.swingViewer.ViewerPipe;
+import org.graphstream.graph.Node;
 
+import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
 
 public class GraphPanel extends JPanel implements ViewerListener {
 	
 	private MainFrame mainFrame;
 	protected boolean loop = true;
-	Graph graph;
-    Viewer viewer;
+	Graph g;
+    Viewer v;
     View view;
     
 	public GraphPanel(MainFrame mF) {
 		super(new BorderLayout());
 		this.setMainFrame(mF);
+		System.setProperty("gs.ui.renderer", "org.graphstream.ui.j2dviewer.J2DGraphRenderer");
 		
-		Graph g = new MultiGraph("mg");
-        Viewer v = new Viewer(g, Viewer.ThreadingModel.GRAPH_IN_SWING_THREAD);
+		g = new MultiGraph("mg");
+        v = new Viewer(g, Viewer.ThreadingModel.GRAPH_IN_SWING_THREAD);
         
         final ViewerPipe fromViewer = v.newViewerPipe();
 		fromViewer.addViewerListener(this);
@@ -51,15 +54,9 @@ public class GraphPanel extends JPanel implements ViewerListener {
 
         g.addAttribute("ui.antialias");
         g.addAttribute("ui.quality");
-
+        
         v.enableAutoLayout();
         add(v.addDefaultView(false), BorderLayout.CENTER);
-//        view = v.addDefaultView(false);
-////    graph.addAttribute("ui.stylesheet", "node#A {size: 25px; fill-color: red; text-alignment:at-right;} node {size: 15px; fill-color: green; text-alignment:at-left;} edge {fill-color: blue; text-alignment: along; text-style: bold;}");
-//        add(view, BorderLayout.CENTER);
-        
-        
-        g.addNode("A").addAttribute("ui.label", "TEST");
         
         v.getDefaultView().addMouseListener(new MouseListener() {
 			
@@ -92,35 +89,54 @@ public class GraphPanel extends JPanel implements ViewerListener {
 	}
 	
 	Integer count = 0;
-	public void updateGraph(ResultSet rs, String selectedFOI) {
-		graph.addNode("A").addAttribute("ui.label", selectedFOI);
-		for(int i = 0; i < 5; i++) {
-			count = i;
-			String temp = count.toString();
-			graph.addNode(temp).addAttribute("ui.label", temp);
-			graph.addEdge("A"+temp, "A", temp).addAttribute("ui.label", "edge");
+	Node attachTo;
+	public void updateGraph(QuerySolution soln, String selectedFOI, int flag) {
+		if (g.getNode("A") == null) {
+			g.addNode("A").addAttribute("ui.label", selectedFOI);
+			g.getNode("A").addAttribute("ui.style", "size: 32px; fill-mode: image-scaled; fill-image: url('foi.png'); text-alignment:at-right;");
+			attachTo = g.getNode("A");
+		} else if (flag == 0) {
+			attachTo = g.getNode("A");
+		} else {
+			attachTo = g.getNode(selectedFOI);
 		}
 		
-		view.updateUI();	
-//		graph.addNode("A").addAttribute("ui.label", selectedFOI);
-//		while (rs.hasNext()) {
-////			QuerySolution soln = rs.nextSolution();
-//			String nodeName = count.toString();
-//			graph.addNode(nodeName).addAttribute("ui.label", "asdasdsad");
-////			graph.addEdge("A"+count.toString(), "A", count.toString()).addAttribute("ui.label", "edge");
-//			count++;
-//		}
-	
+		String nodeName = "";
+		String edgeLabel = "";
+		String nodeLabel = "";
+		String nodeAttribtue = "";
+		
+		if (flag == 0) {
+			nodeName = soln.get("?subject").toString();
+			nodeLabel = soln.get("?label").toString();
+			edgeLabel = "";
+			nodeAttribtue = "size: 32px; fill-mode: image-scaled; fill-image: url('uri.png'); text-padding: 25px, 2px; text-alignment:at-right;";
+		} else {
+			edgeLabel = soln.get("?predicate").toString();
+			if (soln.get("?object").isLiteral()) {
+				nodeName = soln.get("?object").toString();
+				nodeLabel = soln.get("?object").toString();
+				nodeAttribtue = "size: 28px; fill-mode: image-scaled; fill-image: url('literal.png'); text-padding: 25px, 2px; text-alignment:at-right;";
+			} else {
+				nodeName = soln.get("?object").toString();
+				nodeLabel = soln.get("?labelNode").toString();
+				nodeAttribtue = "size: 32px; fill-mode: image-scaled; fill-image: url('uri.png'); text-padding: 25px, 2px; text-alignment:at-right;";
+			}
+		}
+		
+		if (g.getNode(nodeName) == null) {
+			g.addNode(nodeName).addAttribute("ui.label", nodeLabel);
+			g.getNode(nodeName).addAttribute("ui.style", nodeAttribtue);
+			g.addEdge(attachTo.toString()+nodeName, attachTo.toString(), nodeName).addAttribute("ui.label", edgeLabel);
+			g.getEdge(attachTo.toString()+nodeName).addAttribute("ui.style", "fill-color: blue;");
+		}
+			
+		v.getDefaultView().updateUI();	
 	}
 	
-	public void nada() {
-		System.out.println("ich tue heute mal nichts!");
-		graph.addNode("A").addAttribute("ui.label", "CENTER");
-		for(int i = 0; i < 5; i++) {
-			count = i;
-			String temp = count.toString();
-			graph.addNode(temp).addAttribute("ui.label", temp);
-			graph.addEdge("A"+temp, "A", temp).addAttribute("ui.label", "edge");
+	public void clearGraph() {
+		if (g.getNode("A") != null) {
+			g.clear();
 		}
 	}
 
@@ -140,21 +156,22 @@ public class GraphPanel extends JPanel implements ViewerListener {
 
 	@Override
 	public void buttonPushed(String id) {
-		// TODO Auto-generated method stub
 		System.out.println("Button pushed on node "+id);
+		ResultSet rs = ((FilterPanel) getMainFrame().getFilterPanel()).getFacade().getNodeExternalData(g.getNode(id).toString());
+		while(rs.hasNext()) {
+			QuerySolution soln = rs.nextSolution();
+			updateGraph(soln, id, 1);
+		}
+		
 	}
 
 	@Override
 	public void buttonReleased(String id) {
-		// TODO Auto-generated method stub
-		System.out.println("Button released on node "+id);
+
 	}
 
 	@Override
 	public void viewClosed(String arg0) {
-		// TODO Auto-generated method stub
-		loop = false;
-	}
-	
 
+	}
 }

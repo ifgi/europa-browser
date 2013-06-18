@@ -42,6 +42,7 @@ public class TestGraph {
 			graph.addEdge("A"+temp, "A", temp).addAttribute("ui.label", "edge");
 		}
 		
+		
 //		Generator gen = new BarabasiAlbertGenerator(1);
 //		gen.addSink(graph);
 //		gen.begin();

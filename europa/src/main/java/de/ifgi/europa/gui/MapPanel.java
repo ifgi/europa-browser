@@ -56,6 +56,8 @@ import javax.swing.JPanel;
 
 import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
+import com.hp.hpl.jena.query.ResultSetFactory;
+import com.hp.hpl.jena.query.ResultSetRewindable;
 
 import de.ifgi.europa.core.SOSFeatureOfInterest;
 import de.ifgi.europa.core.SOSObservation;
@@ -139,21 +141,21 @@ public class MapPanel extends JPanel {
 				
 				if (sE.getEventAction().equals(SelectEvent.LEFT_PRESS)) {
 					dbpedia.removeAllRenderables();
+					((GraphPanel) getMainFrame().getGraphPanel()).clearGraph();
 					Position currentPosition = wwd.getCurrentPosition();
 					Object selected = sE.getTopObject();
 					System.out.println(selected.getClass().toString());
 					if (selected.getClass().toString().compareTo("class gov.nasa.worldwind.render.Cylinder") == 0) {
 						Cylinder tempSelected = (Cylinder) selected;
 						String caption = (String) tempSelected.getValue(AVKey.DISPLAY_NAME);
-						String[] arrCaption = caption.split("\\#");
+						String[] arrCaption = caption.split("\\_");
 						ResultSet rs = ((FilterPanel) getMainFrame().getFilterPanel()).getFacade().getExternalData(currentPosition.getLatitude().getDegrees(), currentPosition.getLongitude().getDegrees());
-//						((GraphPanel) mainFrame.getGraphPanel()).updateGraph(rs, arrCaption[1]);
-						((GraphPanel) mainFrame.getGraphPanel()).nada();
+
 						try {
-							addDBpediaToGlobe(rs);
+							addDBpediaToGlobe(rs, arrCaption[0]);
 						} catch (Exception e) {
 							System.out.println(e);
-						} 
+						}
 					}
 				}
 			}
@@ -164,9 +166,10 @@ public class MapPanel extends JPanel {
 	 * Add the dbpedia entries to the globe
 	 * @param rs ResultSet containing the dbpedia entries
 	 */
-	public void addDBpediaToGlobe(ResultSet rs) {
+	public void addDBpediaToGlobe(ResultSet rs, String caption) {
 		while (rs.hasNext()) {
 			QuerySolution soln = rs.nextSolution();
+			((GraphPanel) mainFrame.getGraphPanel()).updateGraph(soln, caption, 0);
 			String latitude = soln.getLiteral("?lat").getValue().toString();
 			String longitude = soln.getLiteral("?long").getValue().toString();
 			
@@ -182,7 +185,6 @@ public class MapPanel extends JPanel {
 	        pp.setAttributes(attrs);
 	        dbpedia.addRenderable(pp);
 		}
-		
 	}
 	
 	/**
@@ -218,12 +220,9 @@ public class MapPanel extends JPanel {
 				ArrayList<SOSValue> asVal = sosSensorOutput.getValue();
 				for (SOSValue sosValue : asVal) {
 					if (sosValue.getForProperty().getUri().toString().toLowerCase().compareTo(property.getProperty().getUri().toString().toLowerCase()) == 0) {
-//						System.out.println("--Prop --> " + sosValue.getForProperty().getUri());
 						toolTipProperty = toolTipProperty + selectedFOI;
-//						System.out.println("--Value --> " + sosValue.getHasValue());
 						toolTipValue = toolTipValue + sosValue.getHasValue();
 						val = sosValue.getHasValue();
-//						System.out.println("--Uom --> " + sosValue.getForProperty().getUom());
 						toolTipUom = toolTipUom + sosValue.getForProperty().getUom();
 					}
 				}
