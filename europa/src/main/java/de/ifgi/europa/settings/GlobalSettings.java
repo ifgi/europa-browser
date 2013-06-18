@@ -54,7 +54,8 @@ public class GlobalSettings {
 	public static String getNodeExternalData = prefixes + 
 			"SELECT DISTINCT * WHERE { " + 
 		    " 	{ 	<PARAM_SUBJECT> ?predicate ?object . " + 
-		    " 	  	FILTER isIRI(?object) . " + 
+		    " 	  	FILTER isIRI(?object) . " +
+		    "		OPTIONAL{?object rdfs:label ?labelNode. FILTER (LANG(?labelNode)='en')} ." + 
 		    " 	  	FILTER (?predicate != rdf:type && " +  
 		    "       ?predicate != owl:sameAs && " + 
 		    "       ?predicate != dbpedia-ontology:wikiPageExternalLink ) } " + 
@@ -63,7 +64,7 @@ public class GlobalSettings {
 		    " 		FILTER isLiteral(?object) . " +
 		    "		FILTER (LANG(?object)='en' && " +
 		    "               ?predicate != dbpedia-ontology:abstract ) }    "  + 
-			" } LIMIT 100 ";
+			" } LIMIT 50 ";
 	
 	
 	
