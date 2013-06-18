@@ -326,6 +326,7 @@ TRANSFORMATION OF A SOS GET OBSERVATION RESPONSE TO RDF TRIPLES
 		</xsl:call-template>
 	</xsl:template>
 	
+	
 	<!-- **************************************************************** -->
 	<!-- PARSING DATA ARRAY -->
 	<!-- **************************************************************** -->
@@ -336,26 +337,13 @@ TRANSFORMATION OF A SOS GET OBSERVATION RESPONSE TO RDF TRIPLES
 		<xsl:param name="ObservationId" />
 		<xsl:param name="daCount" />
 
-		<xsl:param name="normDataArray" select="normalize-space(string($dataArray))" />
-		<!-- Process all rows except the 1st --><!-- TODO: Issue regarding the use of "new line" as row separator -->
-		<xsl:param name="remainingDataArray" select="substring-after($normDataArray, $rowSep)" />
-		<xsl:param name="row"><!-- Current row -->
-			<xsl:choose>
-				<xsl:when test="contains($normDataArray, $rowSep)">
-					<xsl:value-of select="substring-before($normDataArray, $rowSep)" />
-				</xsl:when>
-				<xsl:otherwise>
-					<xsl:value-of select="$normDataArray" />
-				</xsl:otherwise>
-			</xsl:choose>
-		</xsl:param> 
+		<xsl:variable name="afterLeadingWS" select="substring-after($dataArray, substring-before($dataArray,substring-before(normalize-space($dataArray), ' ')))"/>		
+		<xsl:variable name="SensorOutputId" select="$daCount" />
 		
-		<xsl:choose>
-			<xsl:when test="string-length(string($normDataArray)) &gt; 0"><!-- Termination condition -->
-				<!-- Operation code -->
-				<xsl:variable name="SensorOutputId" select="$daCount" />
+		 <xsl:choose>
+		 	<xsl:when test="contains($afterLeadingWS, $rowSep)"><!-- <xsl:when test="contains($afterLeadingWS, '&#xA;')"> -->
 				<rdf:Description>
- 					<xsl:attribute name="rdf:about"><xsl:value-of select="concat('http://ifgi.uni-muenster.de/hydrolod#', 'OBSERVATION_', $ObservationId)" /></xsl:attribute>
+						<xsl:attribute name="rdf:about"><xsl:value-of select="concat('http://ifgi.uni-muenster.de/hydrolod#', 'OBSERVATION_', $ObservationId)" /></xsl:attribute>
 					<purl:observationResult>
 						<rdf:Description>
 							<xsl:attribute name="rdf:about"><xsl:value-of select="concat('http://ifgi.uni-muenster.de/hydrolod#', 'SENSOR_OUTPUT_', $ObservationId, '_', $SensorOutputId)" /></xsl:attribute>							
@@ -363,28 +351,33 @@ TRANSFORMATION OF A SOS GET OBSERVATION RESPONSE TO RDF TRIPLES
 					</purl:observationResult>
 				</rdf:Description>
 				<rdf:Description>
-					<xsl:attribute name="rdf:about"><xsl:value-of select="concat('http://ifgi.uni-muenster.de/hydrolod#', 'SENSOR_OUTPUT_', $ObservationId, '_', $SensorOutputId)" /></xsl:attribute>
+					<xsl:attribute name="rdf:about"><xsl:value-of select="concat('http://ifgi.uni-muenster.de/hydrolod#', 'SENSOR_OUTPUT_', $ObservationId, '_', $SensorOutputId)" /></xsl:attribute>		
 					<rdf:type rdf:resource="http://purl.oclc.org/NET/ssnx/ssn#SensorOutput" />
 				</rdf:Description>
-				<!-- Goes for the observed values --> 
+		 		<!-- OBTIENE UN ROW -->
 				<xsl:call-template name="processDataRow">
-					<xsl:with-param name="dataRow" select="$row" />
-					<xsl:with-param name="tokenSep" select="$tokenSep" />
-					<xsl:with-param name="ObservationId" select="$ObservationId" />
-					<xsl:with-param name="SensorOutputId" select="$SensorOutputId" />
-					<xsl:with-param name="drCount" select="1" />
-				</xsl:call-template>
-				<!-- Recursive call -->
-				<xsl:call-template name="processDataArray">
-					<xsl:with-param name="dataArray" select="$remainingDataArray" />
-					<xsl:with-param name="rowSep" select="$rowSep" />
-					<xsl:with-param name="tokenSep" select="$tokenSep" />
-					<xsl:with-param name="ObservationId" select="$ObservationId" />
-					<xsl:with-param name="daCount" select="$daCount + 1" />
-				</xsl:call-template>
-			</xsl:when>
-		</xsl:choose>
+					<xsl:with-param name="dataRow" select="substring-before($afterLeadingWS, $rowSep)"/><!-- <xsl:with-param name="dataRow" select="substring-before($afterLeadingWS, '&#xA;')"/> -->
+					<xsl:with-param name="tokenSep" select="$tokenSep"/>
+					<xsl:with-param name="ObservationId" select="$ObservationId"/>
+					<xsl:with-param name="SensorOutputId" select="$SensorOutputId"/>
+					<xsl:with-param name="drCount" select="1"/>
+				 </xsl:call-template>
+		 		<!-- RECURSIVE CALL -->
+		 		<xsl:call-template name="processDataArray">
+		 			 <xsl:with-param name="dataArray" select="substring-after($afterLeadingWS, $rowSep)"/><!-- <xsl:with-param name="dataArray" select="substring-after($afterLeadingWS, '&#xA;')"/> -->
+		 			 <xsl:with-param name="rowSep" select="$rowSep"/>
+		 			 <xsl:with-param name="tokenSep" select="$tokenSep"/>
+		 			 <xsl:with-param name="ObservationId" select="$ObservationId"/>
+		 			 <xsl:with-param name="daCount" select="$daCount + 1"/>
+		 		</xsl:call-template>
+		 	</xsl:when>
+		 	<!-- 
+		 	<xsl:otherwise>
+		 	</xsl:otherwise>
+		 	 -->
+		 </xsl:choose>
 	</xsl:template>
+
 	
 	<!-- **************************************************************** -->
 	<!-- PARSING ROW -->
