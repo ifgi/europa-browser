@@ -219,6 +219,17 @@ public class MapPanel extends JPanel {
 			String toolTipUom = "";
 			String toolTipSamplingTime = "";
 			
+			Iterable<Renderable> renderables = layer.getRenderables();
+			Iterator<Renderable> iter = renderables.iterator();
+			while (iter.hasNext()) {
+				Cylinder temp = (Cylinder) iter.next();
+				String displayName = (String) temp.getValue(AVKey.DISPLAY_NAME);
+				String[] arrName = displayName.split("\\-");
+				if (selectedFOI.contains(arrName[1])) {
+					//TODO: save cylinder
+				}
+			}
+			
 			ArrayList<SOSSensorOutput> aSo = observation.getSensorOutput();
 			for (SOSSensorOutput sosSensorOutput : aSo) {
 				toolTipSamplingTime = toolTipSamplingTime + sosSensorOutput.getSamplingTime();
@@ -234,6 +245,7 @@ public class MapPanel extends JPanel {
 			}
 			
 			//Build tooltip text
+			//TODO update tooltip
 			toolTipText = toolTipProperty + newline + toolTipSamplingTime + newline + toolTipValue + " " + toolTipUom + newline + newline + "Click to see what is around!";
 			
 			//Get geometry of observation and parse latitude and longitude
@@ -255,6 +267,7 @@ public class MapPanel extends JPanel {
 	        attrs.setDrawOutline(false);
 			
 	        //Create cylinder depending on chosen visualization and add it to the renderable layer
+	        //TODO:Update geometry or add new
 	        Cylinder cylinder = null;
 	        
 	        if (property.getVisualization().compareTo("width") == 0) {

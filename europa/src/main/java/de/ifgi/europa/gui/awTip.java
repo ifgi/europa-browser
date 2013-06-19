@@ -61,7 +61,8 @@ public class awTip extends JPanel {
 	private int delay = 500;
 	private Image imgPlay = null;
 	private Image imgPause = null;
-
+	int sliderIndex = 0;
+	
 	JSlider slider = null;
 	
     public awTip(MainFrame mF)
@@ -170,7 +171,7 @@ public class awTip extends JPanel {
 		 */
 		ActionListener taskPerformer = new ActionListener() {
 			
-			int sliderIndex = 0;
+			
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -195,7 +196,14 @@ public class awTip extends JPanel {
 							}
 						}
 					}
-				} else {
+				} 
+//					else if(sliderIndex > slider.getMaximum()) {
+////					sliderIndex = 0;
+////					slider.setValue(0);
+////					
+////					slider.updateUI();
+//				} 
+				else {
 					btnPlay.doClick();
 				}
 			}
@@ -219,6 +227,11 @@ public class awTip extends JPanel {
 						btnPlay.setText("Pause");
 						btnPlay.setIcon(new ImageIcon(imgPause.getScaledInstance(16, 16, java.awt.Image.SCALE_SMOOTH)));
 						timerswing.start();
+						if(sliderIndex > slider.getValue()) {
+							sliderIndex = 0;
+							slider.setValue(0);
+							slider.updateUI();
+						}
 					}
 				}
 			}

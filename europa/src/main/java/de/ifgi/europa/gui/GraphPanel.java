@@ -128,7 +128,8 @@ public class GraphPanel extends JPanel implements ViewerListener {
 		if (g.getNode(nodeName) == null) {
 			g.addNode(nodeName).addAttribute("ui.label", nodeLabel);
 			g.getNode(nodeName).addAttribute("ui.style", nodeAttribtue);
-			g.addEdge(attachTo.toString()+nodeName, attachTo.toString(), nodeName,true).addAttribute("ui.label", edgeLabel);
+			g.addEdge(attachTo.toString()+nodeName, attachTo.toString(), nodeName,true);
+//			.addAttribute("ui.label", edgeLabel);
 			g.getEdge(attachTo.toString()+nodeName).addAttribute("ui.style", "fill-color: blue;");
 		}
 			
