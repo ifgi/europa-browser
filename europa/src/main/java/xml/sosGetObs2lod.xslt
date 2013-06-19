@@ -419,7 +419,7 @@ TRANSFORMATION OF A SOS GET OBSERVATION RESPONSE TO RDF TRIPLES
 				<xsl:if test="$ObservedValueId  = '1'">
 					<rdf:Description>
 						<xsl:attribute name="rdf:about"><xsl:value-of select="concat('http://ifgi.uni-muenster.de/hydrolod#' , 'SENSOR_OUTPUT_', $ObservationId, '_', $SensorOutputId)" /></xsl:attribute>
-						<purl:observationSamplingTime>
+						<purl:observationSamplingTime rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">
 				<xsl:value-of select="$token" />
 						</purl:observationSamplingTime>
 					</rdf:Description>
