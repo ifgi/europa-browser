@@ -16,6 +16,7 @@
 
 package de.ifgi.europa.gui;
 
+import java.awt.BorderLayout;
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
 import java.awt.event.ActionEvent;
@@ -43,6 +44,7 @@ public class MainFrame extends JFrame {
 	private JSplitPane splitPaneTop;
 	private JSplitPane splitPaneBottom;
 	private JPanel pnlGraph;
+	private JPanel pnlStatusBar;
 
 	public MainFrame() {
 		super("Europa Linked Observation Browser");
@@ -52,8 +54,8 @@ public class MainFrame extends JFrame {
 	    
 	    pnlFilter = new FilterPanel(this);
 	    pnlMap = new MapPanel(this);
-//	    pnlMap = null;
 	    pnlGraph = new GraphPanel(this);
+	    pnlStatusBar = new StatusBarPanel(this);
 	    
 	    splitPaneTop = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,pnlFilter,pnlMap);
 	    splitPaneTop.setOneTouchExpandable(true);
@@ -62,7 +64,8 @@ public class MainFrame extends JFrame {
 	    splitPaneBottom = new JSplitPane(JSplitPane.VERTICAL_SPLIT, splitPaneTop, pnlGraph);
 	    splitPaneBottom.setOneTouchExpandable(true);
 	    
-	    add(splitPaneBottom);
+	    add(splitPaneBottom, BorderLayout.CENTER);
+	    add(pnlStatusBar, BorderLayout.PAGE_END);
 
 	    pack();
 	    setVisible(true); 
@@ -122,5 +125,9 @@ public class MainFrame extends JFrame {
 	
 	public JPanel getGraphPanel() {
 		return pnlGraph;
+	}
+	
+	public JPanel getStatusBarPanel(){
+		return pnlStatusBar;
 	}
 }

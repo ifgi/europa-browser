@@ -42,6 +42,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.SwingWorker;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.TableModelEvent;
@@ -75,6 +76,9 @@ public class FilterPanel extends JPanel {
 	private ArrayList<FeaturesOnTheGlobe> foisOnTheGlobe;
 	final DefaultTableModel resultsTableModel;
 	final JTable resultsTable;
+	final DefaultTableModel propertiesTableModel;
+	final JTable propertiesTable;
+	final DefaultComboBoxModel cbModel;
 	
 	ImageIcon iconSpin, iconConnect, iconSelect, iconUnselect;
 	
@@ -103,7 +107,7 @@ public class FilterPanel extends JPanel {
 	    Object[][] data = {};
 	    
 	    //Setting up the TableModel for the properties table
-	    final DefaultTableModel propertiesTableModel = new DefaultTableModel(data, new String[] {"SOS Properties","Visualization","Visible"}) {
+	    propertiesTableModel = new DefaultTableModel(data, new String[] {"SOS Properties","Visualization","Visible"}) {
 	
 			private static final long serialVersionUID = 1L;
 
@@ -129,7 +133,7 @@ public class FilterPanel extends JPanel {
             }
 		};
         
-	    final JTable propertiesTable = new JTable(propertiesTableModel);
+	    propertiesTable = new JTable(propertiesTableModel);
 //	    propertiesTable.getColumnModel().getColumn(1).setCellRenderer(new MyRenderer());
 //	    propertiesTable.getColumnModel().getColumn(1).setCellRenderer(new CustomRenderer());
 //	    propertiesTable.setCellSelectionEnabled(true);
@@ -145,7 +149,7 @@ public class FilterPanel extends JPanel {
 		comboBox.addItem("Height");
 		visualizationColumn.setCellEditor(new DefaultCellEditor(comboBox));
 		
-		final DefaultComboBoxModel cbModel = new DefaultComboBoxModel();
+		cbModel = new DefaultComboBoxModel();
 		final JComboBox cbURI = new JComboBox(cbModel);
 		
 		btnQuery = new JButton();
@@ -334,25 +338,9 @@ public class FilterPanel extends JPanel {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
 				if (e.getStateChange() == ItemEvent.SELECTED) {
-					clearTable(propertiesTable);
-					clearTable(resultsTable);
+					((StatusBarPanel) getMainFrame().getStatusBarPanel()).toggle(true);
 					
-					//Delete everything from properties if the graph url changes
-					properties.clear();	
-					
-					((MapPanel) getMainFrame().getMapPanel()).clearGlobe();
-					
-					GlobalSettings.CurrentNamedGraph = cbModel.getSelectedItem().toString();
-					
-					//Fill list with properties and add the fois to the property
-					for(SOSProperty prop : getFacade().listProperties()){
-						
-						ArrayList<SOSFeatureOfInterest> foi = getFacade().listFeaturesOfInterest(prop);
-						prop.setFoi(foi);
-						properties.add(new Properties(prop, "", null, false));
-						
-						propertiesTableModel.addRow(new Object[] {prop.getUri()});
-					}
+					new AnswerWorker().execute();
 				}
 			}
 		});
@@ -715,6 +703,47 @@ public class FilterPanel extends JPanel {
 			this.property = property;
 		}
 	}
+	
+	class AnswerWorker extends SwingWorker<Integer, Integer>
+	{
+		
+	    protected Integer doInBackground() throws Exception
+	    {
+	    	clearTable(propertiesTable);
+			clearTable(resultsTable);
+			properties.clear();	
+			
+			((MapPanel) getMainFrame().getMapPanel()).clearGlobe();
+			
+			GlobalSettings.CurrentNamedGraph = cbModel.getSelectedItem().toString();
+			
+			//Fill list with properties and add the fois to the property
+			for(SOSProperty prop : getFacade().listProperties()){
+				
+				ArrayList<SOSFeatureOfInterest> foi = getFacade().listFeaturesOfInterest(prop);
+				prop.setFoi(foi);
+				properties.add(new Properties(prop, "", null, false));
+				
+				propertiesTableModel.addRow(new Object[] {prop.getUri()});
+			}
+			
+	        return 42;
+	    }
+
+	    protected void done()
+	    {
+	        try
+	        {
+	            System.out.println("finished");
+	            ((StatusBarPanel) getMainFrame().getStatusBarPanel()).toggle(false);
+	        }
+	        catch (Exception e)
+	        {
+	            e.printStackTrace();
+	        }
+	    }
+	}
+	
 //	
 //	/**
 //	 * Custom TableCellRenderer to set background color of visualization cloumn if the user selects

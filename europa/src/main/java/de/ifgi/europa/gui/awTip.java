@@ -196,14 +196,7 @@ public class awTip extends JPanel {
 							}
 						}
 					}
-				} 
-//					else if(sliderIndex > slider.getMaximum()) {
-////					sliderIndex = 0;
-////					slider.setValue(0);
-////					
-////					slider.updateUI();
-//				} 
-				else {
+				} else {
 					btnPlay.doClick();
 				}
 			}

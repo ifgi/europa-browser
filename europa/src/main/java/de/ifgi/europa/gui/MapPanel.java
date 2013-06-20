@@ -42,6 +42,7 @@ import gov.nasa.worldwind.layers.ViewControlsSelectListener;
 import gov.nasa.worldwind.layers.Earth.BMNGWMSLayer;
 import gov.nasa.worldwind.layers.Earth.LandsatI3WMSLayer;
 import gov.nasa.worldwind.render.BasicShapeAttributes;
+import gov.nasa.worldwind.render.Cone;
 import gov.nasa.worldwind.render.Cylinder;
 import gov.nasa.worldwind.render.Material;
 import gov.nasa.worldwind.render.Offset;
@@ -212,29 +213,34 @@ public class MapPanel extends JPanel {
 		if (observation != null) {
 			Double defaultHeight = 10.0;
 			Double defaultRadius = 10.0;
-			Double val = 0.0;
+			Double val = null;
 			String toolTipText = "";
 			String toolTipProperty = "";
 			String toolTipValue = "";
 			String toolTipUom = "";
 			String toolTipSamplingTime = "";
+			Cylinder existingCylinder = null;
 			
 			Iterable<Renderable> renderables = layer.getRenderables();
 			Iterator<Renderable> iter = renderables.iterator();
 			while (iter.hasNext()) {
-				Cylinder temp = (Cylinder) iter.next();
-				String displayName = (String) temp.getValue(AVKey.DISPLAY_NAME);
-				String[] arrName = displayName.split("\\-");
-				if (selectedFOI.contains(arrName[1])) {
-					//TODO: save cylinder
+				Cylinder cylinderToCheck = (Cylinder) iter.next();
+				String displayName = (String) cylinderToCheck.getValue(AVKey.DISPLAY_NAME);
+				String[] arrName = selectedFOI.split("\\-");
+				if (displayName.contains(arrName[1])) {
+					System.out.println("found a renderable with the same name");
+					existingCylinder = cylinderToCheck;
 				}
 			}
+			
 			
 			ArrayList<SOSSensorOutput> aSo = observation.getSensorOutput();
 			for (SOSSensorOutput sosSensorOutput : aSo) {
 				toolTipSamplingTime = toolTipSamplingTime + sosSensorOutput.getSamplingTime();
 				ArrayList<SOSValue> asVal = sosSensorOutput.getValue();
 				for (SOSValue sosValue : asVal) {
+					System.out.println(sosValue.getForProperty().getUri().toString());
+					System.out.println(property.getProperty().getUri().toString().toLowerCase());
 					if (sosValue.getForProperty().getUri().toString().toLowerCase().compareTo(property.getProperty().getUri().toString().toLowerCase()) == 0) {
 						toolTipProperty = toolTipProperty + selectedFOI;
 						toolTipValue = toolTipValue + sosValue.getHasValue();
@@ -243,10 +249,6 @@ public class MapPanel extends JPanel {
 					}
 				}
 			}
-			
-			//Build tooltip text
-			//TODO update tooltip
-			toolTipText = toolTipProperty + newline + toolTipSamplingTime + newline + toolTipValue + " " + toolTipUom + newline + newline + "Click to see what is around!";
 			
 			//Get geometry of observation and parse latitude and longitude
 			String wkt = observation.getFeatureOfInterest().getDefaultGeometry().getAsWKT();
@@ -267,32 +269,67 @@ public class MapPanel extends JPanel {
 	        attrs.setDrawOutline(false);
 			
 	        //Create cylinder depending on chosen visualization and add it to the renderable layer
-	        //TODO:Update geometry or add new
-	        Cylinder cylinder = null;
-	        
-	        if (property.getVisualization().compareTo("width") == 0) {
-	        	defaultRadius = defaultRadius*val*1000;
-	        	if (val < 0) {
-					val = val * -1;
+			if (existingCylinder != null) {
+				//TODO Update the geometry and add the new property
+				toolTipText = existingCylinder.getValue(AVKey.DISPLAY_NAME) + newline + toolTipSamplingTime + newline + toolTipValue + " " + toolTipUom + newline + newline + "Click to see what is around!";
+				
+		        if (property.getVisualization().compareTo("width") == 0) {
+		        	defaultRadius = defaultRadius*val*1000;
+		        	if (val < 0) {
+						val = val * -1;
+					}
+				} else if (property.getVisualization().toLowerCase().compareTo("height") == 0) {
+					defaultHeight = defaultHeight*val*10;
+					if (defaultHeight < 0) {
+						defaultHeight = defaultHeight * -1;
+					}
+				} else if (property.getVisualization().toLowerCase().compareTo("color") == 0) {
+					attrs.setInteriorMaterial(new Material(property.getColors()[0]));
+					
 				}
-	        	cylinder = new Cylinder(Position.fromDegrees(lat, lon, 0), defaultHeight, val);
-			} else if (property.getVisualization().toLowerCase().compareTo("height") == 0) {
-				defaultHeight = defaultHeight*val*10;
-				if (defaultHeight < 0) {
-					defaultHeight = defaultHeight * -1;
+		        
+		        existingCylinder.setAttributes(attrs);
+		        existingCylinder.setVisible(true);
+		        existingCylinder.setValue(AVKey.DISPLAY_NAME, toolTipText);
+		        layer.addRenderable(existingCylinder);
+			} else if(val != 0.0) { //if no cylinder exists create a new one
+				Cylinder cylinder = null;
+				
+				toolTipText = toolTipProperty + newline + toolTipSamplingTime + newline + toolTipValue + " " + toolTipUom + newline + newline + "Click to see what is around!";
+				
+		        if (property.getVisualization().compareTo("width") == 0) {
+		        	defaultRadius = defaultRadius*val*1000;
+		        	if (val < 0) {
+						val = val * -1;
+					}
+		        	cylinder = new Cylinder(Position.fromDegrees(lat, lon, 0), defaultHeight, val);
+				} else if (property.getVisualization().toLowerCase().compareTo("height") == 0) {
+					defaultHeight = defaultHeight*val*10;
+					if (defaultHeight < 0) {
+						defaultHeight = defaultHeight * -1;
+					}
+					cylinder = new Cylinder(Position.fromDegrees(lat, lon, 0), defaultHeight, 10000);
+				} else if (property.getVisualization().toLowerCase().compareTo("color") == 0) {
+					attrs.setInteriorMaterial(new Material(property.getColors()[0]));
+					cylinder = new Cylinder(Position.fromDegrees(lat, lon, 0), 1000, 1000);
 				}
-				cylinder = new Cylinder(Position.fromDegrees(lat, lon, 0), defaultHeight, 10000);
-			} else if (property.getVisualization().toLowerCase().compareTo("color") == 0) {
-				attrs.setInteriorMaterial(new Material(property.getColors()[0]));
-				cylinder = new Cylinder(Position.fromDegrees(lat, lon, 0), 1000, 1000);
-			}
-	        
-	        cylinder.setAltitudeMode(WorldWind.ABSOLUTE);
-	        cylinder.setAttributes(attrs);
-	        cylinder.setVisible(true);
-	        cylinder.setValue(AVKey.DISPLAY_NAME, toolTipText);
-	        layer.addRenderable(cylinder);
-	        
+		        
+		        cylinder.setAltitudeMode(WorldWind.ABSOLUTE);
+		        cylinder.setAttributes(attrs);
+		        cylinder.setVisible(true);
+		        cylinder.setValue(AVKey.DISPLAY_NAME, toolTipText);
+		        layer.addRenderable(cylinder);
+			} else { //if there is no observation just add a different geometry
+	        	toolTipText = toolTipText + "No measurements available!";
+	       
+	        	Cone cone = new Cone(Position.fromDegrees(lat, lon, 0), 1000, 1000);
+	        	
+	        	cone.setAltitudeMode(WorldWind.ABSOLUTE);
+	        	cone.setAttributes(attrs);
+	        	cone.setVisible(true);
+	        	cone.setValue(AVKey.DISPLAY_NAME, toolTipText);
+		        layer.addRenderable(cone);
+	        }
 		} else {
 			Iterable<Renderable> renderables = layer.getRenderables();
 			Iterator<Renderable> iter = renderables.iterator();
