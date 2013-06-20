@@ -478,7 +478,7 @@ public class FilterPanel extends JPanel {
 								for (SOSFeatureOfInterest foi : prop.getProperty().getFoi()) {
 									if (foi.getUri().toString().toLowerCase().contains(arrSelectedFOI[1].toLowerCase())) {
 										SOSObservation observation = getFacade().getFOILastObservation(foi);
-										((MapPanel) getMainFrame().getMapPanel()).updateGlobe(observation,foi,prop,selectedFOI);
+										((MapPanel) getMainFrame().getMapPanel()).updateGlobe(observation,foi,prop,selectedFOI, -1);
 										foisOnTheGlobe.add(new FeaturesOnTheGlobe(foi, prop));
 										break;
 									}
@@ -491,7 +491,7 @@ public class FilterPanel extends JPanel {
 							if (prop.getProperty().getUri().toString().toLowerCase().contains(arrSelectedFOI[0].toLowerCase())) {
 								for (SOSFeatureOfInterest foi : prop.getProperty().getFoi()) {
 									if (foi.getUri().toString().toLowerCase().contains(arrSelectedFOI[1].toLowerCase())) {
-										((MapPanel) getMainFrame().getMapPanel()).updateGlobe(null,foi,prop,selectedFOI);
+										((MapPanel) getMainFrame().getMapPanel()).updateGlobe(null,foi,prop,selectedFOI, -1);
 										for (int i = 0; i < foisOnTheGlobe.size(); i++) {
 											if (foisOnTheGlobe.get(i).getFoi().getUri().toString().toLowerCase().compareTo(foi.getUri().toString().toLowerCase()) == 0) {
 												foisOnTheGlobe.remove(i);

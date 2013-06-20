@@ -208,7 +208,7 @@ public class MapPanel extends JPanel {
 	 * @param foi
 	 * @param viz
 	 */
-	public void updateGlobe(SOSObservation observation, SOSFeatureOfInterest foi, Properties property, String selectedFOI) {
+	public void updateGlobe(SOSObservation observation, SOSFeatureOfInterest foi, Properties property, String selectedFOI, int color) {
 
 		if (observation != null) {
 			Double defaultHeight = 10.0;
@@ -284,8 +284,11 @@ public class MapPanel extends JPanel {
 						defaultHeight = defaultHeight * -1;
 					}
 				} else if (property.getVisualization().toLowerCase().compareTo("color") == 0) {
-					attrs.setInteriorMaterial(new Material(property.getColors()[0]));
-					
+					if (color != -1) {
+						attrs.setInteriorMaterial(new Material(new Color(color)));
+					} else {
+						attrs.setInteriorMaterial(new Material(property.getColors()[0]));
+					}
 				}
 		        
 		        existingCylinder.setAttributes(attrs);
@@ -310,7 +313,11 @@ public class MapPanel extends JPanel {
 					}
 					cylinder = new Cylinder(Position.fromDegrees(lat, lon, 0), defaultHeight, 10000);
 				} else if (property.getVisualization().toLowerCase().compareTo("color") == 0) {
-					attrs.setInteriorMaterial(new Material(property.getColors()[0]));
+					if (color != -1) {
+						attrs.setInteriorMaterial(new Material(new Color(color)));
+					} else {
+						attrs.setInteriorMaterial(new Material(property.getColors()[0]));
+					}
 					cylinder = new Cylinder(Position.fromDegrees(lat, lon, 0), 1000, 1000);
 				}
 		        

@@ -17,6 +17,7 @@
 package de.ifgi.europa.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Toolkit;
@@ -28,6 +29,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -58,6 +60,7 @@ public class awTip extends JPanel {
 	private String endTime = "";
 	private ArrayList<ArrayList<SOSObservation>> ons;
 	private ArrayList<FeaturesOnTheGlobe> selectedFOIs;
+	private ArrayList<ArrayList<Integer>> colorramp;
 	private int delay = 500;
 	private Image imgPlay = null;
 	private Image imgPause = null;
@@ -71,6 +74,7 @@ public class awTip extends JPanel {
 		this.setLayout(new BorderLayout());
 		this.setMainFrame(mF);
 		ons = new ArrayList<ArrayList<SOSObservation>>();
+		colorramp = new ArrayList<ArrayList<Integer>>();
 		slider = new JSlider(JSlider.HORIZONTAL, 0, 10, 0);
 		final SimpleDateFormat dateFormatString = new SimpleDateFormat("yyyy-MM-dd");
 		final JButton btnPlay = new JButton("Play");
@@ -81,8 +85,6 @@ public class awTip extends JPanel {
 		
 		final JDateChooser dcFrom = new JDateChooser();
 		final JDateChooser dcUntil = new JDateChooser();
-		
-//		MyDateListener dateChooserListener = new MyDateListener();
 		
 		dcFrom.addPropertyChangeListener(new PropertyChangeListener() {
 			
@@ -192,7 +194,14 @@ public class awTip extends JPanel {
 							String[] arrFOI = selectedFOIs.get(j).getFoi().getUri().toString().split("\\#");
 							System.out.println(arrProp[1]+"-"+arrFOI[1]);
 							if (obs.getFeatureOfInterest().getIdentifier().toString().toLowerCase().compareTo(selectedFOIs.get(j).getProperty().getProperty().getUri().toString().toLowerCase()) == 0) {
-								((MapPanel) getMainFrame().getMapPanel()).updateGlobe(obs, null, selectedFOIs.get(j).getProperty(), arrProp[1]+"-"+arrFOI[1]);
+								if (selectedFOIs.get(j).getProperty().getVisualization().toLowerCase().compareTo("color") == 0) {
+									int color = colorramp.get(i).get(slider.getValue());
+									((MapPanel) getMainFrame().getMapPanel()).updateGlobe(obs, null, selectedFOIs.get(j).getProperty(), arrProp[1]+"-"+arrFOI[1], color);
+								} else {
+									((MapPanel) getMainFrame().getMapPanel()).updateGlobe(obs, null, selectedFOIs.get(j).getProperty(), arrProp[1]+"-"+arrFOI[1], -1);
+								}
+								
+								
 							}
 						}
 					}
@@ -244,6 +253,7 @@ public class awTip extends JPanel {
 			System.out.println("\n**** GET OBSERVATIONS BY TIME-INTERVAL **** \n");
 			for (int i = 0; i < selectedFOIs.size(); i++) {
 				SOSObservation obs = facade.getObservationByInterval(selectedFOIs.get(i).getFoi(), interval);
+				String viz = selectedFOIs.get(i).getProperty().getVisualization();
 				ArrayList<SOSObservation> tempSOSObservation = new ArrayList<SOSObservation>();
 				ArrayList<SOSSensorOutput> aSo = obs.getSensorOutput();
 				for (SOSSensorOutput sosSensorOutput : aSo) {
@@ -277,6 +287,17 @@ public class awTip extends JPanel {
 					}
 				}
 				ons.add(tempSOSObservation);
+				
+				if (viz.toLowerCase().compareTo("color") == 0) {
+					Color start = selectedFOIs.get(i).getProperty().getColors()[0];
+					Color end = selectedFOIs.get(i).getProperty().getColors()[1];
+					int rgbStart = new Color(start.getRed(), start.getGreen(), start.getBlue()).getRGB();
+					int rgbEnd = new Color(end.getRed(), end.getGreen(), end.getBlue()).getRGB();
+					ArrayList<Integer> colors = getUniqueColors(rgbStart, rgbEnd, tempSOSObservation.size());
+					System.out.println(colors.size());
+					colorramp.add(colors);
+				}
+				
 			}
 			
 			slider.setMaximum(ons.get(0).size()-1);
@@ -319,5 +340,16 @@ public class awTip extends JPanel {
 			System.out.println("changed");
 		}
 
+	}
+	
+	public ArrayList<Integer> getUniqueColors(int lowerLimit, int upperLimit, int amount) {
+	    final int colorStep = (upperLimit-lowerLimit)/amount;
+
+	    final ArrayList<Integer> colors = new ArrayList<Integer>();
+	    for (int i=0;i<amount;i++) {
+	        int color = lowerLimit+colorStep*i;
+	        colors.add(color);
+	    }
+	    return colors;
 	}
 }
