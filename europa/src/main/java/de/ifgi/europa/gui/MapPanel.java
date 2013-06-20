@@ -275,14 +275,22 @@ public class MapPanel extends JPanel {
 				
 		        if (property.getVisualization().compareTo("width") == 0) {
 		        	defaultRadius = defaultRadius*val*1000;
+		        	
 		        	if (val < 0) {
 						val = val * -1;
+					
 					}
+		        	Cylinder tempCylinder = existingCylinder;
+		        	attrs = tempCylinder.getActiveAttributes();
+		        	existingCylinder = new Cylinder(Position.fromDegrees(lat, lon, 0), defaultHeight, val);
 				} else if (property.getVisualization().toLowerCase().compareTo("height") == 0) {
 					defaultHeight = defaultHeight*val*10;
 					if (defaultHeight < 0) {
 						defaultHeight = defaultHeight * -1;
 					}
+					Cylinder tempCylinder = existingCylinder;
+		        	attrs = tempCylinder.getActiveAttributes();
+		        	existingCylinder = new Cylinder(Position.fromDegrees(lat, lon, 0), defaultHeight, 10000);
 				} else if (property.getVisualization().toLowerCase().compareTo("color") == 0) {
 					if (color != -1) {
 						attrs.setInteriorMaterial(new Material(new Color(color)));

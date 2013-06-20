@@ -296,6 +296,8 @@ public class awTip extends JPanel {
 					ArrayList<Integer> colors = getUniqueColors(rgbStart, rgbEnd, tempSOSObservation.size());
 					System.out.println(colors.size());
 					colorramp.add(colors);
+				} else {
+					colorramp.add(new ArrayList<Integer>());
 				}
 				
 			}

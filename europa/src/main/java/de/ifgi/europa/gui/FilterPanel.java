@@ -79,6 +79,7 @@ public class FilterPanel extends JPanel {
 	final DefaultTableModel propertiesTableModel;
 	final JTable propertiesTable;
 	final DefaultComboBoxModel cbModel;
+	final JComboBox cbURI;
 	
 	ImageIcon iconSpin, iconConnect, iconSelect, iconUnselect;
 	
@@ -150,7 +151,7 @@ public class FilterPanel extends JPanel {
 		visualizationColumn.setCellEditor(new DefaultCellEditor(comboBox));
 		
 		cbModel = new DefaultComboBoxModel();
-		final JComboBox cbURI = new JComboBox(cbModel);
+		cbURI = new JComboBox(cbModel);
 		
 		btnQuery = new JButton();
 		btnQuery.setEnabled(true);
@@ -301,30 +302,14 @@ public class FilterPanel extends JPanel {
 				/**
 				 * Clear table after querying new endpoint
 				 */
-				btnQuery.setIcon(iconSpin);
-				clearTable(propertiesTable);
-				clearTable(resultsTable);
+				((StatusBarPanel) getMainFrame().getStatusBarPanel()).toggle(true);
 				
-				//Delete everything from properties if the SPARQL Endpoint changes
-				properties.clear();
+				new AnswerWorker(2).execute();
 				
-				cbURI.removeAllItems();
+//				btnQuery.setIcon(iconSpin);
 				
-				URI uri = null;
 				
-				try {
-					uri = new URI(txtSPARQLEndpoint.getText());
-					GlobalSettings.CurrentSPARQLEndpoint = txtSPARQLEndpoint.getText(); 
-					setGraphs(getFacade().getListGraphs(URI.create(GlobalSettings.CurrentSPARQLEndpoint)));
-					
-					for (int i = 0; i < getGraphs().size(); i++) {
-						cbModel.addElement(getGraphs().get(i).toString());
-					}
-				} catch (URISyntaxException e1) {
-					System.out.println(e1.toString());
-				}
-				
-				btnQuery.setIcon(iconConnect);
+//				btnQuery.setIcon(iconConnect);
 			}
 		});
 		
@@ -340,7 +325,7 @@ public class FilterPanel extends JPanel {
 				if (e.getStateChange() == ItemEvent.SELECTED) {
 					((StatusBarPanel) getMainFrame().getStatusBarPanel()).toggle(true);
 					
-					new AnswerWorker().execute();
+					new AnswerWorker(1).execute();
 				}
 			}
 		});
@@ -469,40 +454,8 @@ public class FilterPanel extends JPanel {
 			@Override
 			public void tableChanged(TableModelEvent e) {
 				if (e.getColumn() != -1) {
-					String selectedFOI = resultsTableModel.getValueAt(e.getFirstRow(), 0).toString();
-					String[] arrSelectedFOI = selectedFOI.split("\\-");
-					
-					if ((Boolean) resultsTableModel.getValueAt(e.getFirstRow(), 1)) {	
-						for (Properties prop : properties) {
-							if (prop.getProperty().getUri().toString().toLowerCase().contains(arrSelectedFOI[0].toLowerCase())) {
-								for (SOSFeatureOfInterest foi : prop.getProperty().getFoi()) {
-									if (foi.getUri().toString().toLowerCase().contains(arrSelectedFOI[1].toLowerCase())) {
-										SOSObservation observation = getFacade().getFOILastObservation(foi);
-										((MapPanel) getMainFrame().getMapPanel()).updateGlobe(observation,foi,prop,selectedFOI, -1);
-										foisOnTheGlobe.add(new FeaturesOnTheGlobe(foi, prop));
-										break;
-									}
-								}
-							}
-						}
-						System.out.println(foisOnTheGlobe.size());
-					} else {
-						for (Properties prop : properties) {
-							if (prop.getProperty().getUri().toString().toLowerCase().contains(arrSelectedFOI[0].toLowerCase())) {
-								for (SOSFeatureOfInterest foi : prop.getProperty().getFoi()) {
-									if (foi.getUri().toString().toLowerCase().contains(arrSelectedFOI[1].toLowerCase())) {
-										((MapPanel) getMainFrame().getMapPanel()).updateGlobe(null,foi,prop,selectedFOI, -1);
-										for (int i = 0; i < foisOnTheGlobe.size(); i++) {
-											if (foisOnTheGlobe.get(i).getFoi().getUri().toString().toLowerCase().compareTo(foi.getUri().toString().toLowerCase()) == 0) {
-												foisOnTheGlobe.remove(i);
-											}
-										}
-									}
-								}
-							}
-						}
-						System.out.println(foisOnTheGlobe.size());
-					}	
+					((StatusBarPanel) getMainFrame().getStatusBarPanel()).toggle(true);
+					new AnswerWorker(3, e).execute();
 				}
 			}
 		});
@@ -706,26 +659,98 @@ public class FilterPanel extends JPanel {
 	
 	class AnswerWorker extends SwingWorker<Integer, Integer>
 	{
+		private Integer type = 0;
+		private TableModelEvent e;
+		
+		public AnswerWorker(Integer type) {
+			this.type = type;
+		}
+		
+		public AnswerWorker(Integer type, TableModelEvent e){
+			this.type = type;
+			this.e = e;
+		}
 		
 	    protected Integer doInBackground() throws Exception
 	    {
-	    	clearTable(propertiesTable);
-			clearTable(resultsTable);
-			properties.clear();	
-			
-			((MapPanel) getMainFrame().getMapPanel()).clearGlobe();
-			
-			GlobalSettings.CurrentNamedGraph = cbModel.getSelectedItem().toString();
-			
-			//Fill list with properties and add the fois to the property
-			for(SOSProperty prop : getFacade().listProperties()){
+	    	
+	    	if(type == 1) {
+	    		clearTable(propertiesTable);
+				clearTable(resultsTable);
+				properties.clear();	
 				
-				ArrayList<SOSFeatureOfInterest> foi = getFacade().listFeaturesOfInterest(prop);
-				prop.setFoi(foi);
-				properties.add(new Properties(prop, "", null, false));
+				((MapPanel) getMainFrame().getMapPanel()).clearGlobe();
 				
-				propertiesTableModel.addRow(new Object[] {prop.getUri()});
-			}
+				GlobalSettings.CurrentNamedGraph = cbModel.getSelectedItem().toString();
+				
+				//Fill list with properties and add the fois to the property
+				for(SOSProperty prop : getFacade().listProperties()){
+					
+					ArrayList<SOSFeatureOfInterest> foi = getFacade().listFeaturesOfInterest(prop);
+					prop.setFoi(foi);
+					properties.add(new Properties(prop, "", null, false));
+					
+					propertiesTableModel.addRow(new Object[] {prop.getUri()});
+				}
+	    	} else if(type == 2) {
+	    		clearTable(propertiesTable);
+				clearTable(resultsTable);
+				
+				//Delete everything from properties if the SPARQL Endpoint changes
+				properties.clear();
+				
+				cbURI.removeAllItems();
+				
+				URI uri = null;
+				
+				try {
+					uri = new URI(txtSPARQLEndpoint.getText());
+					GlobalSettings.CurrentSPARQLEndpoint = txtSPARQLEndpoint.getText(); 
+					setGraphs(getFacade().getListGraphs(URI.create(GlobalSettings.CurrentSPARQLEndpoint)));
+					
+					for (int i = 0; i < getGraphs().size(); i++) {
+						cbModel.addElement(getGraphs().get(i).toString());
+					}
+				} catch (URISyntaxException e1) {
+					System.out.println(e1.toString());
+				}	
+				
+	    	} else if(type == 3) {
+	    		String selectedFOI = resultsTableModel.getValueAt(e.getFirstRow(), 0).toString();
+				String[] arrSelectedFOI = selectedFOI.split("\\-");
+				
+				if ((Boolean) resultsTableModel.getValueAt(e.getFirstRow(), 1)) {	
+					for (Properties prop : properties) {
+						if (prop.getProperty().getUri().toString().toLowerCase().contains(arrSelectedFOI[0].toLowerCase())) {
+							for (SOSFeatureOfInterest foi : prop.getProperty().getFoi()) {
+								if (foi.getUri().toString().toLowerCase().contains(arrSelectedFOI[1].toLowerCase())) {
+									SOSObservation observation = getFacade().getFOILastObservation(foi);
+									((MapPanel) getMainFrame().getMapPanel()).updateGlobe(observation,foi,prop,selectedFOI, -1);
+									foisOnTheGlobe.add(new FeaturesOnTheGlobe(foi, prop));
+									break;
+								}
+							}
+						}
+					}
+					System.out.println(foisOnTheGlobe.size());
+				} else {
+					for (Properties prop : properties) {
+						if (prop.getProperty().getUri().toString().toLowerCase().contains(arrSelectedFOI[0].toLowerCase())) {
+							for (SOSFeatureOfInterest foi : prop.getProperty().getFoi()) {
+								if (foi.getUri().toString().toLowerCase().contains(arrSelectedFOI[1].toLowerCase())) {
+									((MapPanel) getMainFrame().getMapPanel()).updateGlobe(null,foi,prop,selectedFOI, -1);
+									for (int i = 0; i < foisOnTheGlobe.size(); i++) {
+										if (foisOnTheGlobe.get(i).getFoi().getUri().toString().toLowerCase().compareTo(foi.getUri().toString().toLowerCase()) == 0) {
+											foisOnTheGlobe.remove(i);
+										}
+									}
+								}
+							}
+						}
+					}
+					System.out.println(foisOnTheGlobe.size());
+				}
+	    	}
 			
 	        return 42;
 	    }
