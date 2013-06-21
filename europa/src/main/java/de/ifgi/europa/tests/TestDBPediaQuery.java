@@ -1,7 +1,10 @@
 package de.ifgi.europa.tests;
 
+import com.hp.hpl.jena.graph.Factory;
 import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
+import com.hp.hpl.jena.query.ResultSetFactory;
+import com.hp.hpl.jena.sparql.resultset.ResultSetRewindable;
 
 import de.ifgi.europa.facade.Facade;
 
@@ -23,20 +26,28 @@ public class TestDBPediaQuery {
 
 		ResultSet rs2 =	Facade.getInstance().getNodeExternalData("http://dbpedia.org/resource/Rodenkirchen");
 
-
+		
 		
 			while (rs2.hasNext()) {
 				QuerySolution soln = rs2.nextSolution();
 				
-				//System.out.println(soln.get("?predicate").isURIResource() + " " + soln.get("?predicate").toString() );
+					System.out.println("Predicate => " + soln.get("?predicate") + " \n" +
+									   "Object => " + soln.get("?object")+  " \n" +
+									   "isLiteral? => " + soln.get("?object").isLiteral() + "\n");										
+				}
 
+			System.out.println("2.");
+			ResultSetRewindable rsw = ResultSetFactory.makeRewindable(rs2);
+			
+			
+			
+			
+		while (rsw.hasNext()) {
+				QuerySolution soln = rs2.nextSolution();
 				
 					System.out.println("Predicate => " + soln.get("?predicate") + " \n" +
 									   "Object => " + soln.get("?object")+  " \n" +
-									   "isLiteral? => " + soln.get("?object").isLiteral() + "\n");
-					
-					
-	
+									   "isLiteral? => " + soln.get("?object").isLiteral() + "\n");										
 				}
 			}
 
