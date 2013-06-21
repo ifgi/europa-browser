@@ -75,7 +75,8 @@ public class GlobalSettings {
 			"	?subject wgs84:long ?long ." +
 			"	?subject rdfs:label ?label. " +
 			
-			"	?subject a dbpedia-ontology:PopulatedPlace . " +
+			//"	?subject a dbpedia-ontology:PopulatedPlace . " +
+			"	?subject a dbpedia-ontology:Place . " +
 			"	OPTIONAL {?subject dbpedia-ontology:populationTotal ?population } . " +
 			
 			"	FILTER(?lat - xsd:float(PARAM_LAT) <= 0.05 && xsd:float(PARAM_LAT) - ?lat <= 0.05 &&" +

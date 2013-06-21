@@ -295,6 +295,8 @@ public class LODResourceFactory {
 		
 		ResultSet rs = cnn.executeSPARQLQuery(SPARQL);
 		
+		System.out.println(SPARQL);
+		
 		ArrayList<SOSSensorOutput> sensorOutputArray = new ArrayList<SOSSensorOutput>();
 		ArrayList<SOSValue> valueArray = new ArrayList<SOSValue>(); 
 		ArrayList<SOSProperty> propertyArray = new ArrayList<SOSProperty>(); 

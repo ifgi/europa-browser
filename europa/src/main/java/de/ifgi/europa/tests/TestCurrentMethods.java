@@ -47,7 +47,7 @@ public class TestCurrentMethods {
 		
 		//TEST FOIs PER PROPERTY
 		ArrayList<SOSFeatureOfInterest> sosprop = new ArrayList<SOSFeatureOfInterest>(); 
-		SOSProperty property = new SOSProperty(URI.create("http://ifgi.uni-muenster.de/hydrolod#Wassertemperatur"));
+		SOSProperty property = new SOSProperty(URI.create("http://mmisw.org/ont/cf/parameter/wind_speed_of_gust"));
 		//property.setUri(URI.create("http://www.opengis.net/def/property/OGC/0/SamplingTime"));
 		sosprop = Facade.getInstance().listFeaturesOfInterest(property);
 		System.out.println("\n**** GET FOIS PER PROPERTY **** \n");
@@ -59,7 +59,7 @@ public class TestCurrentMethods {
 		//TEST GET OBSERVATIONS BY TIME INTERVAL 
 		SOSObservation observation = new SOSObservation();
 		SOSFeatureOfInterest featureOfInterest = new SOSFeatureOfInterest();
-		featureOfInterest.setUri(URI.create("http://ifgi.uni-muenster.de/hydrolod#Suelfeld_31010094"));//featureOfInterest.setUri(URI.create("http://ifgi.uni-muenster.de/hydrolod#Nalje_Siel_126001"));
+		featureOfInterest.setUri(URI.create("http://ifgi.uni-muenster.de/hydrolod#urn:ioos:station:wmo:41012"));//featureOfInterest.setUri(URI.create("http://ifgi.uni-muenster.de/hydrolod#Nalje_Siel_126001"));
 		TimeInterval interval = new TimeInterval("2013-06-12T00:00:00Z", "2013-06-12T06:00:00Z");//TimeInterval interval = new TimeInterval("2000-11-19T13:02:00Z", "2014-11-19T13:04:00Z");
 		
 		System.out.println("\n**** GET OBSERVATIONS BY TIME-INTERVAL **** \n");
