@@ -19,6 +19,7 @@ package de.ifgi.europa.gui;
 import java.awt.BorderLayout;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+
 import javax.swing.JPanel;
 
 import org.graphstream.graph.Edge;
@@ -41,12 +42,14 @@ public class GraphPanel extends JPanel implements ViewerListener {
     Viewer v;
     View view;
     
-	public GraphPanel(MainFrame mF) {
+	public GraphPanel(MainFrame frame) {
 		super(new BorderLayout());
-		this.setMainFrame(mF);
+		this.setMainFrame(frame);
 		System.setProperty("gs.ui.renderer", "org.graphstream.ui.j2dviewer.J2DGraphRenderer");
 		
 		g = new MultiGraph("mg");
+		g.addAttribute("ui.quality");
+		g.addAttribute("ui.antialias");
         v = new Viewer(g, Viewer.ThreadingModel.GRAPH_IN_SWING_THREAD);
         
         final ViewerPipe fromViewer = v.newViewerPipe();
@@ -131,7 +134,7 @@ public class GraphPanel extends JPanel implements ViewerListener {
 			g.addEdge(attachTo.toString()+nodeName, attachTo.toString(), nodeName,true).addAttribute("ui.label", edgeLabel);
 			g.getEdge(attachTo.toString()+nodeName).addAttribute("ui.style", "fill-color: blue;");
 		}
-			
+		
 		v.getDefaultView().updateUI();
 	}
 	
@@ -185,5 +188,9 @@ public class GraphPanel extends JPanel implements ViewerListener {
 	@Override
 	public void viewClosed(String arg0) {
 
+	}
+	
+	public Viewer getViewer(){
+		return v;
 	}
 }

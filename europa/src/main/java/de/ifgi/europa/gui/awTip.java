@@ -29,15 +29,13 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.List;
-
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
-
+import javax.swing.SwingWorker;
 import com.toedter.calendar.JDateChooser;
 
 import de.ifgi.europa.core.SOSObservation;
@@ -68,11 +66,11 @@ public class awTip extends JPanel {
 	
 	JSlider slider = null;
 	
-    public awTip(MainFrame mF)
+    public awTip(MainFrame frame)
     {
     	super(true);
 		this.setLayout(new BorderLayout());
-		this.setMainFrame(mF);
+		this.setMainFrame(frame);
 		ons = new ArrayList<ArrayList<SOSObservation>>();
 		colorramp = new ArrayList<ArrayList<Integer>>();
 		slider = new JSlider(JSlider.HORIZONTAL, 0, 10, 0);
@@ -246,8 +244,52 @@ public class awTip extends JPanel {
      */
 	protected void buildTimeSeries() {
 		if (startTime != "" && endTime != "") {
-			
-			TimeInterval interval = new TimeInterval(startTime, endTime);
+			((StatusBarPanel) getMainFrame().getStatusBarPanel()).toggle(true);
+			new AnswerWorker().execute();
+		}	
+	}
+
+	/**
+	 * Gets MainFrame
+	 * @return the mainFrame
+	 */
+	public MainFrame getMainFrame() {
+		return mainFrame;
+	}
+
+	/**
+	 * Sets MainFrame
+	 * @param mainFrame the mainFrame to set
+	 */
+	public void setMainFrame(MainFrame mainFrame) {
+		this.mainFrame = mainFrame;
+	}
+	
+	public int getDelay() {
+		return delay;
+	}
+
+	public void setDelay(int delay) {
+		this.delay = delay;
+	}
+	
+	public ArrayList<Integer> getUniqueColors(int lowerLimit, int upperLimit, int amount) {
+	    final int colorStep = (upperLimit-lowerLimit)/amount;
+
+	    final ArrayList<Integer> colors = new ArrayList<Integer>();
+	    for (int i=0;i<amount;i++) {
+	        int color = lowerLimit+colorStep*i;
+	        colors.add(color);
+	    }
+	    return colors;
+	}
+	
+	class AnswerWorker extends SwingWorker<Integer, Integer>
+	{
+		
+	    protected Integer doInBackground() throws Exception
+	    {
+	    	TimeInterval interval = new TimeInterval(startTime, endTime);
 			selectedFOIs = ((FilterPanel) getMainFrame().getFilterPanel()).getFoisOnTheGlobe();
 			Facade facade = ((FilterPanel) getMainFrame().getFilterPanel()).getFacade();
 			System.out.println("\n**** GET OBSERVATIONS BY TIME-INTERVAL **** \n");
@@ -308,50 +350,20 @@ public class awTip extends JPanel {
 			slider.setPaintTicks(true);
 			slider.setPaintLabels(true);
 			slider.updateUI();
-		}
-	}
-
-	/**
-	 * Gets MainFrame
-	 * @return the mainFrame
-	 */
-	public MainFrame getMainFrame() {
-		return mainFrame;
-	}
-
-	/**
-	 * Sets MainFrame
-	 * @param mainFrame the mainFrame to set
-	 */
-	public void setMainFrame(MainFrame mainFrame) {
-		this.mainFrame = mainFrame;
-	}
-	
-	public int getDelay() {
-		return delay;
-	}
-
-	public void setDelay(int delay) {
-		this.delay = delay;
-	}
-
-	private class MyDateListener implements PropertyChangeListener
-	{
-		@Override
-		public void propertyChange(PropertyChangeEvent evt) {
-			System.out.println("changed");
-		}
-
-	}
-	
-	public ArrayList<Integer> getUniqueColors(int lowerLimit, int upperLimit, int amount) {
-	    final int colorStep = (upperLimit-lowerLimit)/amount;
-
-	    final ArrayList<Integer> colors = new ArrayList<Integer>();
-	    for (int i=0;i<amount;i++) {
-	        int color = lowerLimit+colorStep*i;
-	        colors.add(color);
+			
+	        return 42;
 	    }
-	    return colors;
+
+	    protected void done()
+	    {
+	        try
+	        {
+	            ((StatusBarPanel) getMainFrame().getStatusBarPanel()).toggle(false);
+	        }
+	        catch (Exception e)
+	        {
+	            e.printStackTrace();
+	        }
+	    }
 	}
 }
