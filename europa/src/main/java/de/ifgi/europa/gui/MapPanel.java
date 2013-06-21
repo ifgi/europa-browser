@@ -183,7 +183,7 @@ public class MapPanel extends JPanel {
 	        pp.setLineEnabled(false);
 	        pp.setAltitudeMode(WorldWind.CLAMP_TO_GROUND);
 	        PointPlacemarkAttributes attrs = new PointPlacemarkAttributes();
-	        attrs.setImageAddress("dbpedia.jpeg");
+	        attrs.setImageAddress(getClass().getResource("/dbpedia.jpeg").toString());
 	        attrs.setImageColor(new Color(1f, 1f, 1f, 1f));
 	        attrs.setScale(1.0);
 	        attrs.setLabelOffset(new Offset(0.9d, 0.6d, AVKey.FRACTION, AVKey.FRACTION));

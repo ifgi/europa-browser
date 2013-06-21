@@ -19,8 +19,10 @@ public class StatusBarPanel extends JPanel {
 		super(new GridLayout(1, 1));
 		setMainFrame(frame);
 		
-		Image imgSpinner = Toolkit.getDefaultToolkit().createImage("spinner.gif");
-        ImageIcon iconSpin = new ImageIcon(imgSpinner);
+//		Image imgSpinner = Toolkit.getDefaultToolkit().createImage("resources/spinner.gif");
+//        ImageIcon iconSpin = new ImageIcon(imgSpinner);
+		
+		ImageIcon iconSpin = new ImageIcon(getClass().getResource("/spinner.gif"));
 		
 		downloadLabel = new JLabel("Downloading", iconSpin, SwingConstants.TRAILING);
 		downloadLabel.setForeground(Color.RED);

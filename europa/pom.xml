@@ -94,4 +94,50 @@
 			<version>1.1.1</version>
 		</dependency>  
 	</dependencies>
+	
+	<build>
+	    <defaultGoal>install</defaultGoal>
+	    <plugins>
+	        <plugin>
+	            <groupId>org.apache.maven.plugins</groupId>
+	            <artifactId>maven-compiler-plugin</artifactId>
+	            <version>2.3.2</version>
+	            <configuration>
+	                <source>${jdk.version}</source>
+	                <target>${jdk.version}</target>
+	            </configuration>
+	        </plugin>
+	        <plugin>
+	            <artifactId>maven-assembly-plugin</artifactId>
+	            <configuration>
+	                <descriptorRefs>
+	                    <descriptorRef>jar-with-dependencies</descriptorRef>
+	                </descriptorRefs>
+	                <finalName>LEOB</finalName>
+	                <appendAssemblyId>false</appendAssemblyId>
+	                <archive>
+	                    <manifest>
+	                        <mainClass>de.ifgi.europa.gui.MainFrame</mainClass>
+	                    </manifest>
+	                </archive>
+	            </configuration>
+	            <executions>
+	                <execution>
+	                    <phase>package</phase>
+	                    <goals>
+	                        <goal>single</goal>
+	                    </goals>
+	                </execution>
+	            </executions>
+	        </plugin>
+	    </plugins>
+	    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>true</filtering>
+      </resource>
+    </resources>
+	    <finalName>Linked Europa Observation Browser</finalName>
+	</build>
+	
 </project>

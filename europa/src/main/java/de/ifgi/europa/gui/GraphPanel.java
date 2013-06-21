@@ -97,7 +97,7 @@ public class GraphPanel extends JPanel implements ViewerListener {
 	public void updateGraph(QuerySolution soln, String selectedFOI, int flag) {
 		if (g.getNode("A") == null) {
 			g.addNode("A").addAttribute("ui.label", selectedFOI);
-			g.getNode("A").addAttribute("ui.style", "size: 32px; fill-mode: image-scaled; fill-image: url('foi.png'); text-alignment:at-right;");
+			g.getNode("A").addAttribute("ui.style", "size: 32px; fill-mode: image-scaled; fill-image: url('"+getClass().getResource("/foi.png").toString()+"'); text-alignment:at-right;");
 			attachTo = g.getNode("A");
 		} else if (flag == 0) {
 			attachTo = g.getNode("A");
@@ -114,17 +114,17 @@ public class GraphPanel extends JPanel implements ViewerListener {
 			nodeName = soln.get("?subject").toString();
 			nodeLabel = soln.get("?label").toString();
 			edgeLabel = "";
-			nodeAttribtue = "size: 32px; fill-mode: image-scaled; fill-image: url('uri.png'); text-padding: 25px, 2px; text-alignment:at-right;";
+			nodeAttribtue = "size: 32px; fill-mode: image-scaled; fill-image: url('"+getClass().getResource("/uri.png").toString()+"'); text-padding: 25px, 2px; text-alignment:at-right;";
 		} else {
 			edgeLabel = soln.get("?predicate").toString();
 			if (soln.get("?object").isLiteral()) {
 				nodeName = soln.get("?object").toString();
 				nodeLabel = soln.get("?object").toString();
-				nodeAttribtue = "size: 28px; fill-mode: image-scaled; fill-image: url('literal.png'); text-padding: 25px, 2px; text-alignment:at-right;";
+				nodeAttribtue = "size: 28px; fill-mode: image-scaled; fill-image: url('"+getClass().getResource("/literal.png").toString()+"'); text-padding: 25px, 2px; text-alignment:at-right;";
 			} else {
 				nodeName = soln.get("?object").toString();
 				nodeLabel = soln.get("?labelNode").toString();
-				nodeAttribtue = "size: 32px; fill-mode: image-scaled; fill-image: url('uri.png'); text-padding: 25px, 2px; text-alignment:at-right;";
+				nodeAttribtue = "size: 32px; fill-mode: image-scaled; fill-image: url('"+getClass().getResource("/uri.png").toString()+"'); text-padding: 25px, 2px; text-alignment:at-right;";
 			}
 		}
 		

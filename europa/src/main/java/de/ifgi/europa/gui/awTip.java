@@ -77,8 +77,8 @@ public class awTip extends JPanel {
 		final SimpleDateFormat dateFormatString = new SimpleDateFormat("yyyy-MM-dd");
 		btnPlay = new JButton("Play");
 		
-		imgPlay = Toolkit.getDefaultToolkit().createImage("play.png");
-		imgPause = Toolkit.getDefaultToolkit().createImage("pause.png");
+		imgPlay = Toolkit.getDefaultToolkit().createImage("resources/play.png");
+		imgPause = Toolkit.getDefaultToolkit().createImage("resources/pause.png");
 		btnPlay.setIcon(new ImageIcon(imgPlay.getScaledInstance(16, 16, java.awt.Image.SCALE_SMOOTH)));
 		
 		btnPlay.setEnabled(false);

@@ -89,14 +89,12 @@ public class FilterPanel extends JPanel {
 		properties = new ArrayList<Properties>();
 		foisOnTheGlobe = new ArrayList<FilterPanel.FeaturesOnTheGlobe>();
 		
-		Image imgSpinner = Toolkit.getDefaultToolkit().createImage("spinner.gif");
-		Image imgConnect = Toolkit.getDefaultToolkit().createImage("connect2.png");
-		Image imgSelect = Toolkit.getDefaultToolkit().createImage("select.png");
-		Image imgUnselect = Toolkit.getDefaultToolkit().createImage("unselect.png");
-        iconSpin = new ImageIcon(imgSpinner);
-        iconConnect = new ImageIcon(imgConnect.getScaledInstance(16, 16, java.awt.Image.SCALE_SMOOTH));
-        iconSelect = new ImageIcon(imgSelect.getScaledInstance(16, 16, java.awt.Image.SCALE_SMOOTH));
-        iconUnselect = new ImageIcon(imgUnselect.getScaledInstance(16, 16, java.awt.Image.SCALE_SMOOTH));
+		iconConnect = new ImageIcon(getClass().getResource("/connect2.png"));
+		iconConnect.setImage(iconConnect.getImage().getScaledInstance(16, 16, java.awt.Image.SCALE_SMOOTH));
+		iconSelect = new ImageIcon(getClass().getResource("/select.png"));
+		iconSelect.setImage(iconSelect.getImage().getScaledInstance(16, 16, java.awt.Image.SCALE_SMOOTH));
+		iconUnselect = new ImageIcon(getClass().getResource("/unselect.png"));
+		iconUnselect.setImage(iconUnselect.getImage().getScaledInstance(16, 16, java.awt.Image.SCALE_SMOOTH));
         
 		/**
 		 * Filter panel
