@@ -21,19 +21,22 @@ import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.lang.reflect.Field;
+
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.plaf.basic.BasicSplitPaneDivider;
 import javax.swing.plaf.basic.BasicSplitPaneUI;
 
-
 /**
- * This class puts all different parts of the program together.
+ * This class represents the starting point of the SOS LOD Viewer
  * @author Matthias Pfeil
  *
  */
@@ -41,41 +44,12 @@ public class MainFrame extends JFrame {
 
 	private JPanel pnlMap;
 	private JPanel pnlFilter;
-	private JSplitPane splitPaneTop;
-	private JSplitPane splitPaneBottom;
 	private JPanel pnlGraph;
 	private JPanel pnlStatusBar;
-
-	public MainFrame() {
-		super("Europa Linked Observation Browser");
-	    setSize(800,600);
-	    setLocation(0,0);
-	    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	    
-	    pnlFilter = new FilterPanel(this);
-	    pnlMap = new MapPanel(this);
-	    pnlGraph = new GraphPanel(this);
-	    pnlStatusBar = new StatusBarPanel(this);
-	    
-	    splitPaneTop = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,pnlFilter,pnlMap);
-	    splitPaneTop.setOneTouchExpandable(true);
-	    splitPaneTop.setBorder(null);
-	    
-	    splitPaneBottom = new JSplitPane(JSplitPane.VERTICAL_SPLIT, splitPaneTop, pnlGraph);
-	    splitPaneBottom.setOneTouchExpandable(true);
-	    
-	    add(splitPaneBottom, BorderLayout.CENTER);
-	    add(pnlStatusBar, BorderLayout.PAGE_END);
-
-	    pack();
-	    setVisible(true); 
-	    
-	    KeyboardFocusManager manager = KeyboardFocusManager.getCurrentKeyboardFocusManager();
-	    manager.addKeyEventDispatcher(new MyDispatcher());
-	}
+	private JSplitPane splitPaneTop;
+	private JSplitPane splitPaneBottom;
 	
 	private class MyDispatcher implements KeyEventDispatcher {
-		
         @Override
         public boolean dispatchKeyEvent(KeyEvent e) {
             if (e.getID() == KeyEvent.KEY_PRESSED) {
@@ -92,9 +66,8 @@ public class MainFrame extends JFrame {
 				}
             } else if (e.getID() == KeyEvent.KEY_RELEASED) {
                 
-               
             } else if (e.getID() == KeyEvent.KEY_TYPED) {
-
+                
             }
             return false;
         }
@@ -108,25 +81,86 @@ public class MainFrame extends JFrame {
                 JButton button = (JButton) buttonField.get(((BasicSplitPaneUI) sp.getUI()).getDivider());
                 button.getActionListeners()[0].actionPerformed(new ActionEvent(bspd, MouseEvent.MOUSE_CLICKED,
                         "bum"));
-                getGraphPanel().updateUI();
+                
+                ((GraphPanel) getGraphPanel()).getViewer().getDefaultView().repaint();
+                splitPaneBottom.repaint();
+                splitPaneBottom.revalidate();
+                splitPaneBottom.updateUI();
+                
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
     }
 	
+	public MainFrame() {
+		JPanel mainPanel = new JPanel(new BorderLayout());
+	    
+	    pnlFilter = new FilterPanel(this);
+	    pnlMap = new MapPanel(this);
+	    pnlGraph = new GraphPanel(this);
+	    pnlStatusBar = new StatusBarPanel(this);
+	    
+	    splitPaneTop = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,pnlFilter,pnlMap);
+	    splitPaneTop.setOneTouchExpandable(true);
+	    splitPaneTop.setBorder(null);
+	    
+	    splitPaneBottom = new JSplitPane(JSplitPane.VERTICAL_SPLIT, splitPaneTop, pnlGraph);
+	    splitPaneBottom.setOneTouchExpandable(true);
+	    
+	    mainPanel.add(splitPaneBottom, BorderLayout.CENTER);
+	    mainPanel.add(pnlStatusBar, BorderLayout.PAGE_END);
+	    
+	    add(mainPanel,BorderLayout.CENTER);
+	    
+	    KeyboardFocusManager manager = KeyboardFocusManager.getCurrentKeyboardFocusManager();
+        manager.addKeyEventDispatcher(new MyDispatcher());
+	}
+	
+	/**
+	 * @param args
+	 */
+	public static void main(String[] args) {
+		/*
+		 *  System Look and Feel
+		 */
+	    try {
+		    // Set System L&F
+	        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+	    } 
+	    catch (UnsupportedLookAndFeelException e) {
+	       // handle exception
+	    }
+	    catch (ClassNotFoundException e) {
+	       // handle exception
+	    }
+	    catch (InstantiationException e) {
+	       // handle exception
+	    }
+	    catch (IllegalAccessException e) {
+	       // handle exception
+	    }
+	    
+	    MainFrame mainFrame= new MainFrame();
+	    mainFrame.setSize(800,600);
+	    mainFrame.setLocation(0,0);
+	    mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	    mainFrame.pack();
+	    mainFrame.setVisible(true);
+	}
+	
 	public JPanel getMapPanel() {
 		return pnlMap;
 	}
-	
+
 	public JPanel getFilterPanel() {
 		return pnlFilter;
 	}
-	
+
 	public JPanel getGraphPanel() {
 		return pnlGraph;
 	}
-	
+
 	public JPanel getStatusBarPanel(){
 		return pnlStatusBar;
 	}

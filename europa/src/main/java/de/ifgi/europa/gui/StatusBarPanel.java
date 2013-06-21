@@ -15,9 +15,9 @@ public class StatusBarPanel extends JPanel {
 	private MainFrame mainFrame;
 	private JLabel downloadLabel;
 	
-	public StatusBarPanel(MainFrame mF) {
+	public StatusBarPanel(MainFrame frame) {
 		super(new GridLayout(1, 1));
-		setMainFrame(mF);
+		setMainFrame(frame);
 		
 		Image imgSpinner = Toolkit.getDefaultToolkit().createImage("spinner.gif");
         ImageIcon iconSpin = new ImageIcon(imgSpinner);

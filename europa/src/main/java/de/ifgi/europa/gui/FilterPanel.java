@@ -26,8 +26,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -83,9 +81,9 @@ public class FilterPanel extends JPanel {
 	
 	ImageIcon iconSpin, iconConnect, iconSelect, iconUnselect;
 	
-	public FilterPanel(MainFrame mF) {
+	public FilterPanel(MainFrame frame) {
 		super(new GridLayout(2,1));
-		this.setMainFrame(mF);
+		this.setMainFrame(frame);
 		this.setFacade(new Facade());
 		
 		properties = new ArrayList<Properties>();
@@ -135,14 +133,7 @@ public class FilterPanel extends JPanel {
 		};
         
 	    propertiesTable = new JTable(propertiesTableModel);
-//	    propertiesTable.getColumnModel().getColumn(1).setCellRenderer(new MyRenderer());
-//	    propertiesTable.getColumnModel().getColumn(1).setCellRenderer(new CustomRenderer());
-//	    propertiesTable.setCellSelectionEnabled(true);
-//	    propertiesTable.getColumnModel().getColumn(1).setCellRenderer(new CustomRenderer());
 	    propertiesTable.setCellSelectionEnabled(true);
-//	    final CustomRenderer renderer = new CustomRenderer();
-//	    renderer.setToolTipText("Click for combo box");
-//	    propertiesTable.getColumnModel().getColumn(1).setCellRenderer(renderer);
 	    TableColumn visualizationColumn = propertiesTable.getColumnModel().getColumn(1);
 		final JComboBox comboBox = new JComboBox();
 		comboBox.addItem("Color");
@@ -177,21 +168,8 @@ public class FilterPanel extends JPanel {
         
         pnlTables.add(pnlGraphs, BorderLayout.PAGE_START);
         
-        //Create the scroll pane and add the table to it.
-//        JLayeredPane layeredPane = new JLayeredPane();
-//        pnlTables.add(layeredPane,BorderLayout.CENTER);
-//        JPanel pnlLayeredPaneTable = new JPanel(new BorderLayout());
-//        JScrollPane scrollPanePropertiesTable = new JScrollPane(propertiesTable);
-//        pnlLayeredPaneTable.add(scrollPanePropertiesTable, BorderLayout.CENTER);
-//        pnlLayeredPaneTable.setBounds(50, 50, 200, 200);
-//        pnlLayeredPaneTable.setOpaque(true);
-//        
-//        layeredPane.add(pnlLayeredPaneTable, new Integer(0), 0);
-        
-        
         JScrollPane scrollPanePropertiesTable = new JScrollPane(propertiesTable);
         pnlTables.add(scrollPanePropertiesTable,BorderLayout.CENTER);
-        
         
 		pnlFilter.add(pnlTables,BorderLayout.CENTER);
 		this.add(pnlFilter);
@@ -303,13 +281,7 @@ public class FilterPanel extends JPanel {
 				 * Clear table after querying new endpoint
 				 */
 				((StatusBarPanel) getMainFrame().getStatusBarPanel()).toggle(true);
-				
 				new AnswerWorker(2).execute();
-				
-//				btnQuery.setIcon(iconSpin);
-				
-				
-//				btnQuery.setIcon(iconConnect);
 			}
 		});
 		
@@ -324,7 +296,6 @@ public class FilterPanel extends JPanel {
 			public void itemStateChanged(ItemEvent e) {
 				if (e.getStateChange() == ItemEvent.SELECTED) {
 					((StatusBarPanel) getMainFrame().getStatusBarPanel()).toggle(true);
-					
 					new AnswerWorker(1).execute();
 				}
 			}
@@ -387,62 +358,6 @@ public class FilterPanel extends JPanel {
 					}
 				}
 			}
-			
-			
-			//DEPRECATED will be deleted
-			/**
-			 * Gets all depending FOIs of a selected property and adds these FOIs to the results table.
-			 * @param property selected property
-			 * @param visualization selected visualization
-			 * @param flag 1=add, 2=delete
-			 */
-			private void updateResultsTable(String property, String visualization ,int flag) {
-				if (flag == 1) {
-//					for (int i = 0; i < getProperties().size(); i++) {
-//						if (property.compareTo(getProperties().get(i).getUri().toString()) == 0) {
-//							ArrayList<SOSFeatureOfInterest> availableFOIs = getFacade().listFeaturesOfInterest(getProperties().get(i));
-//							for (int k = 0; k < availableFOIs.size(); k++) {
-//								String name = availableFOIs.get(k).getUri().toString();
-//								availableFOIs.get(k).setIdentifier(property.toLowerCase());
-//								fois.add(availableFOIs.get(k));
-//								resultsTableModel.addRow(new Object[] {name});
-//							}
-//						}
-//					}
-				} else if (flag == 2) {
-					Boolean somethingVisible = false;
-//					for(SelectedProperties prop : props) {
-//						if (prop.isVisible()) {
-//							somethingVisible = true;
-//							break;
-//						}
-//					}
-					if (!somethingVisible) {
-						clearTable(resultsTable);
-						((MapPanel) getMainFrame().getMapPanel()).clearGlobe();
-					} else {
-//						for (int i = 0; i < getProperties().size(); i++) {
-//							if (property.compareTo(getProperties().get(i).getUri().toString()) == 0) {
-//								ArrayList<SOSFeatureOfInterest> availableFOIs = getFacade().listFeaturesOfInterest(getProperties().get(i));
-//								for (int j = 0; j < availableFOIs.size(); j++) {
-//									for (int k = 0; k < fois.size(); k++) {
-//										if (fois.get(k).getUri().toString().compareTo(availableFOIs.get(j).getUri().toString()) == 0) {
-//											fois.remove(k);
-//										}
-//									}
-//									for (int k = 0; k < resultsTable.getRowCount(); k++) {
-//										if (resultsTable.getValueAt(k, 0).toString().compareTo(availableFOIs.get(j).getUri().toString()) == 0) {
-//											((MapPanel) getMainFrame().getMapPanel()).updateGlobe(null, availableFOIs.get(j), null);
-//											resultsTableModel.removeRow(k);
-//											resultsTableModel.fireTableDataChanged();
-//										}
-//									}
-//								}
-//							}
-//						}
-					}
-				} 
-			}
 		});
 		
 		/**
@@ -500,13 +415,14 @@ public class FilterPanel extends JPanel {
 						String[] arrUri = tempUri.split("\\#");
 						System.out.println(resultsTable.getRowCount());
 						System.out.println(resultsTableModel.getRowCount());
-						//funzt noch nicht
-						for (int k = 0; k < resultsTable.getRowCount(); k++) {
-//								if (resultsTable.getValueAt(k, 0).toString().compareTo(availableFOIs.get(j).getUri().toString()) == 0) {
-//									((MapPanel) getMainFrame().getMapPanel()).updateGlobe(null, availableFOIs.get(j), null);
-//									resultsTableModel.removeRow(k);
-//									resultsTableModel.fireTableDataChanged();
-//								}
+
+						//look through table backwards and delete rows
+						for (int k = resultsTable.getRowCount()-1; k >= 0; k--) {
+							if (resultsTable.getValueAt(k, 0).toString().startsWith(arrUri[1])) {
+								((MapPanel) getMainFrame().getMapPanel()).updateGlobe(null, null, null, tempUri, 0);
+								resultsTableModel.removeRow(k);
+								resultsTableModel.fireTableDataChanged();
+							}
 						}
 					}
 				}
@@ -624,9 +540,6 @@ public class FilterPanel extends JPanel {
 		public void setVisible(Boolean visible) {
 			this.visible = visible;
 		}
-		
-		
-		
 	}
 
 	
@@ -768,71 +681,4 @@ public class FilterPanel extends JPanel {
 	        }
 	    }
 	}
-	
-//	
-//	/**
-//	 * Custom TableCellRenderer to set background color of visualization cloumn if the user selects
-//	 * color option.
-//	 * @author Matthias Pfeil
-//	 *
-//	 */
-//	public static class CustomRenderer extends DefaultTableCellRenderer {
-//	    private boolean render = false;
-//	    private Color color = null;
-//	    
-//	    public void renderNew(boolean render) {
-//	    	this.render = render;
-//	    }
-//	    
-//	    public void setColor(Color color) {
-//	    	this.color = color;
-//	    }
-//	    
-//	    public Color getColor() {
-//	    	return this.color;
-//	    }
-//	    
-//		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column){
-//			setOpaque(true);
-//		
-//			Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-//			
-//			
-//			if (render) {
-//				System.out.println(row +" "+column);
-//				
-//				if (value != null) {
-//					
-//					if (value.toString().compareTo("Color") == 0) {
-////						if (row == table.getSelectedRow() && column == table.getSelectedColumn()) {
-//							System.out.println(row + " "+ column);
-//							setText(value.toString());
-//							c.setBackground(getColor());
-//							c.setForeground(Color.black);
-////						} else {
-////							System.out.println("Color but not selected row: "+row +" "+column);
-//////							Color tempColor = c.getBackground();
-//////							setText(value.toString());
-//////							c.setBackground(tempColor);
-//////							c.setForeground(color.black);
-////						}
-////						System.out.println("Row: "+row+" Column: "+column+" Color: "+c.getBackground());
-////						setText(value.toString());
-////						c.setBackground(getColor());
-////						c.setForeground(Color.black);
-//					} else {
-//						System.out.println("no color row & column");
-//						setText(value.toString());
-//						c.setBackground(Color.white);
-//						c.setForeground(Color.black);
-//					}
-//				} else {
-//					c.setBackground(Color.white);
-//					c.setForeground(Color.black);
-//				}
-//			}
-//			
-//	        return c;
-//		}
-//	}
 }

@@ -40,7 +40,9 @@ import gov.nasa.worldwind.layers.StarsLayer;
 import gov.nasa.worldwind.layers.ViewControlsLayer;
 import gov.nasa.worldwind.layers.ViewControlsSelectListener;
 import gov.nasa.worldwind.layers.Earth.BMNGWMSLayer;
+import gov.nasa.worldwind.layers.Earth.CountryBoundariesLayer;
 import gov.nasa.worldwind.layers.Earth.LandsatI3WMSLayer;
+import gov.nasa.worldwind.layers.Earth.NASAWFSPlaceNameLayer;
 import gov.nasa.worldwind.render.BasicShapeAttributes;
 import gov.nasa.worldwind.render.Cone;
 import gov.nasa.worldwind.render.Cylinder;
@@ -57,9 +59,6 @@ import javax.swing.JPanel;
 
 import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
-import com.hp.hpl.jena.query.ResultSetFactory;
-import com.hp.hpl.jena.query.ResultSetRewindable;
-
 import de.ifgi.europa.core.SOSFeatureOfInterest;
 import de.ifgi.europa.core.SOSObservation;
 import de.ifgi.europa.core.SOSSensorOutput;
@@ -82,14 +81,14 @@ public class MapPanel extends JPanel {
 	AnnotationWindow tip;
 	AnnotationWindowLayer awl;
 	
-	public MapPanel(MainFrame mF) {
+	public MapPanel(MainFrame frame) {
 		super(new GridLayout(1, 1));
 		
 		Configuration.setValue(AVKey.INITIAL_LATITUDE, 51);
         Configuration.setValue(AVKey.INITIAL_LONGITUDE, 10);
         Configuration.setValue(AVKey.INITIAL_ALTITUDE, 120e4);
 		
-		this.setMainFrame(mF);
+		this.setMainFrame(frame);
 		wwd = new WorldWindowGLCanvas();
 		layer = new RenderableLayer();
         dbpedia = new RenderableLayer();
@@ -111,10 +110,10 @@ public class MapPanel extends JPanel {
         {
 			layer,
 			dbpedia,
-            new StarsLayer(),
             new CompassLayer(),
             new BMNGWMSLayer(),
             new LandsatI3WMSLayer(),
+            new CountryBoundariesLayer(),
             awl,
             new ScalebarLayer(),  
         };
@@ -270,27 +269,31 @@ public class MapPanel extends JPanel {
 			
 	        //Create cylinder depending on chosen visualization and add it to the renderable layer
 			if (existingCylinder != null) {
-				//TODO Update the geometry and add the new property
-				toolTipText = existingCylinder.getValue(AVKey.DISPLAY_NAME) + newline + toolTipSamplingTime + newline + toolTipValue + " " + toolTipUom + newline + newline + "Click to see what is around!";
 				
-		        if (property.getVisualization().compareTo("width") == 0) {
-		        	defaultRadius = defaultRadius*val*1000;
+				toolTipText = existingCylinder.getValue(AVKey.DISPLAY_NAME)+ newline + toolTipProperty + newline + toolTipSamplingTime + newline + toolTipValue + " " + toolTipUom + newline + newline + "Click to see what is around!";
+				System.out.println("test");
+		        if (property.getVisualization().toLowerCase().compareTo("width") == 0) {
 		        	
 		        	if (val < 0) {
 						val = val * -1;
 					
 					}
+		        	
+		        	defaultRadius = defaultRadius*val;
+		        	
 		        	Cylinder tempCylinder = existingCylinder;
 		        	attrs = tempCylinder.getActiveAttributes();
-		        	existingCylinder = new Cylinder(Position.fromDegrees(lat, lon, 0), defaultHeight, val);
+		        	existingCylinder = new Cylinder(Position.fromDegrees(lat, lon, 0), (Double) tempCylinder.getValue(AVKey.HEIGHT), defaultRadius);
+		        	layer.removeRenderable(tempCylinder);
 				} else if (property.getVisualization().toLowerCase().compareTo("height") == 0) {
-					defaultHeight = defaultHeight*val*10;
+					defaultHeight = defaultHeight*val;
 					if (defaultHeight < 0) {
 						defaultHeight = defaultHeight * -1;
 					}
 					Cylinder tempCylinder = existingCylinder;
 		        	attrs = tempCylinder.getActiveAttributes();
-		        	existingCylinder = new Cylinder(Position.fromDegrees(lat, lon, 0), defaultHeight, 10000);
+		        	existingCylinder = new Cylinder(Position.fromDegrees(lat, lon, 0), defaultHeight, (Double) tempCylinder.getValue(AVKey.WIDTH));
+		        	layer.removeRenderable(tempCylinder);
 				} else if (property.getVisualization().toLowerCase().compareTo("color") == 0) {
 					if (color != -1) {
 						attrs.setInteriorMaterial(new Material(new Color(color)));
@@ -308,18 +311,24 @@ public class MapPanel extends JPanel {
 				
 				toolTipText = toolTipProperty + newline + toolTipSamplingTime + newline + toolTipValue + " " + toolTipUom + newline + newline + "Click to see what is around!";
 				
-		        if (property.getVisualization().compareTo("width") == 0) {
-		        	defaultRadius = defaultRadius*val*1000;
+		        if (property.getVisualization().toLowerCase().compareTo("width") == 0) {
 		        	if (val < 0) {
 						val = val * -1;
 					}
-		        	cylinder = new Cylinder(Position.fromDegrees(lat, lon, 0), defaultHeight, val);
+		        	
+		        	defaultRadius = defaultRadius*val;
+		        	
+		        	cylinder = new Cylinder(Position.fromDegrees(lat, lon, 0), defaultHeight, defaultRadius);
+		        	cylinder.setValue(AVKey.HEIGHT, defaultHeight);
+					cylinder.setValue(AVKey.WIDTH, defaultRadius);
 				} else if (property.getVisualization().toLowerCase().compareTo("height") == 0) {
-					defaultHeight = defaultHeight*val*10;
+					defaultHeight = defaultHeight*val;
 					if (defaultHeight < 0) {
 						defaultHeight = defaultHeight * -1;
 					}
-					cylinder = new Cylinder(Position.fromDegrees(lat, lon, 0), defaultHeight, 10000);
+					cylinder = new Cylinder(Position.fromDegrees(lat, lon, 0), defaultHeight, 1000);
+					cylinder.setValue(AVKey.HEIGHT, defaultHeight);
+					cylinder.setValue(AVKey.WIDTH, 1000);
 				} else if (property.getVisualization().toLowerCase().compareTo("color") == 0) {
 					if (color != -1) {
 						attrs.setInteriorMaterial(new Material(new Color(color)));
