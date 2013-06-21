@@ -59,7 +59,7 @@ public class awTip extends JPanel {
 	private ArrayList<ArrayList<SOSObservation>> ons;
 	private ArrayList<FeaturesOnTheGlobe> selectedFOIs;
 	private ArrayList<ArrayList<Integer>> colorramp;
-	private int delay = 500;
+	private int delay = 10;
 	private Image imgPlay = null;
 	private Image imgPause = null;
 	int sliderIndex = 0;
@@ -188,33 +188,39 @@ public class awTip extends JPanel {
 					((MapPanel) getMainFrame().getMapPanel()).clearGlobe();
 					for (int i = 0; i < ons.size(); i++) {
 						System.out.println("getObs");
-						SOSObservation obs =  ons.get(i).get(slider.getValue());
-						for (int j = 0; j < selectedFOIs.size(); j++) {
-							if (obs.getFeatureOfInterest().getUri().toString().toLowerCase().compareTo(selectedFOIs.get(j).getFoi().getUri().toString().toLowerCase()) == 0) {
-								String[] arrProp = selectedFOIs.get(j).getProperty().getProperty().getUri().toString().split("\\#");
-								String[] arrFOI = selectedFOIs.get(j).getFoi().getUri().toString().split("\\#");
-								System.out.println(arrProp[1]+"-"+arrFOI[1]);
-								if (obs.getFeatureOfInterest().getIdentifier().toString().toLowerCase().compareTo(selectedFOIs.get(j).getProperty().getProperty().getUri().toString().toLowerCase()) == 0) {
-									if (selectedFOIs.get(j).getProperty().getVisualization().toLowerCase().compareTo("color") == 0) {
-										int color = colorramp.get(i).get(slider.getValue());
-										((MapPanel) getMainFrame().getMapPanel()).updateGlobe(obs, null, selectedFOIs.get(j).getProperty(), arrProp[1]+"-"+arrFOI[1], color, false);
-									} else {
-										((MapPanel) getMainFrame().getMapPanel()).updateGlobe(obs, null, selectedFOIs.get(j).getProperty(), arrProp[1]+"-"+arrFOI[1], -1, false);
+						try {
+							SOSObservation obs =  ons.get(i).get(slider.getValue());
+							for (int j = 0; j < selectedFOIs.size(); j++) {
+								if (obs.getFeatureOfInterest().getUri().toString().toLowerCase().compareTo(selectedFOIs.get(j).getFoi().getUri().toString().toLowerCase()) == 0) {
+									String[] arrProp = selectedFOIs.get(j).getProperty().getProperty().getUri().toString().split("\\#");
+									String[] arrFOI = selectedFOIs.get(j).getFoi().getUri().toString().split("\\#");
+									System.out.println(arrProp[1]+"-"+arrFOI[1]);
+									if (obs.getFeatureOfInterest().getIdentifier().toString().toLowerCase().compareTo(selectedFOIs.get(j).getProperty().getProperty().getUri().toString().toLowerCase()) == 0) {
+										if (selectedFOIs.get(j).getProperty().getVisualization().toLowerCase().compareTo("color") == 0) {
+											int color = colorramp.get(i).get(slider.getValue());
+											((MapPanel) getMainFrame().getMapPanel()).updateGlobe(obs, null, selectedFOIs.get(j).getProperty(), arrProp[1]+"-"+arrFOI[1], color, false);
+										} else {
+											((MapPanel) getMainFrame().getMapPanel()).updateGlobe(obs, null, selectedFOIs.get(j).getProperty(), arrProp[1]+"-"+arrFOI[1], -1, false);
+										}
+										
+										
 									}
-									
-									
 								}
 							}
+						
+						((MapPanel) getMainFrame().getMapPanel()).redrawGlobe();
+						} catch (Exception e2) {
+							System.out.println("No more observation!");
 						}
 					}
-					((MapPanel) getMainFrame().getMapPanel()).redrawGlobe();
+						
 				} else {
 					btnPlay.doClick();
 				}
 			}
 		};
 		
-		final javax.swing.Timer timerswing = new javax.swing.Timer(delay, taskPerformer);
+		final javax.swing.Timer timerswing = new javax.swing.Timer(10, taskPerformer);
 		
 		/**
 		 * ActionListener for Play button inside the AnnotationWindow.
