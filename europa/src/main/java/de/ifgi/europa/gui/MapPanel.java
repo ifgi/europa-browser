@@ -207,7 +207,7 @@ public class MapPanel extends JPanel {
 	 * @param foi
 	 * @param viz
 	 */
-	public void updateGlobe(SOSObservation observation, SOSFeatureOfInterest foi, Properties property, String selectedFOI, int color) {
+	public void updateGlobe(SOSObservation observation, SOSFeatureOfInterest foi, Properties property, String selectedFOI, int color, Boolean directRedraw) {
 
 		if (observation != null) {
 			Double defaultHeight = 10.0;
@@ -283,7 +283,11 @@ public class MapPanel extends JPanel {
 		        	
 		        	Cylinder tempCylinder = existingCylinder;
 		        	attrs = tempCylinder.getActiveAttributes();
-		        	existingCylinder = new Cylinder(Position.fromDegrees(lat, lon, 0), (Double) tempCylinder.getValue(AVKey.HEIGHT), defaultRadius);
+		        	
+		        	String tempHeight = tempCylinder.getValue(AVKey.HEIGHT).toString();
+		        	Double height = Double.parseDouble(tempHeight);
+		        	
+		        	existingCylinder = new Cylinder(Position.fromDegrees(lat, lon, 0), height, defaultRadius);
 		        	layer.removeRenderable(tempCylinder);
 				} else if (property.getVisualization().toLowerCase().compareTo("height") == 0) {
 					defaultHeight = defaultHeight*val;
@@ -292,7 +296,11 @@ public class MapPanel extends JPanel {
 					}
 					Cylinder tempCylinder = existingCylinder;
 		        	attrs = tempCylinder.getActiveAttributes();
-		        	existingCylinder = new Cylinder(Position.fromDegrees(lat, lon, 0), defaultHeight, (Double) tempCylinder.getValue(AVKey.WIDTH));
+		        	
+		        	String tempWidth = tempCylinder.getValue(AVKey.WIDTH).toString();
+		        	Double width = Double.parseDouble(tempWidth);
+		        	
+		        	existingCylinder = new Cylinder(Position.fromDegrees(lat, lon, 0), defaultHeight, width);
 		        	layer.removeRenderable(tempCylinder);
 				} else if (property.getVisualization().toLowerCase().compareTo("color") == 0) {
 					if (color != -1) {
@@ -336,6 +344,8 @@ public class MapPanel extends JPanel {
 						attrs.setInteriorMaterial(new Material(property.getColors()[0]));
 					}
 					cylinder = new Cylinder(Position.fromDegrees(lat, lon, 0), 1000, 1000);
+					cylinder.setValue(AVKey.HEIGHT, 1000);
+					cylinder.setValue(AVKey.WIDTH, 1000);
 				}
 		        
 		        cylinder.setAltitudeMode(WorldWind.ABSOLUTE);
@@ -372,7 +382,10 @@ public class MapPanel extends JPanel {
 		} else {
 			addAnnotationWindowToGlobe();
 		}
-        wwd.redrawNow();
+		
+		if (directRedraw) {
+			wwd.redrawNow();
+		}
 	}
 	
 	/**
@@ -399,5 +412,9 @@ public class MapPanel extends JPanel {
 		awl.setEnabled(false);
 		wwd.redrawNow();
 		wwd.repaint();
+	}
+	
+	public void redrawGlobe(){
+		wwd.redrawNow();
 	}
 }

@@ -419,7 +419,7 @@ public class FilterPanel extends JPanel {
 						//look through table backwards and delete rows
 						for (int k = resultsTable.getRowCount()-1; k >= 0; k--) {
 							if (resultsTable.getValueAt(k, 0).toString().startsWith(arrUri[1])) {
-								((MapPanel) getMainFrame().getMapPanel()).updateGlobe(null, null, null, tempUri, 0);
+								((MapPanel) getMainFrame().getMapPanel()).updateGlobe(null, null, null, tempUri, 0, true);
 								resultsTableModel.removeRow(k);
 								resultsTableModel.fireTableDataChanged();
 							}
@@ -638,7 +638,7 @@ public class FilterPanel extends JPanel {
 							for (SOSFeatureOfInterest foi : prop.getProperty().getFoi()) {
 								if (foi.getUri().toString().toLowerCase().contains(arrSelectedFOI[1].toLowerCase())) {
 									SOSObservation observation = getFacade().getFOILastObservation(foi);
-									((MapPanel) getMainFrame().getMapPanel()).updateGlobe(observation,foi,prop,selectedFOI, -1);
+									((MapPanel) getMainFrame().getMapPanel()).updateGlobe(observation,foi,prop,selectedFOI, -1, true);
 									foisOnTheGlobe.add(new FeaturesOnTheGlobe(foi, prop));
 									break;
 								}
@@ -651,7 +651,7 @@ public class FilterPanel extends JPanel {
 						if (prop.getProperty().getUri().toString().toLowerCase().contains(arrSelectedFOI[0].toLowerCase())) {
 							for (SOSFeatureOfInterest foi : prop.getProperty().getFoi()) {
 								if (foi.getUri().toString().toLowerCase().contains(arrSelectedFOI[1].toLowerCase())) {
-									((MapPanel) getMainFrame().getMapPanel()).updateGlobe(null,foi,prop,selectedFOI, -1);
+									((MapPanel) getMainFrame().getMapPanel()).updateGlobe(null,foi,prop,selectedFOI, -1, true);
 									for (int i = 0; i < foisOnTheGlobe.size(); i++) {
 										if (foisOnTheGlobe.get(i).getFoi().getUri().toString().toLowerCase().compareTo(foi.getUri().toString().toLowerCase()) == 0) {
 											foisOnTheGlobe.remove(i);

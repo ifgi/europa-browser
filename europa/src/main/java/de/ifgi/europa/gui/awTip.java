@@ -63,7 +63,7 @@ public class awTip extends JPanel {
 	private Image imgPlay = null;
 	private Image imgPause = null;
 	int sliderIndex = 0;
-	
+	final JButton btnPlay;
 	JSlider slider = null;
 	
     public awTip(MainFrame frame)
@@ -75,11 +75,13 @@ public class awTip extends JPanel {
 		colorramp = new ArrayList<ArrayList<Integer>>();
 		slider = new JSlider(JSlider.HORIZONTAL, 0, 10, 0);
 		final SimpleDateFormat dateFormatString = new SimpleDateFormat("yyyy-MM-dd");
-		final JButton btnPlay = new JButton("Play");
+		btnPlay = new JButton("Play");
 		
 		imgPlay = Toolkit.getDefaultToolkit().createImage("play.png");
 		imgPause = Toolkit.getDefaultToolkit().createImage("pause.png");
 		btnPlay.setIcon(new ImageIcon(imgPlay.getScaledInstance(16, 16, java.awt.Image.SCALE_SMOOTH)));
+		
+		btnPlay.setEnabled(false);
 		
 		final JDateChooser dcFrom = new JDateChooser();
 		final JDateChooser dcUntil = new JDateChooser();
@@ -188,21 +190,24 @@ public class awTip extends JPanel {
 						System.out.println("getObs");
 						SOSObservation obs =  ons.get(i).get(slider.getValue());
 						for (int j = 0; j < selectedFOIs.size(); j++) {
-							String[] arrProp = selectedFOIs.get(j).getProperty().getProperty().getUri().toString().split("\\#");
-							String[] arrFOI = selectedFOIs.get(j).getFoi().getUri().toString().split("\\#");
-							System.out.println(arrProp[1]+"-"+arrFOI[1]);
-							if (obs.getFeatureOfInterest().getIdentifier().toString().toLowerCase().compareTo(selectedFOIs.get(j).getProperty().getProperty().getUri().toString().toLowerCase()) == 0) {
-								if (selectedFOIs.get(j).getProperty().getVisualization().toLowerCase().compareTo("color") == 0) {
-									int color = colorramp.get(i).get(slider.getValue());
-									((MapPanel) getMainFrame().getMapPanel()).updateGlobe(obs, null, selectedFOIs.get(j).getProperty(), arrProp[1]+"-"+arrFOI[1], color);
-								} else {
-									((MapPanel) getMainFrame().getMapPanel()).updateGlobe(obs, null, selectedFOIs.get(j).getProperty(), arrProp[1]+"-"+arrFOI[1], -1);
+							if (obs.getFeatureOfInterest().getUri().toString().toLowerCase().compareTo(selectedFOIs.get(j).getFoi().getUri().toString().toLowerCase()) == 0) {
+								String[] arrProp = selectedFOIs.get(j).getProperty().getProperty().getUri().toString().split("\\#");
+								String[] arrFOI = selectedFOIs.get(j).getFoi().getUri().toString().split("\\#");
+								System.out.println(arrProp[1]+"-"+arrFOI[1]);
+								if (obs.getFeatureOfInterest().getIdentifier().toString().toLowerCase().compareTo(selectedFOIs.get(j).getProperty().getProperty().getUri().toString().toLowerCase()) == 0) {
+									if (selectedFOIs.get(j).getProperty().getVisualization().toLowerCase().compareTo("color") == 0) {
+										int color = colorramp.get(i).get(slider.getValue());
+										((MapPanel) getMainFrame().getMapPanel()).updateGlobe(obs, null, selectedFOIs.get(j).getProperty(), arrProp[1]+"-"+arrFOI[1], color, false);
+									} else {
+										((MapPanel) getMainFrame().getMapPanel()).updateGlobe(obs, null, selectedFOIs.get(j).getProperty(), arrProp[1]+"-"+arrFOI[1], -1, false);
+									}
+									
+									
 								}
-								
-								
 							}
 						}
 					}
+					((MapPanel) getMainFrame().getMapPanel()).redrawGlobe();
 				} else {
 					btnPlay.doClick();
 				}
@@ -359,6 +364,7 @@ public class awTip extends JPanel {
 	        try
 	        {
 	            ((StatusBarPanel) getMainFrame().getStatusBarPanel()).toggle(false);
+	            btnPlay.setEnabled(true);
 	        }
 	        catch (Exception e)
 	        {
